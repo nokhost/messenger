@@ -1,0 +1,54 @@
+/*
+	Available weights for `Shabnam`: 100, 300, 400, 500, 700
+*/
+@font-face {
+     font-family: 'Shabnam';
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/46024991975c0cad2c9f9861eda4c78e63585f4a221c661a3b029b2a3d6d23e7.eot");
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/46024991975c0cad2c9f9861eda4c78e63585f4a221c661a3b029b2a3d6d23e7.eot?#iefix") format("embedded-opentype"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/a074a415cfe0e4f57e2ede996a73d0e509c0ea194c9678c7b87c65fb977907e7.woff2") format("woff2"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/54e95c8d517ff334fff6ffc1c0b6fa2fed48c6385ed9f8cedceb2cf53c3d06ee.woff") format("woff"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/9c5fc8b15632d57f360d44e9b206d58ecf6c9057f44105a0b57d404da90611a8.ttf") format("truetype");
+     font-weight: 100;
+     font-style: normal;
+}
+@font-face {
+     font-family: 'Shabnam';
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/27017b87f06e873470ea30c6828a68da664345f448a5622d0bc246c1cdb778a4.eot");
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/27017b87f06e873470ea30c6828a68da664345f448a5622d0bc246c1cdb778a4.eot?#iefix") format("embedded-opentype"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/87cf5dde711a284c1e25dd414d51a571b7c9aedd91b2b96f9d679869f5d65162.woff2") format("woff2"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/825bb53d4aa521f6049ccd4ba7f365dac04e8b7f3a2cae87e35963836eee72ed.woff") format("woff"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/7a43afedf3e40b3c66b81ddc60109e855f16def09dc3b248e9e710ef854b0b0e.ttf") format("truetype");
+     font-weight: 300;
+     font-style: normal;
+}
+@font-face {
+     font-family: 'Shabnam';
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/76a28e673dc3aae0d4b12514ec8e53554ea17034909c4973591d95a040a84f7e.eot");
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/76a28e673dc3aae0d4b12514ec8e53554ea17034909c4973591d95a040a84f7e.eot?#iefix") format("embedded-opentype"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/540d3f4e172bd6b5c70dd06bce57e055ce59270e95ea642b414fe0709faaa085.woff2") format("woff2"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/b2dff86b5a95798840f98855c165b3be0564ab96791aeeedc4697ee244f73b50.woff") format("woff"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/7c14586fe687065babbf04a9815a5fc607fcd01bf356a53c988b644f2f2654ad.ttf") format("truetype");
+     font-weight: 400;
+     font-style: normal;
+}
+@font-face {
+     font-family: 'Shabnam';
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/a559fcd789a620c895280f99bfdbb02d2db4d643f185e7c8078ce43496be996a.eot");
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/a559fcd789a620c895280f99bfdbb02d2db4d643f185e7c8078ce43496be996a.eot?#iefix") format("embedded-opentype"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/fd5931f57e84baad81cc7243cfc1c83e5ac7f5dd17818d917765063544a54441.woff2") format("woff2"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/6e65826cae7d72330b906fba02a0f16ccd32edb8e65f01cc678c167c9f2e553f.woff") format("woff"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/90bbe2721476fdb35f228339ba77cd076e38d8409b022ec35b3b6e15325d5680.ttf") format("truetype");
+     font-weight: 500;
+     font-style: normal;
+}
+@font-face {
+     font-family: 'Shabnam';
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/b436812debcd85ce9c0dba78f561ee9efd04a3d711323d2bfd1a33e9e271b538.eot");
+     src: url("https://fdn.fontcdn.ir/Fonts/Shabnam/b436812debcd85ce9c0dba78f561ee9efd04a3d711323d2bfd1a33e9e271b538.eot?#iefix") format("embedded-opentype"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/1ff187f5320ec4527ebb6a71831b88289a6cb18ca33ac34476b96960f0af7282.woff2") format("woff2"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/5096e57e98f10c70e45049c0d56ae338620bc44fb08f1f70eff17ec06a4175b9.woff") format("woff"),
+          url("https://fdn.fontcdn.ir/Fonts/Shabnam/4e7320e31b4654e4a48ffc52e09487cd4ac026169be49badcbd6093e375b3ac5.ttf") format("truetype");
+     font-weight: 700;
+     font-style: normal;
+}
+/* Powered by FontServer.ir */
