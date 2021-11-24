@@ -489,6 +489,7 @@ body {
 }
 .comment-box{
   position: relative;
+  overflow: auto;
 }
 .close-comment-box {
   height: auto;
@@ -502,6 +503,7 @@ body {
 }
 .close-comment-box:hover{
   opacity: 1;
+  cursor: pointer;
 }
 .close_add {
   padding: 11px 32px;
@@ -512,6 +514,11 @@ body {
 
 .comment-message-body{
   margin: inherit;
+  height: auto;
+}
+
+.comment-message-body:hover .more-option{
+  visibility: inherit;
 }
 /*Reply*/
 

@@ -180,6 +180,62 @@ $(window).on('click',function (e) {
   }
   
 })
+// ************************* comment ****************************
+$('.conversation').on('click','.comment',function (e) {
+  e.preventDefault();
+  let out = 
+    `
+    <div class="row comment-cadr">
+            <div class="col-md-12 comment-box">
+              <div class="row close-comment-box">
+                <div class="col-sm-1 col-xs-1 close_add pull-right">
+                  <i class="fas fa-times pull-right" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="row comment-message-body">
+                <div class="col-sm-12 message-main-sender">
+                  <div class="sender">
+                    <span class="contact_name">milad</span>
+                    <div class="message-text">sfgdshfvfkdsjfldhf.</div>
+                    <hr />
+                    <span class="message-time pull-right"> sdfsdfdsfsdfsdf </span>
+                    <div class="more-option">
+                      <i class="fas fa-reply"></i>
+                      <i class="far fa-copy"></i>
+                      <i class="fas fa-trash"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row message-body">
+                <div class="col-sm-12 message-main-receiver">
+                  <div class="receiver">
+                    <div class="message-text">sdfsfdsfsdfd</div>
+                    <hr />
+                    <a class="comment" href="">
+                      <div class="col-xs-12">
+                        <i class="far fa-comment-dots"></i>
+                        <span class="comment-title">اولین یادداشت را بگذارید</span>
+                        <i class="fas fa-angle-left"></i>
+                      </div>
+                    </a>
+                    <br>
+                    <span class="message-time pull-right">sdfsfsdfdsfdsf </span>
+                    <div class="more-option">
+                      <i class="fas fa-reply"></i>
+                      <i class="far fa-copy"></i>
+                      <i class="fas fa-trash"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    `
+  $("#conversation").html(out);
+  
+})
+
 // ************************* add_new_channel ****************************
 $(".new-chanel").click(function () {
   $(".add_new_channel").css({ visibility: "inherit" });
