@@ -1,161 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="./assets/css/bootstrap.min.css"
-      rel="stylesheet"
-      id="bootstrap-css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="./assets/FontAwesome/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/style.css" />
 
     <title>پیام رسان</title>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="container">
-      <div class="col-sm-4 side">
-        <div class="side-one">
-          <div class="container add_new_channel">
-            <div class="row close">
-              <div class="col-sm-1 col-xs-1 close_add pull-right">
-                <i class="fas fa-times pull-right" aria-hidden="true"></i>
-              </div>
-            </div>
-            <div class="row img_channel">
-              <div
-                class="
-                  col-md-4 col-md-offset-4 col-sm-6 col-xs-12
-                  profile-badge
-                "
-              >
-                <div class="profile-pic">
-                  <img
-                    alt="User Pic"
-                    src="./assets/images/gallery.png"
-                    id="profile-image1"
-                    height="200"
-                  />
-                  <input
-                    id="profile-image-upload"
-                    class="hidden"
-                    type="file"
-                    onchange="previewFile()"
-                  />
-                  <div style="color: #999"></div>
+        <div class="col-sm-4 side">
+            <div class="side-one">
+                <div class="container add_new_channel">
+                    <div class="row close">
+                        <div class="col-sm-1 col-xs-1 close_add pull-right">
+                            <i class="fas fa-times pull-right" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="row img_channel">
+                        <div class="col-md-4 col-md-offset-4 col-sm-6 col-xs-12profile-badge">
+                            <div class="profile-pic">
+                                <img alt="User Pic" src="./assets/images/gallery.png" id="profile-image1" height="200" />
+                                <input id="profile-image-upload" class="hidden" type="file" onchange="previewFile()" />
+                                <div style="color: #999"></div>
+                            </div>
+
+                            <div class="user-detail text-center"></div>
+
+
+
+                        </div>
+                    </div>
+                    <div class="row name_channel">
+                        <div class="col-md-12 col-md-offset-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="channelName">نام کانال</label>
+                                <input type="text" class="form-control" id="channelName" placeholder="نام کانال" name="name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row enable_comments">
+                        <input type="checkbox" id="comment_on" name="comment_on" value="enable">
+                        <label for="comment_on">فعال بودن یادداشت ها</label>
+                    </div>
+                    <div class="row add_contact">
+                        <button>افزودن عضو جدید</button>
+                    </div>
                 </div>
 
-                <div class="user-detail text-center"></div>
-                
-                
+                <div class="row heading">
+                    <div class="col-sm-1 col-xs-1 new-chanel pull-right">
+                        <i class="fas fa-plus pull-right" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-8 col-xs-4 heading-compose pull-right">
+                        <!-- <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i> -->
+                        <h4>کانال های ارتباطی</h4>
+                    </div>
+                </div>
 
-              </div>
+                <div class="row searchBox">
+                    <div class="col-sm-12 searchBox-inner">
+                        <div class="form-group has-feedback">
+                            <input id="searchText" type="text" class="form-control" name="searchText" placeholder="جست و جو" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row sideBar">
+
+                </div>
             </div>
-           <div class="row name_channel">
-             <div class="col-md-12 col-md-offset-12 col-sm-12 col-xs-12">
-              <div class="form-group">  
-                <label for="channelName">نام کانال</label>
-                <input type="text" class="form-control" id="channelName" placeholder="نام کانال" name="name">
-              </div>
-             </div>
-           </div>
-           <div class="row enable_comments">
-            <input type="checkbox" id="comment_on" name="comment_on" value="enable">
-            <label for="comment_on">فعال بودن یادداشت ها</label>
-           </div>
-           <div class="row add_contact">
-              <button>افزودن عضو جدید</button>
-           </div>
-          </div>
 
-          <div class="row heading">
-            <div class="col-sm-1 col-xs-1 new-chanel pull-right">
-              <i class="fas fa-plus pull-right" aria-hidden="true"></i>
-            </div>
-            <div class="col-sm-8 col-xs-4 heading-compose pull-right">
-              <!-- <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i> -->
-              <h4>کانال های ارتباطی</h4>
-            </div>
-          </div>
-
-          <div class="row searchBox">
-            <div class="col-sm-12 searchBox-inner">
-              <div class="form-group has-feedback">
-                <input
-                  id="searchText"
-                  type="text"
-                  class="form-control"
-                  name="searchText"
-                  placeholder="جست و جو"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="row sideBar">
-
-          </div>
+            <div class="side-one"></div>
         </div>
 
-        <div class="side-one"></div>
-      </div>
+        <div class="col-sm-8 conversation">
+            <div class="row heading">
+                <div class="col-sm-1 col-md-1 col-xs-1 heading-back">
+                    <i class=" fas fa-arrow-right "></i>
+                </div>
+                <div class="col-sm-2 col-md-1 col-xs-2 heading-avatar ">
+                    <div class="heading-avatar-icon ">
+                        <img src="./assets/images/blue.png " />
+                    </div>
+                </div>
+                <div class="col-sm-8 col-xs-7 heading-name ">
 
-      <div class="col-sm-8 conversation">
-        <div class="row heading">
-          <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
-            <div class="heading-avatar-icon">
-              <img src="./assets/images/blue.png" />
+                </div>
+                <div class="col-sm-1 col-xs-1 heading-refresh pull-right ">
+                    <i class="fas fa-redo "></i>
+                </div>
+                <div class="col-sm-1 col-xs-1 heading-searche pull-right ">
+                    <i class="fas fa-search "></i>
+                </div>
             </div>
-          </div>
-          <div class="col-sm-8 col-xs-7 heading-name">
-            <a class="heading-name-meta">کانال قدیم </a>
-            <span class="heading-online">برخط</span>
-          </div>
-          <div class="col-sm-1 col-xs-1 heading-refresh pull-right">
-            <i class="fas fa-redo"></i>
-          </div>
-          <div class="col-sm-1 col-xs-1 heading-searche pull-right">
-            <i class="fas fa-search"></i>
-          </div>
-        </div>
 
-        <div class="row message" id="conversation">
-          <div class="row">
-            <div class="col-md-12" style="text-align: center;">
-              <img class="bg_conversation" src="./assets/images/bg_co.png" alt="">
+            <div class="row message " id="conversation">
+                <div class="row ">
+                    <div class="col-md-12 " style="text-align: center; ">
+                        <img class="bg_conversation " src="./assets/images/bg_co.png " alt=" ">
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="row reply ">
+                <div class="col-sm-1 col-xs-1 reply-recording ">
+                    <i class="fa fa-microphone fa-2x " aria-hidden="true "></i>
+                </div>
+                <div class="col-sm-1 col-xs-1 reply-attachment ">
+                    <i class="fas fa-paperclip "></i>
+                </div>
+                <div class="col-sm-1 col-xs-1 reply-emojis ">
+                    <i class="fas fa-video "></i>
+                </div>
+                <div class="col-sm-8 col-xs-8 reply-main ">
+                    <textarea class="form-control " rows="1 " id="comment "></textarea>
+                </div>
+                <div class="col-sm-1 col-xs-1 reply-send ">
+                    <i class="fa fa-send fa-2x " aria-hidden="true "></i>
+                </div>
+            </div>
+            <div class="row ">
+
+            </div>
         </div>
-        <div class="row reply">
-          <div class="col-sm-1 col-xs-1 reply-recording">
-            <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
-          </div>
-          <div class="col-sm-1 col-xs-1 reply-attachment">
-            <i class="fas fa-paperclip"></i>
-          </div>
-          <div class="col-sm-1 col-xs-1 reply-emojis">
-            <i class="fa fa-smile-o fa-2x"></i>
-          </div>
-          <div class="col-sm-8 col-xs-8 reply-main">
-            <textarea class="form-control" rows="1" id="comment"></textarea>
-          </div>
-          <div class="col-sm-1 col-xs-1 reply-send">
-            <i class="fa fa-send fa-2x" aria-hidden="true"></i>
-          </div>
-        </div>
-        <div class="row">
-          
-        </div>
-      </div>
     </div>
 
-    <script src="./assets/js/jquery.min.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-  </body>
+    <script src="./assets/js/jquery.min.js "></script>
+    <script src="./assets/js/scripts.js "></script>
+</body>
+
 </html>
