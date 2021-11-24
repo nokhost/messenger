@@ -87,6 +87,9 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
             let list_news = res.data.list_news;
             let last_row = res.data.detail_rows.last_row;
             let out = '';
+            let comment = '';
+            let archive = '';
+            
 
             if (last_row == -1) {
                 out = `
@@ -101,6 +104,17 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
               `;
             } else {
                 list_news.forEach((element) => {
+                  if(!!(element.list_archive.length)){
+                    console.log(element.list_archive[0]);
+                    archive = `<br> <div class="archive_box"> </div> <br>`
+                  }else{  
+                    archive = `<hr/>`
+                  }
+                  if(!(element.count_comment == 0)){
+                    comment = `${element.count_comment} یادداشت`;
+                  }else{
+                    comment = 'اولین یادداشت را بگذارید';
+                  }
                     if (element.user__id == myuser_id) {
                         out +=
                             `
@@ -108,11 +122,11 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
                                   <div class="col-sm-12 message-main-receiver">
                                     <div class="receiver">
                                       <div class="message-text">${element.description}</div>
-                                      <hr />
+                                      ${archive}
                                       <a id = ${element.news__id} class="comment" href="">
                                         <div class="col-xs-12">
                                           <i class="far fa-comment-dots"></i>
-                                          <span class="comment-title">اولین یادداشت را بگذارید</span>
+                                          <span class="comment-title">${comment}</span>
                                           <i class="fas fa-angle-left"></i>
                                         </div>
                                       </a>
@@ -142,11 +156,11 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
                                     <div class="sender">
                                       <span class="contact_name">${element.name_family}</span>
                                       <div class="message-text">${element.description}</div>
-                                      <hr />
+                                      ${archive}
                                       <a id = ${element.news__id} class="comment" href="">
                                         <div class="col-xs-12">
                                           <i class="far fa-comment-dots"></i>
-                                          <span class="comment-title">اولین یادداشت را بگذارید</span>
+                                          <span class="comment-title">${comment}</span>
                                           <i class="fas fa-angle-left"></i>
                                         </div>
                                       </a>
