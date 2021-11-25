@@ -1,4 +1,5 @@
     @import url(../font/webFonts/css/fontiran.css);
+    
     html,
     body,
     div,
@@ -240,7 +241,18 @@
         border: 1px solid #f7f7f7;
         height: calc(100% - 120px);
     }
-    
+    .loading {
+        /* display:    none; */
+
+        top:        0;
+        left:       0;
+        height:     100%;
+        width:      100%;
+        background: rgba( 255, 255, 255, .8 ) 
+                    url('../images/loading.gif') 
+                    50% 50% 
+                    no-repeat;
+    }
     .sideBar-body {
         position: relative;
         padding: 10px !important;
@@ -300,6 +312,11 @@
         padding: 1% !important;
         color: rgba(0, 0, 0, 0.4);
         vertical-align: baseline;
+    }
+    .last_message{
+        height: auto;
+    text-align: center;
+    margin: 25px 0;
     }
     
     .newMessage {
@@ -382,7 +399,22 @@
         height: auto;
         background-color: inherit;
     }
-    
+
+    .viwe_box_item{
+        position: relative;
+    }
+    .fa-cloud-download-alt{
+        position: absolute;
+        right: 8px;
+        top: 12px;
+        color: white;
+    }
+   .fa-download {
+        position: absolute;
+        right: 19px;
+        top: 3px;
+        color: white;
+    }
     .conversation {
         padding: 0 !important;
         margin: 0 !important;
@@ -391,10 +423,30 @@
         border-left: 1px solid rgba(0, 0, 0, 0.08);
         /*overflow-y: auto;*/
     }
+    .archive_view_comment{
+        width: 314px;
+        background-color: inherit;
+    }
+    .archive_view_post{
+        background-color: inherit;
+        width: 30px;
+        height: 46px;
+        padding: 8px 0;
+        margin: 0 10px;
+    }
+    .archive_view_post:hover{
+        cursor: pointer;
+    }
     .archive_box{
         background-color: white;
         width: 100%;
         height: 50px;
+    }
+    .archive_box_comment{
+        background-color: white;
+        width: 100%;
+        height: 50px;
+        display: contents;
     }
     .message {
         padding: 0 !important;
@@ -558,7 +610,6 @@
         left: 0;
         right: 0;
         margin: 0;
-        opacity: 0.9;
     }
     
     .comment-box {

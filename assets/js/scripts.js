@@ -2,62 +2,72 @@ const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
 let token = "7C3CDF0E47CFB4C100B33752BF82F66C";
 
 // ************************* list_channel ****************************
-$.ajax({
-    url: api_address + "/notices/get_list_channel",
-    type: "post",
-    beforeSend: function(request) {
-        request.setRequestHeader("Authorization", "Bearer " + token);
-    },
-    success: function(response) {
-        $(".sideBar").ready(function() {
-            let res = jQuery.parseJSON(response);
-            let out = "";
-            res.data.list_channel.forEach((element) => {
-                let badge = ``;
-                if (element.count_news_new == 1) {
-                    badge = `<span class="count_not_read">${element.count_news_new}</span>`;
-                } else {
-                    badge = '';
-                }
-                let img = "";
-                if (img) {} else {
-                    img = [
-                        "./assets/images/blue.png",
-                        "./assets/images/green.png",
-                        "./assets/images/pink.png",
-                        "./assets/images/yellow.png",
-                    ];
-                    img = img[Math.floor(Math.random() * img.length)];
-                }
-                out += `
-            <div id= '${element.channel__id}' class='row sideBar-body'>
-              <div class="col-sm-3 col-xs-3 sideBar-avatar">
-                  <div class="avatar-icon">
-                    <img src= ${img}>
-                  </div>
-                </div>
-                <div class="col-sm-9 col-xs-9 sideBar-main">
-                  <div class="row">
-                    <div class="col-sm-8 col-xs-8 sideBar-name">
-                      <span class="name-meta">${element.channel_name}
-                    </span>
-                    <br>
-                    <span style="font-size: 10px; color: #838080;">${element.last_news}</span>
+let refreshChanleList = ()=>{
+    $.ajax({
+        url: api_address + "/notices/get_list_channel",
+        type: "post",
+        timeout: 50000,
+        beforeSend: function(request) {
+            request.setRequestHeader("Authorization", "Bearer " + token);
+        },
+        success: function(response) {
+            $(".sideBar").ready(function() {
+                let res = jQuery.parseJSON(response);
+                let out = "";
+                res.data.list_channel.forEach((element) => {
+                    let badge = ``;
+                    if (element.count_news_new == 1) {
+                        badge = `<span class="count_not_read">${element.count_news_new}</span>`;
+                    } else {
+                        badge = '';
+                    }
+                    let img = "";
+                    if (img) {} else {
+                        img = [
+                            "./assets/images/blue.png",
+                            "./assets/images/green.png",
+                            "./assets/images/pink.png",
+                            "./assets/images/yellow.png",
+                        ];
+                        img = img[Math.floor(Math.random() * img.length)];
+                    }
+                    out += `
+                <div id= '${element.channel__id}' class='row sideBar-body'>
+                  <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                      <div class="avatar-icon">
+                        <img src= ${img}>
+                      </div>
                     </div>
-                    <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
-                      <span class="time-meta pull-right">
-                        ${badge}
-                      </span>
+                    <div class="col-sm-9 col-xs-9 sideBar-main">
+                      <div class="row">
+                        <div class="col-sm-8 col-xs-8 sideBar-name">
+                          <span class="name-meta">${element.channel_name}
+                        </span>
+                        <br>
+                        <span style="font-size: 10px; color: #838080;">${element.last_news}</span>
+                        </div>
+                        <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                          <span class="time-meta pull-right">
+                            ${badge}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            `;
+                `;
+                });
+                $(".sideBar").html(out);
             });
-            $(".sideBar").html(out);
-        });
-    },
+        },
+    });
+}
+
+$('.heading-refresh i').on('click',function () {
+    refreshChanleList();
 });
+$(window).on('load',function () {
+  refreshChanleList();
+})
 
 // ************************* sidebar ****************************
 let myuser_id = '';
@@ -74,10 +84,11 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
         url: api_address + "/notices/get_news_channel",
         type: "post",
         data: {
-            start_row: "0",
-            number_rows: "10",
+            start_row: "-1",
+            number_rows: "5",
             channel__id: chanel_id
         },
+        
         beforeSend: function(request) {
             request.setRequestHeader("Authorization", "Bearer " + token);
         },
@@ -104,17 +115,32 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
               `;
             } else {
                 list_news.forEach((element) => {
-                  if(!!(element.list_archive.length)){
-                    console.log(element.list_archive[0]);
-                    archive = `<br> <div class="archive_box"> </div> <br>`
-                  }else{  
-                    archive = `<hr/>`
-                  }
-                  if(!(element.count_comment == 0)){
-                    comment = `${element.count_comment} یادداشت`;
-                  }else{
-                    comment = 'اولین یادداشت را بگذارید';
-                  }
+                  
+                    if (!!(element.list_archive.length)) {
+                      let show_file = '';
+                        element.list_archive.forEach((element) => {
+                          console.log(element);
+                            let fileType = element.file_type;
+                            if (fileType == 'pdf') {
+                              show_file +=`<span class="viwe_box_item"><img class="archive_view_post" src="./assets/images/pdf.png" alt=""></img> <i class="fas fa-download"></i></span>`;
+                            }else if (fileType == 'aac'|| fileType =='mp3' ){
+                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/player_icon.png" alt=""></img> <i class="fas fa-cloud-download-alt"></i></span>`;
+                            }else if (fileType == 'jpg' || fileType == 'jpeg'){
+                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/img_icon.png" alt=""></img> <i class="fas fa-download"></i></span>`;
+                            }else{
+                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/document_icon.png" alt=""></img> <i class="fas fa-download"></i></span>`;
+                            }
+
+                        })
+                        archive = `<br> <div class="archive_box"> ${show_file} </div> <br>`
+                    } else {
+                        archive = `<hr/>`
+                    }
+                    if (!(element.count_comment == 0)) {
+                        comment = `${element.count_comment} یادداشت`;
+                    } else {
+                        comment = 'اولین یادداشت را بگذارید';
+                    }
                     if (element.user__id == myuser_id) {
                         out +=
                             `
@@ -185,6 +211,11 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
                     }
                 });
             }
+            out = 
+            `<div style="overflow: auto;">
+                <div class="row last_message"><a href="">نمایش پیام های بیشتر!</a></div>
+                ${out}
+            </div>`
             $(".heading-name").html(heade_chanel_name);
             $("#conversation").html(out);
             conversation = out;
@@ -285,16 +316,37 @@ $('.conversation').on('click', '.comment', function(e) {
             let res = jQuery.parseJSON(response);
             let comment_list = res.data.list_comment;
             let msg = '';
+            let archive = '';
 
             comment_list.forEach((element) => {
+              if (!!(element.list_archive.length)) {
+                let show_file = '';
+                  element.list_archive.forEach((element) => {
+                    console.log(element);
+                      let fileType = element.file_type;
+                      if (fileType == 'pdf') {
+                        show_file +=`<img class="archive_view_comment" src="./assets/images/pdf.png" alt=""></img>`;
+                      }else if (fileType == 'aac'|| fileType =='mp3' ){
+                        show_file +=`<img class="archive_view_comment" src="./assets/images/player_icon.png" alt=""></img>`;
+                      }else if (fileType == 'jpg' || fileType == 'jpeg'){
+                        show_file +=`<img class="archive_view_comment" src="./assets/images/img_icon.png" alt=""></img>`;
+                      }else{
+                        show_file +=`<img class="archive_view_comment" src="./assets/images/document_icon.png" alt=""></img>`;
+                      }
+
+                  })
+                  archive = `<br> <div class="archive_box_comment"> ${show_file} </div> <br>`
+              } else {
+                  archive = ``
+              }
                 if (myuser_id == element.user__id) {
                     msg +=
                         `
                         <div class="row comment-message-body">
                           <div class="col-sm-12 message-main-receiver">
                             <div class="receiver">
-                              <div class="message-text">${element.text}</div>
-                              <hr />
+                            ${archive}
+                            <div class="message-text">${element.text}</div>
                               <span class="message-time pull-right">${element.datetime}</span>
                               <div class="more-option">
                                 <i class="fas fa-reply"></i>
@@ -313,8 +365,8 @@ $('.conversation').on('click', '.comment', function(e) {
                         <div class="col-sm-12 message-main-sender">
                           <div class="sender">
                             <span class="contact_name">${element.name_family}</span>
+                            ${archive}
                             <div class="message-text">${element.text}</div>
-                            <hr />
                             <span class="message-time pull-right"> ${element.datetime} </span>
                             <div class="more-option">
                               <i class="fas fa-reply"></i>
