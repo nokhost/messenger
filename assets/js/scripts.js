@@ -1,8 +1,27 @@
 const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
 let token = "7C3CDF0E47CFB4C100B33752BF82F66C";
 
+// ************************* get_session_archive  ****************************
+let session = '';
+let get_session_archive = () =>{
+  $.ajax({
+    url: api_address + "/general/get_session_archive",
+    type: "post",
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      let res = jQuery.parseJSON(response);
+      session = res.data.session
+    }
+  });
+};
+if(session == ''){
+  get_session_archive()
+}
+
 // ************************* list_channel ****************************
-let refreshChanleList = ()=>{
+let ChanleList = ()=>{
     $.ajax({
         url: api_address + "/notices/get_list_channel",
         type: "post",
@@ -63,13 +82,28 @@ let refreshChanleList = ()=>{
 }
 
 $('.heading-refresh i').on('click',function () {
-    refreshChanleList();
+  ChanleList();
 });
-$(window).on('load',function () {
-  refreshChanleList();
-})
 
-// ************************* sidebar ****************************
+$(window).on('load',function () {
+  ChanleList();
+});
+
+// ************************* sideBar ****************************
+$('.sideBar').on('click', function() {
+  if (parseInt($(window).width()) < 768) {
+      $('.side').hide();
+  }
+});
+
+$(window).resize(function() {
+  if (parseInt($(window).width()) > 768) {
+      $('.side').show();
+  }
+
+});
+
+// ************************* conversation ****************************
 let myuser_id = '';
 let conversation = '';
 let chanel_id = '';
@@ -119,18 +153,17 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
                     if (!!(element.list_archive.length)) {
                       let show_file = '';
                         element.list_archive.forEach((element) => {
-                          console.log(element);
                             let fileType = element.file_type;
                             if (fileType == 'pdf') {
-                              show_file +=`<span class="viwe_box_item"><img class="archive_view_post" src="./assets/images/pdf.png" alt=""></img> <i class="fas fa-download"></i></span>`;
+                              show_file +=`<span class="viwe_box_item"><img class="archive_view_post" src="./assets/images/pdf.png" alt=""></img> <i id="${element.file__id}" class="fas fa-download"></i></span>`;
                             }else if (fileType == 'aac'|| fileType =='mp3' ){
-                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/player_icon.png" alt=""></img> <i class="fas fa-cloud-download-alt"></i></span>`;
+                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/player_icon.png" alt=""></img> <i id="${element.file__id}" class="fas fa-cloud-download-alt audio_play"></i></span>`;
                             }else if (fileType == 'jpg' || fileType == 'jpeg'){
-                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/img_icon.png" alt=""></img> <i class="fas fa-download"></i></span>`;
+                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" alt=""></img> <i id="${element.file__id}" class="fas fa-download"></i></span>`;
                             }else{
-                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/document_icon.png" alt=""></img> <i class="fas fa-download"></i></span>`;
+                              show_file +=`<span class="viwe_box_item" ><img class="archive_view_post" src="./assets/images/document_icon.png" alt=""></img> <i id="${element.file__id}" class="fas fa-download"></i></span>`;
                             }
-
+                            
                         })
                         archive = `<br> <div class="archive_box"> ${show_file} </div> <br>`
                     } else {
@@ -225,21 +258,52 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
     });
 });
 
-$('.sideBar').on('click', function() {
-    if (parseInt($(window).width()) < 768) {
-        $('.side').hide();
-    }
+// ************************* play audio ****************************
+let player =(session ,file__id )=>{
+  $('#conversation').on('click','.audio_play',function () {
+    $('.play_audio').addClass('run_player');
+    let out = '';
+        out = `
+              <source src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}" type="audio/mpeg">
+        `;
+        $('audio').html(out);
+  });
+}
+$('.close_player').on("click",function () {
+  $('.play_audio').removeClass('run_player');
+});
+// ************************* download file ****************************
+$(window).on('click', function (e) {
+  let file__id = e.target.id;
+  if(!(session == '') && file__id){
+    console.log(file__id);
+    $.ajax({
+      url:`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`,
+      type: "get",
+      success: function(response) {
+        try{
+          let res = jQuery.parseJSON(response);
+          if(res.ResultCode == 4001){
+            get_session_archive()
+          }
+        }catch{
+          if(true){
+            player(session , file__id);
+            
+          }else{
+
+            window.open(`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`, '_blank');
+          }
+        }
+      }
+    });
+  }else if(session == ''){
+    get_session_archive()
+  }
+  
 });
 
-$(window).resize(function() {
-    if (parseInt($(window).width()) > 768) {
-        $('.side').show();
-    }
-
-});
-
-
-// ************************* conversation ****************************
+// ************************* heading conversation ****************************
 $('.heading-back').on('click', function() {
     $('.side').show();
 });
@@ -248,6 +312,7 @@ $(".heading-refresh").on("click", function() {
     console.log('heading-refresh');
 });
 
+// ************************* conversation more option ****************************
 $(".conversation").on('click', '.fa-copy', function() {
     console.log("hi");
 });
@@ -317,23 +382,23 @@ $('.conversation').on('click', '.comment', function(e) {
             let comment_list = res.data.list_comment;
             let msg = '';
             let archive = '';
-
             comment_list.forEach((element) => {
               if (!!(element.list_archive.length)) {
                 let show_file = '';
                   element.list_archive.forEach((element) => {
-                    console.log(element);
                       let fileType = element.file_type;
                       if (fileType == 'pdf') {
-                        show_file +=`<img class="archive_view_comment" src="./assets/images/pdf.png" alt=""></img>`;
+                        show_file +=`<div class="viwe_box_item"><img class="archive_view_comment" src="./assets/images/pdf.png" alt=""></img> <i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></span>`;
                       }else if (fileType == 'aac'|| fileType =='mp3' ){
-                        show_file +=`<img class="archive_view_comment" src="./assets/images/player_icon.png" alt=""></img>`;
+                        show_file +=` <audio controls>
+                        <source src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" type="audio/ogg">
+                        <source src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" type="audio/mpeg">
+                      </audio>`;
                       }else if (fileType == 'jpg' || fileType == 'jpeg'){
-                        show_file +=`<img class="archive_view_comment" src="./assets/images/img_icon.png" alt=""></img>`;
+                        show_file +=`<div class="archive_view_comment" ><img class="archive_view_comment" src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" alt=""></img><i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></span>`;
                       }else{
-                        show_file +=`<img class="archive_view_comment" src="./assets/images/document_icon.png" alt=""></img>`;
+                        show_file +=`<div class="archive_view_comment" ><img class="archive_view_comment" src="./assets/images/document_icon.png" alt=""></img> <i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></span>`;
                       }
-
                   })
                   archive = `<br> <div class="archive_box_comment"> ${show_file} </div> <br>`
               } else {

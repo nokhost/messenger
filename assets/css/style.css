@@ -1,5 +1,5 @@
     @import url(../font/webFonts/css/fontiran.css);
-    
+
     html,
     body,
     div,
@@ -29,8 +29,45 @@
         font-family: IRANSans !important;
     }
     
-    img {
+    .play_audio{
+        position: fixed;
+        background: gray;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        height: 100%;
+        text-align: center;
+        opacity: .8;
+        display: none;
+    }
+    .run_player{
+        display: block;
+    }
+    .box_player{
         background-color: aqua;
+        opacity: 1;
+        width: 34%;
+        height: 37%;
+        position: absolute;
+        top: 32%;
+        left: 35%;
+        border-radius: 40px;
+    }
+    .close_player{
+        text-align: right;
+        padding: 17px;
+        font-size: 30px;
+        width: fit-content;
+        height: fit-content;
+    }
+    .close_player:hover{
+        cursor: pointer;
+        color: red;
+    }
+    .text_player{
+        height: fit-content;
     }
     hr{
         border-top: 1px solid #000;
@@ -423,9 +460,28 @@
         border-left: 1px solid rgba(0, 0, 0, 0.08);
         /*overflow-y: auto;*/
     }
+    
     .archive_view_comment{
         width: 314px;
+        height: 280px;
         background-color: inherit;
+        position: relative;
+    }
+    .archive_view_comment i:hover{
+        cursor: pointer;
+        color: #89cf85;
+    }
+    .archive_view_comment i{
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        color: white;
+        font-size: 45px;
+        background-color: gray;
+        border-radius: 25px;
+    }
+    span.archive_view_comment img::before{
+        right: 55%;
     }
     .archive_view_post{
         background-color: inherit;
@@ -434,7 +490,7 @@
         padding: 8px 0;
         margin: 0 10px;
     }
-    .archive_view_post:hover{
+    .viwe_box_item:hover{
         cursor: pointer;
     }
     .archive_box{
@@ -544,7 +600,7 @@
     /*otion list*/
     
     .more-option {
-        visibility: hidden;
+        /* visibility: hidden; */
         text-align: left;
         position: relative;
     }
@@ -554,7 +610,7 @@
     }
     
     .message-body:hover .more-option {
-        visibility: inherit;
+        /* visibility: inherit; */
     }
     
     .contact_name {
@@ -647,7 +703,7 @@
     }
     
     .comment-message-body:hover .more-option {
-        visibility: inherit;
+        /* visibility: inherit; */
     }
     /*Reply*/
     
