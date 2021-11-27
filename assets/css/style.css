@@ -48,8 +48,8 @@
     .box_player{
         background-color: aqua;
         opacity: 1;
-        width: 34%;
-        height: 37%;
+        width: 23%;
+        height: auto;
         position: absolute;
         top: 32%;
         left: 35%;
