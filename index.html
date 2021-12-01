@@ -7,8 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="./assets/css/animate.css">
     <link rel="stylesheet" href="./assets/FontAwesome/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/sweetalert_theme/borderless.css">
 
     <title>پیام رسان</title>
 </head>
@@ -119,13 +121,17 @@
                   <br>
                   <audio controls=""  autoplay="" name="media"></audio>
                 </div>
-              </div>
+            </div>
+            
+            <div class="prv_file">
+               
+            </div>
             <div class="row reply ">
                 <div class="col-sm-1 col-xs-1 reply-recording ">
                     <i class="fa fa-microphone fa-2x " aria-hidden="true "></i>
                 </div>
                 <div class="col-sm-1 col-xs-1 reply-attachment ">
-                    <i class="fas fa-paperclip "></i>
+                    <i id='pickfiles' class="fas fa-paperclip "></i>
                 </div>
                 <div class="col-sm-1 col-xs-1 reply-emojis ">
                     <i class="fas fa-video "></i>
@@ -144,6 +150,8 @@
     </div>
 
     <script src="./assets/js/jquery.min.js "></script>
+    <script src="./assets/js/plupload.full.min.js"></script>
+    <script src="./assets/js/sweetalert2@11.js"></script>
     <script src="./assets/js/scripts.js "></script>
 </body>
 

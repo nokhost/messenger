@@ -1,5 +1,5 @@
 const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-let token = "7C3CDF0E47CFB4C100B33752BF82F66C";
+let token = "73BFDA3C4E4DB61E5A47CEA7E2F9E762";
 
 // ************************* get_session_archive  ****************************
 let session = '';
@@ -14,7 +14,7 @@ let get_session_archive = () =>{
       let res = jQuery.parseJSON(response);
       session = res.data.session
     }
-  });
+  })
 };
 if(session == ''){
   get_session_archive()
@@ -30,54 +30,82 @@ let ChanleList = ()=>{
             request.setRequestHeader("Authorization", "Bearer " + token);
         },
         success: function(response) {
+          try{
             $(".sideBar").ready(function() {
-                let res = jQuery.parseJSON(response);
-                let out = "";
+              let res = jQuery.parseJSON(response);
+              let out = "";
+              
+              if(res.result == 'ok'){
                 res.data.list_channel.forEach((element) => {
-                    let badge = ``;
-                    if (element.count_news_new == 1) {
-                        badge = `<span class="count_not_read">${element.count_news_new}</span>`;
-                    } else {
-                        badge = '';
-                    }
-                    let img = "";
-                    if (img) {} else {
-                        img = [
-                            "./assets/images/blue.png",
-                            "./assets/images/green.png",
-                            "./assets/images/pink.png",
-                            "./assets/images/yellow.png",
-                        ];
-                        img = img[Math.floor(Math.random() * img.length)];
-                    }
-                    out += `
-                <div id= '${element.channel__id}' class='row sideBar-body'>
-                  <div class="col-sm-3 col-xs-3 sideBar-avatar">
-                      <div class="avatar-icon">
-                        <img src= ${img}>
-                      </div>
-                    </div>
-                    <div class="col-sm-9 col-xs-9 sideBar-main">
-                      <div class="row">
-                        <div class="col-sm-8 col-xs-8 sideBar-name">
-                          <span class="name-meta">${element.channel_name}
-                        </span>
-                        <br>
-                        <span style="font-size: 10px; color: #838080;">${element.last_news}</span>
+                  let badge = ``;
+                  if (element.count_news_new == 1) {
+                      badge = `<span class="count_not_read">${element.count_news_new}</span>`;
+                  } else {
+                      badge = '';
+                  }
+                  let img = "";
+                  if (img) {} else {
+                      img = [
+                          "./assets/images/blue.png",
+                          "./assets/images/green.png",
+                          "./assets/images/pink.png",
+                          "./assets/images/yellow.png",
+                      ];
+                      img = img[Math.floor(Math.random() * img.length)];
+                  }
+                  out += `
+                    <div id= '${element.channel__id}' class='row sideBar-body'>
+                      <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                          <div class="avatar-icon">
+                            <img src= ${img}>
+                          </div>
                         </div>
-                        <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
-                          <span class="time-meta pull-right">
-                            ${badge}
-                          </span>
+                        <div class="col-sm-9 col-xs-9 sideBar-main">
+                          <div class="row">
+                            <div class="col-sm-8 col-xs-8 sideBar-name">
+                              <span class="name-meta">${element.channel_name}
+                            </span>
+                            <br>
+                            <span style="font-size: 10px; color: #838080;">${element.last_news}</span>
+                            </div>
+                            <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                              <span class="time-meta pull-right">
+                                ${badge}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                `;
-                });
-                $(".sideBar").html(out);
-            });
+              `;
+              });
+              $(".sideBar").html(out);
+              }else{
+                Swal.fire({
+                  icon: res.result,
+                  title: res.data.message,
+                  text: 'برای استفاده از پیام رسان مجدد وارد شوید',
+                  showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                  },
+                  hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                  }
+                }).then(() => {
+                  window.close()
+                })
+              }
+              
+          });
+          }catch(err){
+            console.log(err);
+          }
+           
         },
+        error : function (xhr, ajaxOptions, thrownError) {
+          console.log(xhr.status);
+          console.log(ajaxOptions);
+          console.log(thrownError);
+        }
     });
 }
 
@@ -109,6 +137,7 @@ let conversation = '';
 let chanel_id = '';
 
 $(".sideBar").on("click", ".sideBar-body", function(e) {
+    $('.reply').css({"visibility":"inherit"})
     let str = e.currentTarget.innerText;
     let endStr = str.search('\n');
     str = str.substr(0, endStr);
@@ -127,6 +156,7 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
             request.setRequestHeader("Authorization", "Bearer " + token);
         },
         success: function(response) {
+          try{
             let res = jQuery.parseJSON(response);
             myuser_id = res.data.myuser_id;
             let list_news = res.data.list_news;
@@ -252,9 +282,10 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
             $(".heading-name").html(heade_chanel_name);
             $("#conversation").html(out);
             conversation = out;
+          }catch(err){
+            console.log(err);
+          }
         }
-
-
     });
 });
 
@@ -276,7 +307,6 @@ $('.close_player').on("click",function () {
 $(window).on('click', function (e) {
   let file__id = e.target.id;
   if(!(session == '') && file__id){
-    console.log(file__id);
     $.ajax({
       url:`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`,
       type: "get",
@@ -314,7 +344,7 @@ $(".heading-refresh").on("click", function() {
 
 // ************************* conversation more option ****************************
 $(".conversation").on('click', '.fa-copy', function() {
-    console.log("hi");
+    console.log("conversation more option");
 });
 
 $(".conversation").on('click', '.fa-ellipsis-v', function(e) {
@@ -332,6 +362,120 @@ $(window).on('click', function(e) {
     }
 
 });
+
+// ************************* archive files ****************************
+let uploader = new plupload.Uploader({
+  browse_button: 'pickfiles',
+  chunk_size:(200*1024) + 'b',
+  max_retries: 3,
+  url: 'http://archive.atiehsazan.ir/Api/Upload/index.php',
+  multipart_params: {
+      chunk_size: 200*1024,
+  }
+});
+uploader.init();
+let html = '';
+uploader.bind('FilesAdded', function (up, files) {
+  plupload.each(files, function (file) {
+    let type_file = '';
+    console.log(file.type);
+    let img = file.type.includes('image');
+    let pdf = file.type.includes('pdf');
+    let voice = file.type.includes('audio');
+    let video = file.type.includes('video');
+
+    if(img){
+      type_file = ` <img src="./assets/images/img_icon.png" alt="${file.name}">`
+    }else if(pdf){
+      type_file = ` <img src="./assets/images/pdf.png" alt="${file.name}">`
+    }else if(voice){
+      type_file = ` <img src="./assets/images/player_icon.png" alt="${file.name}">`
+    }else if(video){
+      type_file = ` <img src="./assets/images/video_icon.png" alt="${file.name}">`
+    }
+      html += `
+      <span id = "${file.id}">
+        ${type_file}
+        <i class="fas fa-times"></i>
+      </span>
+   `;
+  });
+  $('.prv_file').html(html);
+  if ($('.prv_file').children().length){
+    $('.prv_file').css({ visibility: "inherit" })
+  }
+
+});
+
+      //console.dir(info);
+
+   
+
+
+
+  // uploader.bind('UploadProgress', function (up, file) {
+  //     document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+
+  // });
+  //   uploader.bind('Error', function (up, err) {
+  //     document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
+  // });
+    uploader.bind('FileUploaded', function (up, file, info) {
+      try {
+          let myresponse = $.parseJSON(info['response']);
+          console.dir(myresponse);
+          if (myresponse['Result'] === "Ok") {
+              console.log(myresponse['Data']['File_id']);
+          } else {
+              console.log(myresponse['Data']['Message']);
+          }
+      } catch (ex) {
+          alert(ex);
+      }
+     });
+   uploader.bind('ChunkUploaded', function (up, file, info) {
+    });
+    uploader.bind('UploadComplete', function (up, file) {
+
+     });
+  
+  if(session == ''){
+    get_session_archive();
+  }else{
+    uploader.settings.multipart_params["Session_id"] = session;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('#pickfiles').on('click',function () {
+//   let oute = `
+//   <span>
+//   <img src="./assets/images/pink.png" alt="">
+//   <i class="fas fa-times"></i>
+//   <i class="fas fa-check"></i>
+//   <i class="far fa-tired"></i>
+// </span>
+                
+//   `
+  
+})
+
+
+
+
+
+
 
 // ************************* send message ****************************
 $('.reply-send i').on('click', function() {
@@ -478,9 +622,9 @@ $(".close_add").click(function() {
 });
 
 function previewFile() {
-    var preview = document.querySelector("img");
-    var file = document.querySelector("input[type=file]").files[0];
-    var reader = new FileReader();
+    let preview = document.querySelector("img");
+    let file = document.querySelector("input[type=file]").files[0];
+    let reader = new FileReader();
 
     reader.addEventListener(
         "load",

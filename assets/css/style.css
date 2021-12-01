@@ -13,6 +13,7 @@
         direction: rtl;
         font-family: IRANSans !important;
     }
+   
     
     h1,
     h2,
@@ -609,9 +610,6 @@
         padding: 0 5px;
     }
     
-    .message-body:hover .more-option {
-        /* visibility: inherit; */
-    }
     
     .contact_name {
         display: block;
@@ -702,9 +700,6 @@
         height: auto;
     }
     
-    .comment-message-body:hover .more-option {
-        /* visibility: inherit; */
-    }
     /*Reply*/
     
     .reply {
@@ -714,6 +709,7 @@
         padding: 10px 5px 10px 5px !important;
         margin: 0 !important;
         z-index: 1000;
+        visibility: hidden;
     }
     
     .reply-emojis {
@@ -784,6 +780,60 @@
         text-indent: 5px;
         box-shadow: none;
     }
+    .reply div{
+        height: auto;
+    }
+    /*previwe file*/
+    .prv_file{
+        visibility: hidden;
+        background: #c1c1c1;
+        width: 100%;
+        height: auto;
+        position: absolute;
+        padding: 10px;
+        bottom: 60px;
+    }
+    .prv_file span{
+        width: auto;
+        height: auto;
+        display: inline-block;
+        position: relative;
+        overflow: auto;
+        padding: 4px;
+    
+    }
+    .prv_file img{
+        border-radius: 8px;
+        height: 45px;
+        width: 45px;
+    }
+    .prv_file i.fa-times{
+        color: red;
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .prv_file i.fa-check{
+        color: green;
+        position: absolute;
+        left: 5px;
+        bottom: 3px;
+        visibility: hidden;
+    }
+    .prv_file i.fa-tired {
+        color: chocolate;
+        font-size: 22px;
+        position: absolute;
+        right: 15px;
+        top: 14px;
+        font-weight: bold;
+    }
+
+    /*send file*/
+    
+    /*arcive file*/
+
     /*add_new_channel*/
     
     .add_new_channel {
