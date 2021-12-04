@@ -2,6 +2,14 @@
 * @sweetalert2/themes v5.0.8
 * Released under the MIT License.
 */
+/* div.swal2-popup  {
+  height: auto;
+  margin: inherit;
+  font-family: IRANSans !important;
+}
+html, body, div, span{
+  width: inherit;
+} */
 
 @-webkit-keyframes fadeInDown {
   from {

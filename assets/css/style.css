@@ -967,7 +967,16 @@
         border: none;
         padding: 12px;
     }
-    
+    .custom_sweet_alert_2{
+        height: inherit;
+        width: inherit;        
+        overflow: inherit; 
+        padding: inherit;         
+        margin: inherit;        
+        box-sizing: inherit; 
+        direction: inherit;        
+        font-family: IRANSans !important; 
+    }
     @media screen and (max-width: 990px) {
         .count_not_read {
             background: #1ba8f0;
