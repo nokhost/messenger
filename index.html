@@ -17,6 +17,36 @@
 
 <body>
     <div class="container">
+        <div class="msg_upload_bg">
+            <div class="msg_upload_box">
+                <span class="msg_upload_header">
+                    <img class="sending" src="./assets/images/sending.gif" alt="">
+                    <div class="upload_img_success">
+                        <img class="success" src="./assets/images/success.gif" alt="">
+                        <h3>آپلود فایل ها با موفقیت انجام شد</h3>
+                    </div>
+                    <div class="upload_img_faile">
+                        <img class="faile" src="./assets/images/failed.gif" alt="">
+                        <h3>آپلود فایل ها ناموفق</h3>
+                    </div>
+                    
+                </span>
+                <ul class="msg_upload_lists">
+                    
+                </ul>
+                <span class="msg_upload_footer">
+                    <div class="upload_msg_success">
+                        <h4>پیام با موفقیت ارسال شد</h4>
+                        <img src="./assets//images/msg_success.gif" alt="">
+                    </div>
+                    <div class="upload_msg_faile">
+                        <h4>پیام ارسال نشد</h4>
+                        <img src="./assets//images/msg_failed.gif" alt="">
+                    </div>
+                </span>
+
+            </div>
+        </div>
         <div class="col-sm-4 side">
             <div class="side-one">
                 <div class="container add_new_channel">
@@ -60,7 +90,10 @@
                     <div class="col-sm-1 col-xs-1 new-chanel pull-right">
                         <i class="fas fa-plus pull-right" aria-hidden="true"></i>
                     </div>
-                    <div class="col-sm-8 col-xs-4 heading-compose pull-right">
+                    <div class="col-sm-1 col-xs-1 refresh-chanel">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-6 col-xs-6 heading-compose pull-right">
                         <!-- <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i> -->
                         <h4>کانال های ارتباطی</h4>
                     </div>
@@ -96,13 +129,13 @@
 
                 </div>
                 <div class="col-sm-1 col-xs-1 heading-refresh pull-right ">
-                    <i class="fas fa-redo "></i>
+                    <i class="fas fa-redo"></i>
                 </div>
                 <div class="col-sm-1 col-xs-1 heading-searche pull-right ">
                     <i class="fas fa-search "></i>
                 </div>
             </div>
-            <div class="row message " id="conversation">
+            <div class="row message" id="conversation">
                 
                 <div class="row">
                     <div class="col-md-12 " style="text-align: center; ">

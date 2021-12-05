@@ -1,0 +1,16 @@
+@media screen and (min-width: 768px)and (max-width:1024px) {
+    .count_not_read {
+        background: #1ba8f0;
+        border-radius: 25px;
+        padding: 6px 0;
+        display: inline-block;
+        width: 88%;
+        height: 28px;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+    }
+    .heading-compose h4{
+        font-size: 14px;
+    }
+}

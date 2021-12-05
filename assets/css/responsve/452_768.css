@@ -1,0 +1,25 @@
+@media screen and (min-width: 425px)and (max-width:768px) {
+    .heading-back {
+        display: block;
+        float: right;
+        padding-top: 13px;
+        color: #93918f;
+        font-size: 14px;
+    }
+    .heading-back:hover {
+        display: block;
+        color: #000;
+        cursor: pointer;
+    }
+    .count_not_read {
+        background: #1ba8f0;
+        border-radius: 25px;
+        padding: 6px 0;
+        display: inline-block;
+        width: 20%;
+        height: 28px;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+    }
+}

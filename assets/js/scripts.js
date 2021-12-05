@@ -1,24 +1,9 @@
 const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
 let token = "CF57AAA62AE3F9F053908918E7C70FCE";
 
-// ************************* get_session_archive  ****************************
+
 let session = '';
-let get_session_archive = () =>{
-  $.ajax({
-    url: api_address + "/general/get_session_archive",
-    type: "post",
-    beforeSend: function(request) {
-        request.setRequestHeader("Authorization", "Bearer " + token);
-    },
-    success: function(response) {
-      let res = jQuery.parseJSON(response);
-      session = res.data.session
-    }
-  })
-};
-if(session == ''){
-  get_session_archive()
-}
+
 
 // ************************* list_channel ****************************
 let ChanleList = ()=>{
@@ -360,14 +345,17 @@ $(window).on('click', function(e) {
   if (!$(e.target).parents('.more-option').length) {
     $(".selected").last().removeClass('selected');
   }
-  
-  if(!$(e.target).parents('.conversation').length){
-      preview_file = '';
-      $('.prv_file').css({ visibility: "hidden" });
-      $.each(uploader.files, function (i, file) {
-        uploader.removeFile(file);
-      });
-    }
+  // if(!$(e.target).parents('.conversation').length){
+  //   console.log(!$(e.target).parents('.conversation').length);
+  //     preview_file = '';
+  //     // $('.prv_file').remove('span');
+  //     // if ($('.prv_file').children().length){
+  //     //   $('.prv_file').css({ visibility: "hidden" })
+  //     // }
+  //     // $.each(uploader.files, function (i, file) {
+  //     //   uploader.removeFile(file);
+  //     // });
+  //   }
 });
 
 // ************************* send message ****************************
@@ -377,79 +365,17 @@ let sendedfiles = (id  , name , size )=>{
 }
 $('.reply-send i').on('click', function() {
   
+
+  // prosseBar();
   uploader.start();
   
-
-  // if file || text is exist visibility => true
-  // if (true){
-  //   $('fa-send').css({ visibility: "inherit" });
-  //   console.log('hi');
-    
-
-  // }
-  // const swalWithBootstrapButtons = Swal.mixin({
-  //   customClass: {
-  //     confirmButton: 'btn btn-success',
-  //     cancelButton: 'btn btn-danger'
-  //   },
-  //   buttonsStyling: false
-  // })
-  
-  // swalWithBootstrapButtons.fire({
-  //   title: 'Are you sure?',
-  //   text: "You won't be able to revert this!",
-  //   icon: 'warning',
-  //   showCancelButton: true,
-  //   confirmButtonText: 'Yes, delete it!',
-  //   cancelButtonText: 'No, cancel!',
-  //   reverseButtons: true
-  // }).then((result) => {
-  //   if (result.isConfirmed) {
-  //     swalWithBootstrapButtons.fire(
-  //       'Deleted!',
-  //       'Your file has been deleted.',
-  //       'success'
-  //     )
-  //   } else if (
-  //     /* Read more about handling dismissals below */
-  //     result.dismiss === Swal.DismissReason.cancel
-  //   ) {
-  //     swalWithBootstrapButtons.fire(
-  //       'Cancelled',
-  //       'Your imaginary file is safe :)',
-  //       'error'
-  //     )
-  //   }
-  // })
-    // if (chanel_id) {
-    //     $.ajax({
-    //         url: api_address + "/notices/insert_news_channel",
-    //         type: "post",
-    //         data: {
-    //             description: '',
-    //             channel__id: chanel_id,
-    //             list_archive: '',
-    //             allow_comment: '',
-    //             type: 'file'
-    //         },
-    //         beforeSend: function(request) {
-    //             request.setRequestHeader("Authorization", "Bearer " + token);
-    //         },
-    //         success: function(response) {
-    //             $(".sideBar").ready(function() {
-    //                 let res = jQuery.parseJSON(response);
-    //                 console.log(res);
-    //                 let out = "";
-
-
-    //             });
-    //         },
-    //     });
-    // } else {}
+ 
 })
 
 // ************************* archive files ****************************
-let preview_file = '';  
+let preview_file = ``;
+let uploadFileShowModal = '';
+let progress = 0;
 let uploader = new plupload.Uploader({
     browse_button: 'pickfiles',
     chunk_size:(200*1024) + 'b',
@@ -463,13 +389,13 @@ let uploader = new plupload.Uploader({
   uploader.bind('FilesAdded', function (up, files) {
     if(uploader.files.length <= 6){
       plupload.each(files, function (file) {
-        // sendedfiles(file.id , file.name , plupload.formatSize(file.size) , file.type)
-        let type_file = '';
-        let img = file.type.includes('image');
-        let pdf = file.type.includes('pdf');
-        let voice = file.type.includes('audio');
-        let video = file.type.includes('video');
-        if(img){
+      // sendedfiles(file.id , file.name , plupload.formatSize(file.size) , file.type)
+      let type_file = '';
+      let img = file.type.includes('image');
+      let pdf = file.type.includes('pdf');
+      let voice = file.type.includes('audio');
+      let video = file.type.includes('video');
+      if(img){
           type_file = ` <img src="./assets/images/img_icon.png" alt="${file.name}">`
         }else if(pdf){
           type_file = ` <img src="./assets/images/pdf.png" alt="${file.name}">`
@@ -481,77 +407,91 @@ let uploader = new plupload.Uploader({
           type_file = ` <img src="./assets/images/document_icon.png" alt="${file.name}">`
         }
         preview_file += `
-          <span id = "${file.id}">
+          <span class="span_prv_archive" id = "${file.id}">
             ${type_file}
             <i class="fas fa-times"></i>
           </span>
       `;
+        uploadFileShowModal +=
+        `
+          <li class="msg_upload_file_box" id = "${file.id}">
+            ${type_file}
+            <h5 class="fileName">${file.name}</h2>
+            <h5 class="fileSize">${plupload.formatSize(file.size)}</h5>
+            <h5 class="fileProgress">${progress}%</h5>
+            <h5 class="icon"><i class="fas fa-check-circle"></i></h5>
+          </li>
+        `;
       });
       $('.prv_file').html(preview_file);
+      
       if ($('.prv_file').children().length){
         $('.prv_file').css({ visibility: "inherit" })
       }
-    }else{
-      Swal.fire({
-        className: 'custom_sweet_alert_2',
-        icon: 'error',
-        title: 'محدودیت در ارسال تعداد فایل',
-        text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 6 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
-        heightAuto : true,
-        showClass: {
-          popup: 'animate__animated animate__fadeInDown'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__fadeOutUp'
-        }
+      }else{
+        Swal.fire({
+          className: 'custom_sweet_alert_2',
+          icon: 'error',
+          title: 'محدودیت در ارسال تعداد فایل',
+          text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 6 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
+          heightAuto : true,
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+      }
       })
     }
 
+    $('.span_prv_archive').on('click',function () {
+      let clicked_file_id = $(this).attr('id');
+      plupload.each(files, function (file) {
+        if (file && file.id == clicked_file_id) {
+          if ($('.prv_file').children().length == 0){
+            console.log($('.prv_file').children().length);
+            $('.prv_file').css({ visibility: "hidden" });
+          }
+          uploader.removeFile(file);
+          $(`#${clicked_file_id}`).remove();
+          preview_file = $('.prv_file').html();
+        }
+      });
+    });
+
   });
   uploader.bind('UploadProgress', function (up, file) {
-    alert(file.percent)
-    // document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+    console.log(file.percent);
+    progress += file.percent ;
+    $(`.msg_upload_lists li#${file.id}`).children('h5.fileProgress').html(progress)
+    $('.msg_upload_bg').css({ visibility: "inherit" })
+    
+      $('.msg_upload_lists').html(uploadFileShowModal);
 
-});
+  });
   uploader.bind('Error', function (up, err) {
       // document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
       console.log(err.message);
   });
   uploader.bind('FileUploaded', function (up, file, info) {
-        try {
-          let myresponse = $.parseJSON(info['response']);
-          console.dir(myresponse);
-          if (myresponse['Result'] === "Ok") {
-              //console.log(myresponse['Data']['File_id']);
-          } else {
-              //console.log(myresponse['Data']['Message']);
-          }
-        } catch (ex) {
-            alert(ex);
-        }
+        // try {
+
+        //   let myresponse = $.parseJSON(info['response']);
+        //   console.dir(myresponse);
+        //   if (myresponse['Result'] === "Ok") {
+        //       //console.log(myresponse['Data']['File_id']);
+        //   } else {
+        //       //console.log(myresponse['Data']['Message']);
+        //   }
+        // } catch (ex) {
+        //     alert(ex);
+        // }
     });
   uploader.bind('ChunkUploaded', function (up, file, info) {
     // console.dir(info);
   });
   uploader.bind('UploadComplete', function (up, file) {
     
-  });
-
-    
-    if(session == ''){
-      get_session_archive();
-    }else{
-      uploader.settings.multipart_params["Session_id"] = session;
-    }
-
-  $('.prv_file').on('click','.fa-times',function (e) {
-    let clicked_file_id = $(e.target).parents('span')[0].id;
-    $.each(uploader.files, function (i, file) {
-      if (file && file.id == clicked_file_id) {
-        // $('span').remove(`#${clicked_file_id}`);
-        uploader.removeFile(file);
-      }
-    });
   });
 
 // ************************* comment ****************************
@@ -691,3 +631,25 @@ $(function() {
         $("#profile-image-upload").click();
     });
 });
+
+
+// ************************* get_session_archive  ****************************
+
+let get_session_archive = () =>{
+  $.ajax({
+    url: api_address + "/general/get_session_archive",
+    type: "post",
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      let res = jQuery.parseJSON(response);
+      session = res.data.session
+      uploader.settings.multipart_params["Session_id"] = session;
+    }
+  })
+};
+
+if(session == ''){
+  get_session_archive()
+}
