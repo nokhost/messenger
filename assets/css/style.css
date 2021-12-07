@@ -843,7 +843,7 @@
         font-weight: bold;
     }
 
-    /*send file*/
+    
     
     /*arcive file*/
 
@@ -990,6 +990,10 @@
         direction: inherit;        
         font-family: IRANSans !important; 
     }
+
+    /*sending file*/
+    
+
     .msg_upload_bg{
         visibility: hidden;
         position: fixed;
@@ -998,10 +1002,9 @@
         right: 0;
         bottom: 0;
         z-index: 2;
-        background: black;
+        background: #000000c9;
         width: inherit;
         height: inherit;
-        opacity: 0.6;
         text-align: center;
     }
     .msg_upload_box{
@@ -1018,6 +1021,9 @@
         z-index: 11;
         border-radius: 19px;
         overflow: auto;
+    }
+    .msg_upload_lists{
+        padding: 0 10px;
     }
     .msg_upload_header img{
         width: 30%;
@@ -1040,8 +1046,12 @@
         border-radius: 70px;
     }
     .msg_upload_file_box h5{
-        display: inline-block;
+        display: inline-flex;
         padding: 0 9px;
+    }
+    .msg_upload_file_box .fileName{
+        width: 45%;
+        overflow: hidden;
     }
     .msg_upload_file_box h5 i.fa-exclamation-triangle{
         color: rgb(255, 0, 0);
@@ -1049,6 +1059,42 @@
     .msg_upload_file_box h5 i.fa-check-circle{
         color: rgb(4, 172, 4);
     }
+
+
+    @keyframes growProgressBar {
+        0%, 33% { --pgPercentage: 0; }
+        100% { --pgPercentage: var(--value); }
+      }
+      
+      @property --pgPercentage {
+        syntax: '<number>';
+        inherits: false;
+        initial-value: 0;
+      }
+      
+      div[role="progressbar"] {
+        --fg: #369;
+        --bg: #def;
+        --pgPercentage: var(--value);
+        animation: growProgressBar 3s 1 forwards;
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: 
+          radial-gradient(closest-side, white 80%, transparent 0 99.9%, white 0),
+          conic-gradient(var(--fg) calc(var(--pgPercentage) * 1%), var(--bg) 0)
+          ;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: calc(var(--size) / 5);
+        color: var(--fg);
+      }
+      
+      div[role="progressbar"]::before {
+        counter-reset: percentage var(--value);
+        content: counter(percentage) '%';
+      }
     
     @media screen and (max-width: 990px) {
         .count_not_read {

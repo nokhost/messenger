@@ -1,8 +1,11 @@
 const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-let token = "CF57AAA62AE3F9F053908918E7C70FCE";
-
-
+let token = "3507A72D2807177A1ACA8E804CC01DEA";
+// ************************* global variables ****************************
 let session = '';
+let preview_file = ``;
+let uploadFileShowModal = '';
+let errUploadedFile = true;
+let listArchive = [];
 
 
 // ************************* list_channel ****************************
@@ -288,8 +291,11 @@ let player =(session ,file__id )=>{
 $('.close_player').on("click",function () {
   $('.play_audio').removeClass('run_player');
 });
-// ************************* download file ****************************
-$(window).on('click', function (e) {
+// ************************* handle click window and conversation ****************************
+$(window).on('click', function(e) {
+  
+  // *** download file ***
+
   let file__id = e.target.id;
   if(!(session == '') && file__id){
     $.ajax({
@@ -302,7 +308,7 @@ $(window).on('click', function (e) {
             get_session_archive()
           }
         }catch{
-          if(true){
+          if(false){
             player(session , file__id);
             
           }else{
@@ -315,7 +321,33 @@ $(window).on('click', function (e) {
   }else if(session == ''){
     get_session_archive()
   }
-  
+
+  // *** conversation more option ***
+
+  if (!$(e.target).parents('.more-option').length) {
+    $(".selected").last().removeClass('selected');
+  }
+
+  // *** close prev list file for upload *** 
+
+  if(!$(e.target).parents('.conversation').length){
+      $.each(uploader.files, function (i, file) {
+        uploader.removeFile(file);
+        $(`.msg_upload_lists li`).remove();
+        $(`.prv_file span`).remove();
+        preview_file = ``;
+        uploadFileShowModal = ``;
+      });
+      if ($('.prv_file').children().length == 0){
+        $('.prv_file').css({ visibility: "hidden" });
+      }
+  }
+
+  // *** clear box msg after click other chanel *** 
+
+  if(!$(e.target).parents('.conversation').length){
+    $('textarea.form-control').val('');
+  }
 });
 
 // ************************* heading conversation ****************************
@@ -341,41 +373,62 @@ $(".conversation").on('click', '.fa-ellipsis-v', function(e) {
     }
 });
 
-$(window).on('click', function(e) {
-  if (!$(e.target).parents('.more-option').length) {
-    $(".selected").last().removeClass('selected');
-  }
-  // if(!$(e.target).parents('.conversation').length){
-  //   console.log(!$(e.target).parents('.conversation').length);
-  //     preview_file = '';
-  //     // $('.prv_file').remove('span');
-  //     // if ($('.prv_file').children().length){
-  //     //   $('.prv_file').css({ visibility: "hidden" })
-  //     // }
-  //     // $.each(uploader.files, function (i, file) {
-  //     //   uploader.removeFile(file);
-  //     // });
-  //   }
-});
-
 // ************************* send message ****************************
+let sendMessage  = (id , text , archive)=>{
+  console.log(archive);
+  $.ajax({
+    url: api_address + "/notices/insert_news_channel",
+    type: "post",
+    data: {
+      description : text,
+      channel__id : id,
+      list_archive : archive,
+      allow_comment : 1 ,
+      type : 'text',
 
-let sendedfiles = (id  , name , size )=>{
-  console.log('id--' ,id , 'name---',name ,'size----', size );
+  },
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      try{
+        
+          let res = jQuery.parseJSON(response);
+          console.log(res);
+         
+          
+      }catch(err){
+        let res = jQuery.parseJSON(err);
+        console.log(res);
+      }
+       
+    },
+    error : function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(ajaxOptions);
+      console.log(thrownError);
+    }
+  });
 }
-$('.reply-send i').on('click', function() {
-  
 
-  // prosseBar();
-  uploader.start();
-  
- 
-})
+  $('.reply-send i').on('click', function() {
+    
+    // console.log(listArchive);
+    // let textInsertMessage = $('textarea.form-control').val();
+    uploader.start();
+    // if (textInsertMessage !== '' || listArchive !== []){
+    //   if(textInsertMessage !== '' && listArchive !== []){
+    //     sendMessage(chanel_id , textInsertMessage , listArchive )
+    //   }else if (textInsertMessage !== ''){
+    //     sendMessage(chanel_id  , textInsertMessage)
+    //   }else if(listArchive !== []){
+    //     sendMessage(chanel_id , textInsertMessage , listArchive)
+    //   }
+    // }
+  });
 
 // ************************* archive files ****************************
-let preview_file = ``;
-let uploadFileShowModal = '';
-let progress = 0;
+
 let uploader = new plupload.Uploader({
     browse_button: 'pickfiles',
     chunk_size:(200*1024) + 'b',
@@ -396,15 +449,15 @@ let uploader = new plupload.Uploader({
       let voice = file.type.includes('audio');
       let video = file.type.includes('video');
       if(img){
-          type_file = ` <img src="./assets/images/img_icon.png" alt="${file.name}">`
+          type_file = ` <img id="" src="./assets/images/img_icon.png" alt="${file.name}">`
         }else if(pdf){
-          type_file = ` <img src="./assets/images/pdf.png" alt="${file.name}">`
+          type_file = ` <img id="" src="./assets/images/pdf.png" alt="${file.name}">`
         }else if(voice){
-          type_file = ` <img src="./assets/images/player_icon.png" alt="${file.name}">`
+          type_file = ` <img id="" src="./assets/images/player_icon.png" alt="${file.name}">`
         }else if(video){
-          type_file = ` <img src="./assets/images/video_icon.png" alt="${file.name}">`
+          type_file = ` <img id="" src="./assets/images/video_icon.png" alt="${file.name}">`
         }else{
-          type_file = ` <img src="./assets/images/document_icon.png" alt="${file.name}">`
+          type_file = ` <img id="" src="./assets/images/document_icon.png" alt="${file.name}">`
         }
         preview_file += `
           <span class="span_prv_archive" id = "${file.id}">
@@ -418,19 +471,22 @@ let uploader = new plupload.Uploader({
             ${type_file}
             <h5 class="fileName">${file.name}</h2>
             <h5 class="fileSize">${plupload.formatSize(file.size)}</h5>
-            <h5 class="fileProgress">${progress}%</h5>
-            <h5 class="icon"><i class="fas fa-check-circle"></i></h5>
+            <h5 class="fileProgress">
+              <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:0; --size:50px"></div>
+            </h5>
+            <h5 class="icon"></h5>
+            <hr/>
           </li>
         `;
       });
       $('.prv_file').html(preview_file);
-      
+      $('.msg_upload_lists').html(uploadFileShowModal);
       if ($('.prv_file').children().length){
-        $('.prv_file').css({ visibility: "inherit" })
+        $('.prv_file').css({ visibility: "inherit"})
+        
       }
-      }else{
+    }else{
         Swal.fire({
-          className: 'custom_sweet_alert_2',
           icon: 'error',
           title: 'محدودیت در ارسال تعداد فایل',
           text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 6 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
@@ -441,56 +497,88 @@ let uploader = new plupload.Uploader({
           hideClass: {
             popup: 'animate__animated animate__fadeOutUp'
       }
-      })
+      });
+      plupload.each(files, function (file) {
+        uploader.removeFile(file);
+      });
     }
 
-    $('.span_prv_archive').on('click',function () {
+    $('.prv_file').on('click','.span_prv_archive',function () {
       let clicked_file_id = $(this).attr('id');
       plupload.each(files, function (file) {
         if (file && file.id == clicked_file_id) {
-          if ($('.prv_file').children().length == 0){
-            console.log($('.prv_file').children().length);
+          if ($('.prv_file').children().length == 1){
             $('.prv_file').css({ visibility: "hidden" });
           }
           uploader.removeFile(file);
+          $(`.msg_upload_lists li#${clicked_file_id}`).remove();
           $(`#${clicked_file_id}`).remove();
           preview_file = $('.prv_file').html();
+          uploadFileShowModal = $('.msg_upload_lists').html();
         }
       });
     });
 
   });
-  uploader.bind('UploadProgress', function (up, file) {
-    console.log(file.percent);
+  uploader.bind('UploadProgress',function (up, file) {
+    $('.msg_upload_bg').css({ visibility: "inherit" });
+    let progress = 0;
     progress += file.percent ;
-    $(`.msg_upload_lists li#${file.id}`).children('h5.fileProgress').html(progress)
-    $('.msg_upload_bg').css({ visibility: "inherit" })
-    
-      $('.msg_upload_lists').html(uploadFileShowModal);
-
+    $(`.msg_upload_lists li#${file.id}`).children('h5.fileProgress').children()[0].style.cssText = `--value:${progress}; --size:50px;`
   });
   uploader.bind('Error', function (up, err) {
       // document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
       console.log(err.message);
   });
   uploader.bind('FileUploaded', function (up, file, info) {
-        // try {
+        try {
 
-        //   let myresponse = $.parseJSON(info['response']);
-        //   console.dir(myresponse);
-        //   if (myresponse['Result'] === "Ok") {
-        //       //console.log(myresponse['Data']['File_id']);
-        //   } else {
-        //       //console.log(myresponse['Data']['Message']);
-        //   }
-        // } catch (ex) {
-        //     alert(ex);
-        // }
+          let myresponse = $.parseJSON(info['response']);
+          // console.dir(myresponse);
+          ($(`li#${file.id} img`)).attr('id' , myresponse.Data.File_id)
+          if (myresponse['Result'] === "Ok") {
+            $(`#${file.id} .fileProgress`).hide();
+            $(`.msg_upload_lists li#${file.id}`).children('h5.icon').html('<i class="fas fa-check-circle"></i>')
+            $('.upload_img_success h4').html(myresponse.Data.Message)
+              //console.log(myresponse['Data']['File_id']);
+          } else {
+            $(`#${file.id} .fileProgress`).hide();
+            $(`.msg_upload_lists li#${file.id}`).children('h5.icon').html('<i class="fas fa-exclamation-triangle"></i>')
+            $('.upload_img_faile h4').html(myresponse.Data.Message)
+            errUploadedFile = false;
+              //console.log(myresponse['Data']['Message']);
+          }
+        } catch (ex) {
+            alert(ex);
+        }
     });
   uploader.bind('ChunkUploaded', function (up, file, info) {
+    
     // console.dir(info);
   });
-  uploader.bind('UploadComplete', function (up, file) {
+  uploader.bind('UploadComplete', function (up, file , info) {
+    $('.sending').css({display : 'none'})
+    if(errUploadedFile){
+      $('.upload_img_success').css({display : 'block'})
+      let fileObject = {}
+      up.files.forEach(e => {
+        fileObject = {
+          "description" : "" ,
+          "extera__id" : "",
+          "file_size" : e.size,
+          "archive__id" : "",
+          "file_type" : e.type.slice(e.type.indexOf("/")+1,e.type.length),
+          "file__id" : ($(`li#${e.id} img`)).attr('id'),
+          "file_name" : e.name
+        }
+        listArchive.push(fileObject);
+      });
+      sendMessage(chanel_id , 'Message' , listArchive )
+      console.log(listArchive );
+    }else{
+      $('.upload_img_faile').css({display : 'block'})
+    }
+   
     
   });
 
