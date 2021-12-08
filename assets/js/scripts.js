@@ -1,5 +1,5 @@
 const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-let token = "994C3D2A73B732D4A80AD9188B40F01A";
+let token = "6E92F47AED9671BD88B3526218482DF7";
 // ************************* global variables ****************************
 let session = '';
 let myuser_id = '';
@@ -9,6 +9,8 @@ let uploadFileShowModal = '';
 let errUploadedFile = true;
 let listArchive = [];
 let primery_id = '';
+let commentBox = 'close';
+let postId = '';
 
 
 // ************************* list_channel ****************************
@@ -271,6 +273,7 @@ let get_news_channel = ( row , id)=>{
         $(".heading-name").html(heade_chanel_name);
         $("#conversation").html(out);
         conversation = out;
+        commentBox = 'close';
       }catch(err){
         console.log(err);
       }
@@ -416,30 +419,32 @@ let sendMessage  = (id , text , archive)=>{
       try{
           let res = jQuery.parseJSON(response);
            // console.log(res);
-          $('.upload_img_success').css({display : 'block'});
-          $('.upload_msg_success').css({display : 'block'});
-        
-          setTimeout(function(){
-            $('.msg_upload_bg').css({visibility: "hidden"});
-            $('.upload_img_success').css({display : 'none'});
-            $('.upload_msg_success').css({display : 'none'});
-            $('.sending').css({display : 'inline-flex'});
-          },7000);
-          setTimeout(function(){
-            $.each(uploader.files, function (i, file) {
-              uploader.removeFile(file);
-              $(`.msg_upload_lists li`).remove();
-              $(`.prv_file span`).remove();
-              preview_file = ``;
-              uploadFileShowModal = ``;
-            });
-            if ($('.prv_file').children().length == 0){
-              $('.prv_file').css({ visibility: "hidden" });
-            }
-          }, 7000);
-         
-          $('textarea.form-control').val('')
-          get_news_channel(5 , chanel_id)
+           if(!!$('.prv_file').children().length){
+            $('.upload_img_success').css({display : 'block'});
+            $('.upload_msg_success').css({display : 'block'});
+          
+            setTimeout(function(){
+              $('.msg_upload_bg').css({visibility: "hidden"});
+              $('.upload_img_success').css({display : 'none'});
+              $('.upload_msg_success').css({display : 'none'});
+              $('.sending').css({display : 'inline-flex'});
+            },7000);
+            setTimeout(function(){
+              $.each(uploader.files, function (i, file) {
+                uploader.removeFile(file);
+                $(`.msg_upload_lists li`).remove();
+                $(`.prv_file span`).remove();
+                preview_file = ``;
+                uploadFileShowModal = ``;
+              });
+              if ($('.prv_file').children().length == 0){
+                $('.prv_file').css({ visibility: "hidden" });
+              }
+            }, 7000);
+            listArchive = [];
+           }
+          $('textarea.form-control').val('');
+          get_news_channel(5 , chanel_id);
       }catch(err){
         console.log(err);
       }
@@ -456,17 +461,66 @@ let sendMessage  = (id , text , archive)=>{
 }
 
   $('.reply-send i').on('click', function() {
-    
     let textInsertMessage = $('textarea.form-control').val();
-    if (!!$('.prv_file').children().length && textInsertMessage !== ''){
-      uploader.start();
-    }else if(textInsertMessage !== ''){
-      sendMessage(chanel_id  , textInsertMessage);
-    }else if(!!$('.prv_file').children().length){
-      uploader.start();
+
+    if(commentBox == 'open'){
+      if (!!$('.prv_file').children().length && textInsertMessage !== ''){
+        uploader.start();
+      }else if(textInsertMessage !== ''){
+        sendcomment(textInsertMessage , '',listArchive , postId)
+      }else if(!!$('.prv_file').children().length){
+        uploader.start();
+      }else{
+        // Swal.fire({
+        //   title : 'برای ارسال پیام حداقل یک متن  یا یک فایل ارسال کنید',
+        //   icon : 'error'
+        // })
+        const Toast = Swal.mixin({
+          toast: true,
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+        
+        Toast.fire({
+          icon: 'error',
+          title: 'برای ارسال پیام حداقل یک متن  یا یک فایل ارسال کنید'
+        })
+      }
+    }else{
+      if (!!$('.prv_file').children().length && textInsertMessage !== ''){
+        uploader.start();
+      }else if(textInsertMessage !== ''){
+        sendMessage(chanel_id  , textInsertMessage);
+      }else if(!!$('.prv_file').children().length){
+        uploader.start();
+      }else{
+        const Toast = Swal.mixin({
+          toast: true,
+          showConfirmButton: false,
+          height: 'auto',
+          // timer: 3000,
+          timerProgressBar: true,
+          
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+        
+        Toast.fire({
+          icon: 'error',
+          title: 'برای ارسال پیام حداقل یک متن  یا یک فایل ارسال کنید',
+          
+        })
+      }
     }
-    
-  });
+  
+});
 
 // ************************* archive files ****************************
 
@@ -481,55 +535,59 @@ let uploader = new plupload.Uploader({
   });
   uploader.init();
   uploader.bind('FilesAdded', function (up, files) {
-    if(uploader.files.length <= 6){
+    let FilesAdded = ()=>{
       plupload.each(files, function (file) {
-      let type_file = '';
-      let img = file.type.includes('image');
-      let pdf = file.type.includes('pdf');
-      let voice = file.type.includes('audio');
-      let video = file.type.includes('video');
-      if(img){
-          type_file = ` <img id="" src="./assets/images/img_icon.png" alt="${file.name}">`
-        }else if(pdf){
-          type_file = ` <img id="" src="./assets/images/pdf.png" alt="${file.name}">`
-        }else if(voice){
-          type_file = ` <img id="" src="./assets/images/player_icon.png" alt="${file.name}">`
-        }else if(video){
-          type_file = ` <img id="" src="./assets/images/video_icon.png" alt="${file.name}">`
-        }else{
-          type_file = ` <img id="" src="./assets/images/document_icon.png" alt="${file.name}">`
-        }
-        preview_file += `
-          <span class="span_prv_archive" id = "${file.id}">
-            ${type_file}
-            <i class="fas fa-times"></i>
-          </span>
-      `;
-        uploadFileShowModal +=
-        `
-          <li class="msg_upload_file_box" id = "${file.id}">
-            ${type_file}
-            <h5 class="fileName">${file.name}</h2>
-            <h5 class="fileSize">${plupload.formatSize(file.size)}</h5>
-            <h5 class="fileProgress">
-              <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:0; --size:50px"></div>
-            </h5>
-            <h5 class="icon"></h5>
-            <hr/>
-          </li>
+        let type_file = '';
+        let img = file.type.includes('image');
+        let pdf = file.type.includes('pdf');
+        let voice = file.type.includes('audio');
+        let video = file.type.includes('video');
+        if(img){
+            type_file = ` <img id="" src="./assets/images/img_icon.png" alt="${file.name}">`
+          }else if(pdf){
+            type_file = ` <img id="" src="./assets/images/pdf.png" alt="${file.name}">`
+          }else if(voice){
+            type_file = ` <img id="" src="./assets/images/player_icon.png" alt="${file.name}">`
+          }else if(video){
+            type_file = ` <img id="" src="./assets/images/video_icon.png" alt="${file.name}">`
+          }else{
+            type_file = ` <img id="" src="./assets/images/document_icon.png" alt="${file.name}">`
+          }
+          preview_file += `
+            <span class="span_prv_archive" id = "${file.id}">
+              ${type_file}
+              <i class="fas fa-times"></i>
+            </span>
         `;
-      });
-      $('.prv_file').html(preview_file);
-      $('.msg_upload_lists').html(uploadFileShowModal);
-      if ($('.prv_file').children().length){
-        $('.prv_file').css({ visibility: "inherit"})
-        
-      }
-    }else{
+          uploadFileShowModal +=
+          `
+            <li class="msg_upload_file_box" id = "${file.id}">
+              ${type_file}
+              <h5 class="fileName">${file.name}</h2>
+              <h5 class="fileSize">${plupload.formatSize(file.size)}</h5>
+              <h5 class="fileProgress">
+                <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:0; --size:50px"></div>
+              </h5>
+              <h5 class="icon"></h5>
+              <hr/>
+            </li>
+          `;
+        });
+        $('.prv_file').html(preview_file);
+        $('.msg_upload_lists').html(uploadFileShowModal);
+        if ($('.prv_file').children().length){
+          $('.prv_file').css({ visibility: "inherit"})
+          
+        }
+    }
+    if(commentBox == 'open') {
+      if(uploader.files.length <= 1){
+        FilesAdded();
+      }else{
         Swal.fire({
           icon: 'error',
           title: 'محدودیت در ارسال تعداد فایل',
-          text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 6 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
+          text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 1 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
           heightAuto : true,
           showClass: {
             popup: 'animate__animated animate__fadeInDown'
@@ -541,8 +599,29 @@ let uploader = new plupload.Uploader({
       plupload.each(files, function (file) {
         uploader.removeFile(file);
       });
+      
+      }
+    }else{
+      if(uploader.files.length <= 6){
+        FilesAdded();
+      }else{
+          Swal.fire({
+            icon: 'error',
+            title: 'محدودیت در ارسال تعداد فایل',
+            text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 6 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
+            heightAuto : true,
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+        }
+        });
+        plupload.each(files, function (file) {
+          uploader.removeFile(file);
+        });
+      }
     }
-
     $('.prv_file').on('click','.fa-times',function () {
       let clicked_file_id = $(this).parents()[0].id;
       plupload.each(files, function (file) {
@@ -591,8 +670,7 @@ let uploader = new plupload.Uploader({
             alert(ex);
         }
     });
-  uploader.bind('ChunkUploaded', function (up, file, info) {
-    
+  uploader.bind('ChunkUploaded', function (up, file, info) {  
   });
   uploader.bind('UploadComplete', function (up, file , info) {
     $('.sending').css({display : 'none'})
@@ -613,8 +691,11 @@ let uploader = new plupload.Uploader({
       });
       listArchive = JSON.stringify(listArchive)
       let textInsertMessage = $('textarea.form-control').val();
-      console.log(textInsertMessage);
-      sendMessage(chanel_id , textInsertMessage , listArchive )
+      if(commentBox == 'open'){
+        sendcomment(textInsertMessage , '',listArchive , postId)
+      }else{
+        sendMessage(chanel_id , textInsertMessage , listArchive )
+      }
     }else{
       $('.upload_img_faile').css({display : 'block'});
       $('.upload_msg_faile').css({display : 'block'});
@@ -742,11 +823,73 @@ $('.conversation').on('click', '.comment', function(e) {
     primery_id = e.currentTarget.id;
     e.preventDefault();
     get_comment_reply(primery_id);
+    commentBox = 'open';
+    postId = $(e.target).parents()[1].id;
 });
 
 $("#conversation").on('click', '.close-comment-box', function() {
     $('.comment-cadr').hide()
+    commentBox = 'close';
 });
+
+// ************************* sendcomment ****************************
+let sendcomment = (text , reply_id , archive , extraid)=>{
+  $.ajax({
+    url: api_address + "/notices/insert_comment_reply",
+    type: "post",
+    data: {
+      text : text,
+      reply_to : reply_id,
+      list_archive : archive,
+      extra__id : extraid,
+  },
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      try{
+          let res = jQuery.parseJSON(response);
+           // console.log(res);
+           if(!!$('.prv_file').children().length){
+            $('.upload_img_success').css({display : 'block'});
+            $('.upload_msg_success').css({display : 'block'});
+          
+            setTimeout(function(){
+              $('.msg_upload_bg').css({visibility: "hidden"});
+              $('.upload_img_success').css({display : 'none'});
+              $('.upload_msg_success').css({display : 'none'});
+              $('.sending').css({display : 'inline-flex'});
+            },7000);
+            setTimeout(function(){
+              $.each(uploader.files, function (i, file) {
+                uploader.removeFile(file);
+                $(`.msg_upload_lists li`).remove();
+                $(`.prv_file span`).remove();
+                preview_file = ``;
+                uploadFileShowModal = ``;
+              });
+              if ($('.prv_file').children().length == 0){
+                $('.prv_file').css({ visibility: "hidden" });
+              }
+            }, 7000);
+            listArchive = [];
+           }
+          
+         
+          $('textarea.form-control').val('')
+          get_comment_reply(primery_id);
+      }catch(err){
+        console.log(err);
+      }
+       
+    },
+    error : function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(ajaxOptions);
+      console.log(thrownError);
+    }
+  });
+};
 
 // ************************* add_new_channel ****************************
 $(".new-chanel").click(function() {
@@ -780,7 +923,6 @@ $(function() {
         $("#profile-image-upload").click();
     });
 });
-
 
 // ************************* get_session_archive  ****************************
 

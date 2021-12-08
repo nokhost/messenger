@@ -206,7 +206,7 @@
     .new-chanel i {
         text-align: right;
         padding: 5px;
-        color: #93918f;
+        color: #ffffff;
         cursor: pointer;
         font-size: 20px;
     }
@@ -219,7 +219,7 @@
     .refresh-chanel i{
         text-align: right;
         padding: 7px 6px;
-        color: #93918f;
+        color: #ffffff;
         cursor: pointer;
         font-size: 16px;
     }
@@ -234,7 +234,7 @@
     .heading-searche i {
         text-align: right;
         padding: 5px;
-        color: #93918f;
+        color: #ffffff;
         cursor: pointer;
     }
     
@@ -248,7 +248,7 @@
     .heading-refresh i {
         text-align: right;
         padding: 5px;
-        color: #93918f;
+        color: #ffffff;
         cursor: pointer;
     }
     
@@ -692,6 +692,7 @@
     .comment-box {
         position: relative;
         overflow: auto;
+        background: radial-gradient(circle, rgba(215,191,255,1) 0%, rgba(144,234,255,1) 100%);
     }
     
     .close-comment-box {
