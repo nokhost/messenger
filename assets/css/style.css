@@ -1107,12 +1107,17 @@
         content: counter(percentage) '%';
       }
     
+      .swal2-container.swal2-center>.swal2-popup{
+        height: auto;
+    }
+    .swal2-html-container{
+        width: auto;
+    }
     
-    
-    @media screen and (min-width:1024px)and(max-width:2560px) {
+    @media screen and (min-width:1024px) and (max-width:2560px) {
         
     }
-    @media screen and (min-width:767px)and(max-width:1024px) {
+    @media screen and (min-width:767px) and (max-width:1024px) {
         .count_not_read {
             background: #1ba8f0;
             border-radius: 25px;
@@ -1140,19 +1145,29 @@
         }
         
     }
-    @media screen and (min-width:425px)and(max-width:767px) {
+    
+    @media screen and (min-width:425px) and (max-width:767px) {
 
         .heading-back {
             display: block;
             float: right;
             padding-top: 13px;
-            color: #93918f;
+            color: #ffffff;
             font-size: 14px;
+            position: relative;
+            left: 13px;
         }
+        .heading-searche{
+            display: none;
+        }
+
         .heading-back:hover {
             display: block;
             color: #000;
             cursor: pointer;
+        }
+        .heading-refresh i{
+            padding: 10px 0;
         }
         .count_not_read {
             background: #1ba8f0;
@@ -1182,13 +1197,98 @@
             position: absolute;
             left: 0;
         }
-    }
-    @media screen and (min-width:320px)and(max-width:425px) {
-        .heading-compose h4{
-            font-size: 15px !important;
+        .conversation{
+            border-radius: 24px;
+        }
+        .side{
+            border-radius: 24px;
         }
     }
-    @media screen and (max-width: 700px) {
+    
+    @media screen and (min-width:320px) and (max-width:425px) {
+        .heading-compose h4{
+            font-size: 14px !important;
+        }
+        .heading-searche{
+            display: none;
+        }
+        .heading-avatar{
+            width: 43px;
+        }
+        .heading-back {
+            display: block;
+            float: right;
+            padding-top: 13px;
+            color: #ffffff;
+            font-size: 14px;
+            position: relative;
+            left: 13px;
+        }
+        
+        .reply-main textarea{
+            width: 85%;
+            margin: auto;
+        }
+        .reply-attachment i{
+            margin: 0 -10px;
+        }
+        .reply-send i{
+            margin:  0 -10px;
+        }
+        .conversation{
+            border-radius: 24px;
+        }
+        .side{
+            border-radius: 24px;
+        }
+        .heading-refresh i{
+            padding: 10px 0;
+        }
+    }
+    @media screen and (min-width:280px) and (max-width:320px) {
+        .heading-compose h4{
+            font-size: 14px !important;
+        }
+        .heading-searche{
+            display: none;
+        }
+        .heading-avatar{
+            width: 43px;
+        }
+        .heading-back {
+            display: block;
+            float: right;
+            padding-top: 13px;
+            color: #ffffff;
+            font-size: 14px;
+            position: relative;
+            left: 13px;
+        }
+        .heading-name{
+            width: 111px;
+        }
+        .reply-main textarea{
+            width: 85%;
+            margin: auto;
+        }
+        .reply-attachment i{
+            margin: 0 -10px;
+        }
+        .reply-send i{
+            margin:  0 -10px;
+        }
+        .conversation{
+            border-radius: 24px;
+        }
+        .side{
+            border-radius: 24px;
+        }
+        .heading-refresh i{
+            padding: 10px 0;
+        }
+        
+    }
+    /* @media screen and (max-width: 700px) {
         .app {
             top: 0;
             height: 100%;
@@ -1303,13 +1403,11 @@
             text-align: center;
         }
         /*Conversation*/
-        .conversation {
+        /* .conversation {
             padding: 0 !important;
             margin: 0 !important;
             height: 100%;
-            /*width: 100%;*/
             border-left: 1px solid rgba(0, 0, 0, 0.08);
-            /*overflow-y: auto;*/
         }
         .message {
             height: calc(100% - 140px);
@@ -1344,8 +1442,7 @@
         .reply-send i {
             padding: 5px 2px 5px 0 !important;
             font-size: 1.8em !important;
-        }
+        } */
     
         
-    }
-    
+    /* }  */

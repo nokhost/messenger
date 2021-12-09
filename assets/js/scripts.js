@@ -1,5 +1,8 @@
-const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-let token = "6E92F47AED9671BD88B3526218482DF7";
+// const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
+// let token = "175CAB162708D77B1E30C15279202C2E";
+const api_address =  "../../backend/api";
+let token = localStorage.getItem("token");
+
 // ************************* global variables ****************************
 let session = '';
 let myuser_id = '';
@@ -12,9 +15,8 @@ let primery_id = '';
 let commentBox = 'close';
 let postId = '';
 
-
 // ************************* list_channel ****************************
-let ChanleList = ()=>{
+let ChanleList = (countNewsNew)=>{
     $.ajax({
         url: api_address + "/notices/get_list_channel",
         type: "post",
@@ -29,13 +31,20 @@ let ChanleList = ()=>{
               let out = "";
               
               if(res.result == 'ok'){
+                let badge = ``;
+                let count_news_new = 0;
                 res.data.list_channel.forEach((element) => {
-                  let badge = ``;
-                  if (element.count_news_new == 1) {
-                      badge = `<span class="count_not_read">${element.count_news_new}</span>`;
-                  } else {
-                      badge = '';
-                  }
+                  count_news_new = element.count_news_new;
+                  if (count_news_new >= 1)  {
+                    if(countNewsNew){
+                      badge = `<span class="count_not_read">${countNewsNew}</span>`;
+                    }
+                    badge = `<span class="count_not_read">${element.count_news_new}</span>`;
+                } else {
+                    badge = '';
+                }
+                  
+                  
                   let img = "";
                   if (img) {} else {
                       img = [
@@ -71,6 +80,8 @@ let ChanleList = ()=>{
                       </div>
               `;
               });
+              
+              
               $(".sideBar").html(out);
               }else{
                 Swal.fire({
@@ -107,11 +118,8 @@ $('.refresh-chanel i').on('click',function () {
 });
 
 $(window).on('load',function () {
-  setTimeout(function(){
     ChanleList();
-  },7000)
-  
-});
+}); 
 
 // ************************* sideBar ****************************
 $('.sideBar').on('click', function() {
@@ -129,8 +137,31 @@ $(window).resize(function() {
 
 // ************************* conversation ****************************
 let conversation = '';
-let endRow = 0;
+let number_rows = 0;
 let heade_chanel_name = '';
+
+$(".sideBar").on("click", ".sideBar-body", function(e) {
+  $('.reply').css({"visibility":"inherit"})
+  let str = e.currentTarget.innerText;
+  let endStr = str.search('\n');
+  str = str.substr(0, endStr);
+  heade_chanel_name = `<a class="heading-name-meta">${str}</a>`;
+  chanel_id = this.id;
+  let row = 10;
+  $('#conversation').on('click','.last_message a',function (e) {
+    e.preventDefault();
+    if(row <= number_rows){
+      row = row + 5;
+      get_news_channel( row , chanel_id);
+    }else{
+      $('.last_message a').hide()
+    }
+  });
+
+  get_news_channel( row, chanel_id);
+  ChanleList(0);
+  
+});
 
 let get_news_channel = ( row , id)=>{
   $.ajax({
@@ -148,14 +179,13 @@ let get_news_channel = ( row , id)=>{
     success: function(response) {
       try{
         let res = jQuery.parseJSON(response);
-        endRow =  res.data.detail_rows.last_row
+        number_rows =  res.data.detail_rows.last_row
         myuser_id = res.data.myuser_id;
         let list_news = res.data.list_news;
         let last_row = res.data.detail_rows.last_row;
         let out = '';
         let comment = '';
         let archive = '';
-        
 
         if (last_row == -1) {
             out = `
@@ -280,28 +310,7 @@ let get_news_channel = ( row , id)=>{
     }
 });
 }
-$(".sideBar").on("click", ".sideBar-body", function(e) {
-    $('.reply').css({"visibility":"inherit"})
-    let str = e.currentTarget.innerText;
-    let endStr = str.search('\n');
-    str = str.substr(0, endStr);
-    heade_chanel_name = `<a class="heading-name-meta">${str}</a>`;
-    chanel_id = this.id;
-    let row = 5;
-    
-    $('#conversation').on('click','.last_message a',function (e) {
-      e.preventDefault();
-      if(row <= endRow){
-        row = row + 5;
-        get_news_channel( row , chanel_id);
-      }else{
-        $('.last_message a').hide()
-      }
-    });
 
-    get_news_channel( row, chanel_id);
-    
-});
 
 // ************************* play audio ****************************
 let player =(session ,file__id )=>{
@@ -378,11 +387,13 @@ $(window).on('click', function(e) {
 
 // ************************* heading conversation ****************************
 $('.heading-back').on('click', function() {
+  ChanleList();
     $('.side').show();
+
 });
 
 $(".heading-refresh i").on("click", function() {
-  get_news_channel(5 , chanel_id)
+  get_news_channel(10 , chanel_id)
 });
 
 // ************************* conversation more option ****************************
@@ -444,7 +455,7 @@ let sendMessage  = (id , text , archive)=>{
             listArchive = [];
            }
           $('textarea.form-control').val('');
-          get_news_channel(5 , chanel_id);
+          get_news_channel(10 , chanel_id);
       }catch(err){
         console.log(err);
       }
@@ -471,10 +482,7 @@ let sendMessage  = (id , text , archive)=>{
       }else if(!!$('.prv_file').children().length){
         uploader.start();
       }else{
-        // Swal.fire({
-        //   title : 'برای ارسال پیام حداقل یک متن  یا یک فایل ارسال کنید',
-        //   icon : 'error'
-        // })
+        
         const Toast = Swal.mixin({
           toast: true,
           showConfirmButton: false,
