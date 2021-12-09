@@ -491,7 +491,7 @@ let sendMessage  = (id , text , archive)=>{
           title: 'برای ارسال پیام حداقل یک متن  یا یک فایل ارسال کنید'
         })
       }
-    }else{
+    }else{1
       if (!!$('.prv_file').children().length && textInsertMessage !== ''){
         uploader.start();
       }else if(textInsertMessage !== ''){
