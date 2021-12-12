@@ -723,7 +723,22 @@
         margin: inherit;
         height: auto;
     }
-    
+
+     /*reply_comment*/
+
+     .reply_comment{
+        background: #ffffff52;
+        padding: 0 8px;
+        margin-top: 6px;
+        border-right: solid 3px #f0ff45;
+        border-radius: 4px;
+        width: 100%;
+        display: inline-block;
+        height: 100%;
+        cursor: pointer;
+        color: #939393;
+    }
+
     /*Reply*/
     
     .reply {
@@ -857,6 +872,7 @@
     
     
     /*arcive file*/
+   
 
     /*add_new_channel*/
     

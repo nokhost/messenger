@@ -1,7 +1,7 @@
-// const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-// let token = "175CAB162708D77B1E30C15279202C2E";
-const api_address =  "../../backend/api";
-let token = localStorage.getItem("token");
+const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
+let token = "A507703FA65F7F0E2EDA2E137E8B9E7D";
+// const api_address =  "../../backend/api";
+// let token = localStorage.getItem("token");
 
 // ************************* global variables ****************************
 let session = '';
@@ -14,9 +14,9 @@ let listArchive = [];
 let primery_id = '';
 let commentBox = 'close';
 let postId = '';
-
+let count_news_new = 0;
 // ************************* list_channel ****************************
-let ChanleList = (countNewsNew)=>{
+let ChanleList = ()=>{
     $.ajax({
         url: api_address + "/notices/get_list_channel",
         type: "post",
@@ -31,15 +31,12 @@ let ChanleList = (countNewsNew)=>{
               let out = "";
               
               if(res.result == 'ok'){
+                
                 let badge = ``;
-                let count_news_new = 0;
                 res.data.list_channel.forEach((element) => {
                   count_news_new = element.count_news_new;
                   if (count_news_new >= 1)  {
-                    if(countNewsNew){
-                      badge = `<span class="count_not_read">${countNewsNew}</span>`;
-                    }
-                    badge = `<span class="count_not_read">${element.count_news_new}</span>`;
+                    badge = `<span class="count_not_read">${count_news_new}</span>`;
                 } else {
                     badge = '';
                 }
@@ -147,23 +144,20 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
   str = str.substr(0, endStr);
   heade_chanel_name = `<a class="heading-name-meta">${str}</a>`;
   chanel_id = this.id;
-  let row = 10;
+  let row = 15;
   $('#conversation').on('click','.last_message a',function (e) {
     e.preventDefault();
     if(row <= number_rows){
       row = row + 5;
-      get_news_channel( row , chanel_id);
+      get_news_channel( row , chanel_id , 'showMore');
     }else{
       $('.last_message a').hide()
     }
   });
-
-  get_news_channel( row, chanel_id);
-  ChanleList(0);
-  
+  get_news_channel( row, chanel_id,'clickChanel');
 });
 
-let get_news_channel = ( row , id)=>{
+let get_news_channel = ( row , id , scrollEndMsg)=>{
   $.ajax({
     url: api_address + "/notices/get_news_channel",
     type: "post",
@@ -243,11 +237,11 @@ let get_news_channel = ( row , id)=>{
                                   <br>
                                   <span class="message-time pull-right"> ${element.datetime} </span>
                                   <div class="more-option">
-                                    <i class="fas fa-copy"></i>
+                                    <i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
                                     <i class="fas fa-ellipsis-v"></i>
                                     <ul class="more-option-list">
                                       <li class="more-option-comments"><i class="far fa-comment"></i><span>یادداشت ها</span></li>
-                                      <li class="more-option-copy"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
+                                      <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
                                       <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
                                       <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
                                       <li class="more-option-nocomment"><i class="fas fa-comment-slash"></i><span>غیر فعال کردن یادداشت ها</span></li>
@@ -277,11 +271,11 @@ let get_news_channel = ( row , id)=>{
                                   <br>
                                   <span class="message-time pull-right"> ${element.datetime} </span>
                                   <div class="more-option">
-                                    <i class="fas fa-copy"></i>
+                                    <i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i>
                                     <i class="fas fa-ellipsis-v"></i>
                                     <ul class="more-option-list">
                                       <li class="more-option-comments"><i class="far fa-comment"></i><span>یادداشت ها</span></li>
-                                      <li class="more-option-copy"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
+                                      <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
                                       <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
                                       <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
                                       <li class="more-option-nocomment"><i class="fas fa-comment-slash"></i><span>غیر فعال کردن یادداشت ها</span></li>
@@ -296,12 +290,21 @@ let get_news_channel = ( row , id)=>{
             });
         }
         out = 
-        `<div style="overflow: auto;">
+        `<div style="overflow: auto;" class="conversation_body">
             <div class="row last_message"><a href="">نمایش پیام های بیشتر!</a></div>
             ${out}
         </div>`
         $(".heading-name").html(heade_chanel_name);
         $("#conversation").html(out);
+        if(scrollEndMsg == 'showMore'){
+          $('.conversation_body').animate({ scrollTop: 0 }, 1000);
+        }else if(scrollEndMsg == 'clickChanel'){
+          $('.conversation_body').animate({ scrollTop: $('.conversation_body')[0].scrollHeight }, 1000);
+          ChanleList();
+        }else{
+          $('.conversation_body')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
+        }
+        
         conversation = out;
         commentBox = 'close';
       }catch(err){
@@ -393,7 +396,7 @@ $('.heading-back').on('click', function() {
 });
 
 $(".heading-refresh i").on("click", function() {
-  get_news_channel(10 , chanel_id)
+  get_news_channel(15 , chanel_id)
 });
 
 // ************************* conversation more option ****************************
@@ -455,7 +458,7 @@ let sendMessage  = (id , text , archive)=>{
             listArchive = [];
            }
           $('textarea.form-control').val('');
-          get_news_channel(10 , chanel_id);
+          get_news_channel(15 , chanel_id);
       }catch(err){
         console.log(err);
       }
@@ -746,9 +749,27 @@ let get_comment_reply = (id) =>{
         let comment_list = res.data.list_comment;
         let msg = '';
         let archive = '';
+        let commentsArry = [];
+        let commentObject = {};
         comment_list.forEach((element) => {
+          commentObject = {
+            "description" : element.text ,
+            "comment_reply__id" : element.comment_reply__id
+          }
+          commentsArry.push(commentObject);
+          let replyComment = ``;
+          if(element.reply_to){
+            commentsArry.forEach((elem) =>{
+              if(elem.comment_reply__id == element.reply_to){
+                replyComment = `<a class="reply_comment"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.description}</h6> </a> <br>`;
+              }
+            })
+           }else{
+             replyComment = '';
+           }
           if (!!(element.list_archive.length)) {
             let show_file = '';
+            
               element.list_archive.forEach((element) => {
                   let fileType = element.file_type;
                   if (fileType == 'pdf') {
@@ -772,8 +793,9 @@ let get_comment_reply = (id) =>{
                 msg +=
                     `
                     <div class="row comment-message-body">
-                      <div class="col-sm-12 message-main-receiver">
+                      <div id="${element.comment_reply__id}" class="col-sm-12 message-main-receiver">
                         <div class="receiver">
+                        ${replyComment}
                         ${archive}
                         <div class="message-text">${element.text}</div>
                           <span class="message-time pull-right">${element.datetime}</span>
@@ -791,9 +813,10 @@ let get_comment_reply = (id) =>{
                 msg +=
                     `
                   <div class="row comment-message-body">
-                    <div class="col-sm-12 message-main-sender">
+                    <div id="${element.comment_reply__id}" class="col-sm-12 message-main-sender">
                       <div class="sender">
                         <span class="contact_name">${element.name_family}</span>
+                        ${replyComment}
                         ${archive}
                         <div class="message-text">${element.text}</div>
                         <span class="message-time pull-right"> ${element.datetime} </span>
@@ -809,6 +832,7 @@ let get_comment_reply = (id) =>{
                 `
 
             }
+            
         });
         let out = conversation;
         out += `
@@ -824,9 +848,13 @@ let get_comment_reply = (id) =>{
               </div>
         `;
         $("#conversation").html(out);
+        // $(`.BADD8CAF2F48CBCCD2C045CD0C58E9BB`).html($($($(`#BADD8CAF2F48CBCCD2C045CD0C58E9BB`).children()[0]).children()[1]).html())
+        // console.log( $(`#BADD8CAF2F48CBCCD2C045CD0C58E9BB`));
+        
     }
 });
 }
+
 $('.conversation').on('click', '.comment', function(e) {
     primery_id = e.currentTarget.id;
     e.preventDefault();
@@ -838,6 +866,34 @@ $('.conversation').on('click', '.comment', function(e) {
 $("#conversation").on('click', '.close-comment-box', function() {
     $('.comment-cadr').hide()
     commentBox = 'close';
+});
+
+// ************************* more option handle ****************************
+
+// comment ****************************
+$('.conversation').on('click', '.more-option-comments', function(e) {
+  primery_id = e.currentTarget.id;
+  e.preventDefault();
+  get_comment_reply(primery_id);
+  commentBox = 'open';
+  postId = $(e.target).parents()[1].id;
+});
+// more-option-copy ****************************
+$('.conversation').on('click','.more-option-copy',function(e){
+  let $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(e.target).parents("div.receiver").children("div.message-text").html()).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
+});
+$('.conversation').on('click','.fa-copy',function(e){
+  let $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(e.target).parents("div.receiver").children("div.message-text").html()).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
 });
 
 // ************************* sendcomment ****************************
