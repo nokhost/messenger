@@ -1,0 +1,9 @@
+.swal2-container.swal2-center>.swal2-popup{
+    height: auto;
+}
+.swal2-html-container{
+    width: auto;
+}
+.swal2-icon.swal2-info.swal2-icon-show .swal2-icon-content{
+    width: auto;
+}
