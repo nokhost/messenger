@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="./assets/css/animate.css">
     <link rel="stylesheet" href="./assets/FontAwesome/css/all.min.css" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
     <link rel="stylesheet" href="./assets/css/sweetalert_theme/bootstrap-4.css">
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/sweetalert_custom.css">
 
     <title>پیام رسان</title>
 </head>
@@ -102,7 +103,7 @@
                 <div class="row searchBox">
                     <div class="col-sm-12 searchBox-inner">
                         <div class="form-group has-feedback">
-                            <input id="searchText" type="text" class="form-control" name="searchText" placeholder="جست و جو" />
+                            <input id="searchText" disabled = 'disabled' type="text" class="form-control" name="searchText" placeholder="جست و جو" />
                         </div>
                     </div>
                 </div>
@@ -132,17 +133,24 @@
                     <i class="fas fa-redo"></i>
                 </div>
                 <div class="col-sm-1 col-xs-1 heading-searche pull-right ">
-                    <i class="fas fa-search "></i>
+                    <!-- <i class="fas fa-search "></i> -->
                 </div>
             </div>
+
             <div class="row message" id="conversation">
-                
-                <div class="row">
+
+                <div class="row conversation_empty">
                     <div class="col-md-12 " style="text-align: center; ">
                         <img class="bg_conversation " src="./assets/images/bg_co.png " alt=" ">
                     </div>
                 </div>
+
+                <div class="row conversation_message"></div>
+
+                <div class="row conversation_comment"></div>
+
             </div>
+            
             <div class="row play_audio">
                 <div class="box_player">
                   <div class="close_player">
@@ -155,10 +163,13 @@
                   <audio controls=""  autoplay="" name="media"></audio>
                 </div>
             </div>
-            
-            <div class="prv_file">
-               
+
+            <div class="reply_to">
             </div>
+
+            <div class="prv_file">
+            </div>
+
             <div class="row reply ">
                 <!-- <div class="col-sm-1 col-xs-1 reply-recording ">
                     <i class="fa fa-microphone fa-2x " aria-hidden="true "></i>

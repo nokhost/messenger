@@ -1,7 +1,13 @@
-const api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-let token = "A507703FA65F7F0E2EDA2E137E8B9E7D";
-// const api_address =  "../../backend/api";
-// let token = localStorage.getItem("token");
+let url = window.location.href;    
+let api_address = "";
+let token = "";
+if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html'){
+  api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
+  token = "A507703FA65F7F0E2EDA2E137E8B9E7D";
+}else{
+  api_address =  "../../backend/api";
+  token = localStorage.getItem("token");
+}
 
 // ************************* global variables ****************************
 let session = '';
@@ -15,6 +21,9 @@ let primery_id = '';
 let commentBox = 'close';
 let postId = '';
 let count_news_new = 0;
+
+
+
 // ************************* list_channel ****************************
 let ChanleList = ()=>{
     $.ajax({
@@ -132,7 +141,7 @@ $(window).resize(function() {
 
 });
 
-// ************************* conversation ****************************
+// ************************* get_news_channel ****************************
 let conversation = '';
 let number_rows = 0;
 let heade_chanel_name = '';
@@ -180,7 +189,10 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
         let out = '';
         let comment = '';
         let archive = '';
-
+        let moreOption = '';
+        let contentComment = '';
+        let anchorTagComment = '';
+        let noCommentText = ''
         if (last_row == -1) {
             out = `
             <div class="row">
@@ -194,7 +206,6 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
           `;
         } else {
             list_news.forEach((element) => {
-              
                 if (!!(element.list_archive.length)) {
                   let show_file = '';
                     element.list_archive.forEach((element) => {
@@ -212,12 +223,59 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                     })
                     archive = `<br> <div class="archive_box"> ${show_file} </div> <br>`
                 } else {
-                    archive = `<hr/>`
+                  archive = `<hr/>`
+                  if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
+                    
+                    archive = ``;
+                  }
+                    
                 }
                 if (!(element.count_comment == 0)) {
                     comment = `${element.count_comment} یادداشت`;
                 } else {
                     comment = 'اولین یادداشت را بگذارید';
+                }
+                if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
+                  noCommentText = `فعال کردن یادداشت ها`
+                }else if(!!(element.allow_comment == 0) &&  !!(element.count_comment > 0)){
+                  noCommentText = `فعال کردن یادداشت ها`
+                }else{
+                  noCommentText = 'غیر فعال کردن یادداشت ها';
+                }
+                if(element.status == 1){
+                  moreOption = `<i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <ul class="more-option-list">
+                    <li class="more-option-comments"><i class="far fa-comment"></i><span>یادداشت ها</span></li>
+                    <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
+                    <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
+                    <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
+                    <li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>
+                    <li class="more-option-delete"><i class="fas fa-trash"></i><span>حذف</span></li>
+                  </ul>`;
+                  contentComment = `<div class="col-xs-12">
+                  <i class="far fa-comment-dots"></i>
+                  <span class="comment-title">${comment}</span>
+                  <i class="fas fa-angle-left"></i>
+                </div>`
+                }else{
+                  moreOption = ``;
+                  contentComment = ``;
+                  archive = ``;
+                }
+                if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
+                  anchorTagComment = `
+                      <a id = ${element.news__id} class="comment" href="">
+                            
+                       </a>`;
+                  
+                }else{
+                  anchorTagComment = 
+                      `<a id = ${element.news__id} class="comment" href="">
+                         ${contentComment}
+                      </a>
+                      `;
+                      
                 }
                 if (element.user__id == myuser_id) {
                     out +=
@@ -227,26 +285,11 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                                 <div class="receiver">
                                   <div class="message-text">${element.description}</div>
                                   ${archive}
-                                  <a id = ${element.news__id} class="comment" href="">
-                                    <div class="col-xs-12">
-                                      <i class="far fa-comment-dots"></i>
-                                      <span class="comment-title">${comment}</span>
-                                      <i class="fas fa-angle-left"></i>
-                                    </div>
-                                  </a>
+                                  ${anchorTagComment}
                                   <br>
                                   <span class="message-time pull-right"> ${element.datetime} </span>
                                   <div class="more-option">
-                                    <i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
-                                    <i class="fas fa-ellipsis-v"></i>
-                                    <ul class="more-option-list">
-                                      <li class="more-option-comments"><i class="far fa-comment"></i><span>یادداشت ها</span></li>
-                                      <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
-                                      <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
-                                      <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
-                                      <li class="more-option-nocomment"><i class="fas fa-comment-slash"></i><span>غیر فعال کردن یادداشت ها</span></li>
-                                      <li class="more-option-delete"><i class="fas fa-trash"></i><span>حذف</span></li>
-                                    </ul>
+                                    ${moreOption}
                                   </div>
                                 </div>
                               </div>
@@ -261,26 +304,11 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                                   <span class="contact_name">${element.name_family}</span>
                                   <div class="message-text">${element.description}</div>
                                   ${archive}
-                                  <a id = ${element.news__id} class="comment" href="">
-                                    <div class="col-xs-12">
-                                      <i class="far fa-comment-dots"></i>
-                                      <span class="comment-title">${comment}</span>
-                                      <i class="fas fa-angle-left"></i>
-                                    </div>
-                                  </a>
+                                  ${anchorTagComment}
                                   <br>
                                   <span class="message-time pull-right"> ${element.datetime} </span>
                                   <div class="more-option">
-                                    <i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i>
-                                    <i class="fas fa-ellipsis-v"></i>
-                                    <ul class="more-option-list">
-                                      <li class="more-option-comments"><i class="far fa-comment"></i><span>یادداشت ها</span></li>
-                                      <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
-                                      <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
-                                      <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
-                                      <li class="more-option-nocomment"><i class="fas fa-comment-slash"></i><span>غیر فعال کردن یادداشت ها</span></li>
-                                      <li class="more-option-delete"><i class="fas fa-trash"></i><span>حذف</span></li>
-                                    </ul>
+                                    ${moreOption}
                                   </div>
                                 </div>
                               </div>
@@ -294,15 +322,21 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
             <div class="row last_message"><a href="">نمایش پیام های بیشتر!</a></div>
             ${out}
         </div>`
+        $('.conversation_empty').hide();
         $(".heading-name").html(heade_chanel_name);
-        $("#conversation").html(out);
+        $("#conversation .conversation_message").html(out);
+        $('.conversation_comment').css({height: "100%"});
+        // $('.conversation_message').css({height: "100%"});
+        $('.conversation_comment').hide();
+        $('.conversation_message').show();
         if(scrollEndMsg == 'showMore'){
-          $('.conversation_body').animate({ scrollTop: 0 }, 1000);
+          $('#conversation').animate({ scrollTop: 0 }, 1000);
         }else if(scrollEndMsg == 'clickChanel'){
-          $('.conversation_body').animate({ scrollTop: $('.conversation_body')[0].scrollHeight }, 1000);
+          $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight }, 1000);
           ChanleList();
+          
         }else{
-          $('.conversation_body')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
+          $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
         }
         
         conversation = out;
@@ -313,7 +347,6 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
     }
 });
 }
-
 
 // ************************* play audio ****************************
 let player =(session ,file__id )=>{
@@ -329,6 +362,7 @@ let player =(session ,file__id )=>{
 $('.close_player').on("click",function () {
   $('.play_audio').removeClass('run_player');
 });
+
 // ************************* handle click window and conversation ****************************
 $(window).on('click', function(e) {
   
@@ -386,6 +420,14 @@ $(window).on('click', function(e) {
   if(!$(e.target).parents('.conversation').length){
     $('textarea.form-control').val('');
   }
+
+  // *** clear box msg after click other chanel *** 
+
+  if(!$(e.target).parents('.conversation').length){
+    $('.reply_to').html('');
+    $('.reply_to').hide();
+    $('.conversation_comment').css({height: 'auto'});
+  }
 });
 
 // ************************* heading conversation ****************************
@@ -396,21 +438,12 @@ $('.heading-back').on('click', function() {
 });
 
 $(".heading-refresh i").on("click", function() {
-  get_news_channel(15 , chanel_id)
-});
+  if(commentBox == 'open'){
+    get_comment_reply(primery_id)
+  }else{
 
-// ************************* conversation more option ****************************
-$(".conversation").on('click', '.fa-copy', function() {
-    console.log("conversation more option");
-});
-
-$(".conversation").on('click', '.fa-ellipsis-v', function(e) {
-    if (!$('.fa-ellipsis-v').parents('.selected').length) {
-        $(e.target).parents(".more-option").last().addClass("selected");
-    } else {
-        $(".selected").last().removeClass('selected');
-        $(e.target).parents(".more-option").last().addClass("selected");
-    }
+    get_news_channel(15 , chanel_id)
+  }
 });
 
 // ************************* send message ****************************
@@ -432,32 +465,7 @@ let sendMessage  = (id , text , archive)=>{
     success: function(response) {
       try{
           let res = jQuery.parseJSON(response);
-           // console.log(res);
-           if(!!$('.prv_file').children().length){
-            $('.upload_img_success').css({display : 'block'});
-            $('.upload_msg_success').css({display : 'block'});
-          
-            setTimeout(function(){
-              $('.msg_upload_bg').css({visibility: "hidden"});
-              $('.upload_img_success').css({display : 'none'});
-              $('.upload_msg_success').css({display : 'none'});
-              $('.sending').css({display : 'inline-flex'});
-            },7000);
-            setTimeout(function(){
-              $.each(uploader.files, function (i, file) {
-                uploader.removeFile(file);
-                $(`.msg_upload_lists li`).remove();
-                $(`.prv_file span`).remove();
-                preview_file = ``;
-                uploadFileShowModal = ``;
-              });
-              if ($('.prv_file').children().length == 0){
-                $('.prv_file').css({ visibility: "hidden" });
-              }
-            }, 7000);
-            listArchive = [];
-           }
-          $('textarea.form-control').val('');
+           
           get_news_channel(15 , chanel_id);
       }catch(err){
         console.log(err);
@@ -474,14 +482,23 @@ let sendMessage  = (id , text , archive)=>{
   
 }
 
-  $('.reply-send i').on('click', function() {
+$('.reply-send i').on('click', function() {
     let textInsertMessage = $('textarea.form-control').val();
-
     if(commentBox == 'open'){
       if (!!$('.prv_file').children().length && textInsertMessage !== ''){
         uploader.start();
       }else if(textInsertMessage !== ''){
-        sendcomment(textInsertMessage , '',listArchive , postId)
+        if(!!$($('.reply_to')).children().length){
+          let h6ClassId = $('.reply_to_content_box h6')[0].outerHTML
+          h6ClassId = h6ClassId.slice(h6ClassId.search('"')+1,h6ClassId.length)
+          h6ClassId = h6ClassId.slice(0 , h6ClassId.search('"'))
+          sendcomment(textInsertMessage , h6ClassId ,listArchive , postId)
+          $('.reply_to').html('');
+          $('.reply_to').hide();
+          $('.conversation_comment').css({height: 'auto'});
+        }else{
+          sendcomment(textInsertMessage , '',listArchive , postId)
+        }
       }else if(!!$('.prv_file').children().length){
         uploader.start();
       }else{
@@ -504,19 +521,18 @@ let sendMessage  = (id , text , archive)=>{
       }
     }else{
       if (!!$('.prv_file').children().length && textInsertMessage !== ''){
+        
         uploader.start();
       }else if(textInsertMessage !== ''){
         sendMessage(chanel_id  , textInsertMessage);
       }else if(!!$('.prv_file').children().length){
-        uploader.start();
+         uploader.start();
       }else{
         const Toast = Swal.mixin({
           toast: true,
           showConfirmButton: false,
-          height: 'auto',
-          // timer: 3000,
+          timer: 3000,
           timerProgressBar: true,
-          
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -532,6 +548,49 @@ let sendMessage  = (id , text , archive)=>{
     }
   
 });
+
+// ************************* delete message ****************************
+let deleteMessage  = (channel , news)=>{
+  $.ajax({
+    url: api_address + "/notices/delete_news_channel",
+    type: "post",
+    data: {
+      channel__id : channel,
+      news__id : news,
+  },
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      try{
+          let res = jQuery.parseJSON(response);
+          if(res.result == 'ok'){
+            get_news_channel(15 , chanel_id);
+            console.log();
+          }else{
+          Swal.fire({
+            icon: 'error',
+            title: res.data.message,
+            showConfirmButton: false,
+            timer: 2000
+          })
+          }
+      }catch(err){
+        console.log(err);
+      }
+    },
+    cache : function(response) {
+      console.log(response);
+    },
+    error : function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(ajaxOptions);
+      console.log(thrownError);
+    }
+  });
+ 
+  
+}
 
 // ************************* archive files ****************************
 
@@ -584,10 +643,15 @@ let uploader = new plupload.Uploader({
             </li>
           `;
         });
+        if(!$($('.prv_file')).children().length){
+          $('.reply_to').css({bottom: '139px'})
+          $('.conversation_comment').css({height: '67%'});
+        }
         $('.prv_file').html(preview_file);
         $('.msg_upload_lists').html(uploadFileShowModal);
         if ($('.prv_file').children().length){
           $('.prv_file').css({ visibility: "inherit"})
+          
           
         }
     }
@@ -639,6 +703,8 @@ let uploader = new plupload.Uploader({
         if (file && file.id == clicked_file_id) {
           if ($('.prv_file').children().length == 1){
             $('.prv_file').css({ visibility: "hidden" });
+            $('.reply_to').css({bottom: '60px'});
+            $('.conversation_comment').css({height: '83%'});
           }
           uploader.removeFile(file);
           $(`.msg_upload_lists li#${clicked_file_id}`).remove();
@@ -703,7 +769,17 @@ let uploader = new plupload.Uploader({
       listArchive = JSON.stringify(listArchive)
       let textInsertMessage = $('textarea.form-control').val();
       if(commentBox == 'open'){
-        sendcomment(textInsertMessage , '',listArchive , postId)
+        if(!!$($('.reply_to')).children().length){
+          let h6ClassId = $('.reply_to_content_box h6')[0].outerHTML
+          h6ClassId = h6ClassId.slice(h6ClassId.search('"')+1,h6ClassId.length)
+          h6ClassId = h6ClassId.slice(0 , h6ClassId.search('"'))
+          sendcomment(textInsertMessage , h6ClassId ,listArchive , postId)
+          $('.reply_to').html('');
+          $('.reply_to').hide();
+          $('.conversation_comment').css({height: 'auto'});
+        }else{
+          sendcomment(textInsertMessage , '',listArchive , postId)
+        }
       }else{
         sendMessage(chanel_id , textInsertMessage , listArchive )
       }
@@ -732,7 +808,46 @@ let uploader = new plupload.Uploader({
     }
   });
 
-// ************************* comment ****************************
+// ************************* allow_comment ****************************
+let allowComment = (id , allow) => {
+  $.ajax({
+    url: api_address + "/notices/update_news_channel",
+    type: "post",
+    data: {
+      news__id : id,
+      allow_comment : allow
+  },
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      try{
+        let res = jQuery.parseJSON(response);
+        if(res.result == 'ok'){
+          get_news_channel(15 , chanel_id);
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: res.data.message,
+            showConfirmButton: false,
+            timer: 2000
+          })
+
+        }
+      }catch (err){
+        console.log(err);
+      }
+    },
+    cache : function(response) {
+      console.log(response);
+    },
+    error: function(response) {
+      console.log(response);
+    },
+  });
+};
+
+// ************************* get_comment_reply ****************************
 let get_comment_reply = (id) =>{
   $.ajax({
     url: api_address + "/notices/get_comment_reply",
@@ -749,23 +864,46 @@ let get_comment_reply = (id) =>{
         let comment_list = res.data.list_comment;
         let msg = '';
         let archive = '';
+        let name_family = '';
+        let moreOption = '';
         let commentsArry = [];
         let commentObject = {};
         comment_list.forEach((element) => {
+          if(element.status == 1){
+            moreOption = 
+              `<i class="fas fa-reply"></i>
+              <i class="far fa-copy"></i>
+              <i class="fas fa-trash"></i>`
+            name_family = element.name_family
+          }else{
+            name_family = '';
+            moreOption = '';
+          }
+          let filename = ''
+          if(element.list_archive[0]){
+            filename = element.list_archive[0].file_name
+          }
           commentObject = {
             "description" : element.text ,
-            "comment_reply__id" : element.comment_reply__id
+            "comment_reply__id" : element.comment_reply__id,
+            "fileName" : filename,
           }
           commentsArry.push(commentObject);
           let replyComment = ``;
-          if(element.reply_to){
+          if(element.reply_to && element.status == 1){
+            
             commentsArry.forEach((elem) =>{
               if(elem.comment_reply__id == element.reply_to){
-                replyComment = `<a class="reply_comment"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.description}</h6> </a> <br>`;
+                if(elem.description){
+                  replyComment = `<a class="reply_comment"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.description}</h6> </a> <br>`;
+                }else{
+                  replyComment = `<a class="reply_comment"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.fileName}</h6> </a> <br>`;
+                }
               }
             })
            }else{
              replyComment = '';
+             
            }
           if (!!(element.list_archive.length)) {
             let show_file = '';
@@ -773,16 +911,16 @@ let get_comment_reply = (id) =>{
               element.list_archive.forEach((element) => {
                   let fileType = element.file_type;
                   if (fileType == 'pdf') {
-                    show_file +=`<div class="viwe_box_item"><img class="archive_view_comment" src="./assets/images/pdf.png" alt=""></img> <i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></span>`;
+                    show_file +=`<div class="archive_view_comment"><img class="archive_view_comment" src="./assets/images/pdf.png" alt="${element.file_name}"></img> <i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></div>`;
                   }else if (fileType == 'aac'|| fileType =='mp3' ){
                     show_file +=` <audio controls>
                     <source src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" type="audio/ogg">
                     <source src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" type="audio/mpeg">
                   </audio>`;
                   }else if (fileType == 'jpg' || fileType == 'jpeg' || fileType == 'png' || fileType == 'gif') {
-                    show_file +=`<div class="archive_view_comment" ><img class="archive_view_comment" src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" alt=""></img><i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></span>`;
+                    show_file +=`<div class="archive_view_comment" ><img class="archive_view_comment" src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" alt="${element.file_name}"></img><i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></div>`;
                   }else{
-                    show_file +=`<div class="archive_view_comment" ><img class="archive_view_comment" src="./assets/images/document_icon.png" alt=""></img> <i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></span>`;
+                    show_file +=`<div class="archive_view_comment" ><img class="archive_view_comment" src="./assets/images/document_icon.png" alt="${element.file_name}"></img> <i id="${element.file__id}" class="far fa-arrow-alt-circle-down"></i></div>`;
                   }
               })
               archive = `<br> <div class="archive_box_comment"> ${show_file} </div> <br>`
@@ -800,9 +938,7 @@ let get_comment_reply = (id) =>{
                         <div class="message-text">${element.text}</div>
                           <span class="message-time pull-right">${element.datetime}</span>
                           <div class="more-option">
-                            <i class="fas fa-reply"></i>
-                            <i class="far fa-copy"></i>
-                            <i class="fas fa-trash"></i>
+                            ${moreOption}
                           </div>
                         </div>
                       </div>
@@ -815,15 +951,13 @@ let get_comment_reply = (id) =>{
                   <div class="row comment-message-body">
                     <div id="${element.comment_reply__id}" class="col-sm-12 message-main-sender">
                       <div class="sender">
-                        <span class="contact_name">${element.name_family}</span>
+                        <span class="contact_name">${name_family}</span>
                         ${replyComment}
                         ${archive}
                         <div class="message-text">${element.text}</div>
                         <span class="message-time pull-right"> ${element.datetime} </span>
                         <div class="more-option">
-                          <i class="fas fa-reply"></i>
-                          <i class="far fa-copy"></i>
-                          <i class="fas fa-trash"></i>
+                        ${moreOption}
                         </div>
                       </div>
                     </div>
@@ -835,7 +969,7 @@ let get_comment_reply = (id) =>{
             
         });
         let out = conversation;
-        out += `
+        out = `
               <div class="row comment-cadr">
                 <div class="col-md-12 comment-box">
                   <div class="row close-comment-box">
@@ -844,32 +978,46 @@ let get_comment_reply = (id) =>{
                     </div>
                   </div>
                     ${msg}
+                    
                 </div>
               </div>
+                
         `;
-        $("#conversation").html(out);
-        // $(`.BADD8CAF2F48CBCCD2C045CD0C58E9BB`).html($($($(`#BADD8CAF2F48CBCCD2C045CD0C58E9BB`).children()[0]).children()[1]).html())
-        // console.log( $(`#BADD8CAF2F48CBCCD2C045CD0C58E9BB`));
-        
+        $("#conversation .conversation_comment").html(out);
     }
 });
 }
 
 $('.conversation').on('click', '.comment', function(e) {
+    $('textarea.form-control').val('');
     primery_id = e.currentTarget.id;
     e.preventDefault();
     get_comment_reply(primery_id);
     commentBox = 'open';
     postId = $(e.target).parents()[1].id;
+    $('.conversation_comment').show();
+    $('.conversation_message').hide();
 });
 
 $("#conversation").on('click', '.close-comment-box', function() {
+    $('textarea.form-control').val('');
     $('.comment-cadr').hide()
     commentBox = 'close';
+    $('.conversation_message').show();
+    $('.conversation_comment').hide();
 });
 
 // ************************* more option handle ****************************
 
+// open other option ****************************
+$(".conversation").on('click', '.fa-ellipsis-v', function(e) {
+  if (!$('.fa-ellipsis-v').parents('.selected').length) {
+      $(e.target).parents(".more-option").last().addClass("selected");
+  } else {
+      $(".selected").last().removeClass('selected');
+      $(e.target).parents(".more-option").last().addClass("selected");
+  }
+});
 // comment ****************************
 $('.conversation').on('click', '.more-option-comments', function(e) {
   primery_id = e.currentTarget.id;
@@ -878,11 +1026,18 @@ $('.conversation').on('click', '.more-option-comments', function(e) {
   commentBox = 'open';
   postId = $(e.target).parents()[1].id;
 });
+
 // more-option-copy ****************************
 $('.conversation').on('click','.more-option-copy',function(e){
   let $temp = $("<input>");
   $("body").append($temp);
-  $temp.val($(e.target).parents("div.receiver").children("div.message-text").html()).select();
+  if($(e.target).parents("div.receiver").length){
+
+    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html()).select();
+  }else{
+
+    $temp.val($(e.target).parents("div.sender").children("div.message-text").html()).select();
+  }
   document.execCommand("copy");
   $temp.remove();
   $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
@@ -890,10 +1045,112 @@ $('.conversation').on('click','.more-option-copy',function(e){
 $('.conversation').on('click','.fa-copy',function(e){
   let $temp = $("<input>");
   $("body").append($temp);
-  $temp.val($(e.target).parents("div.receiver").children("div.message-text").html()).select();
+  if($(e.target).parents("div.receiver").length){
+    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html()).select();
+  }else{
+    $temp.val($(e.target).parents("div.sender").children("div.message-text").html()).select();
+  }
   document.execCommand("copy");
   $temp.remove();
   $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
+});
+// more-option-share ****************************
+$('.conversation').on('click','.more-option-share',function(e){
+  Swal.fire({
+    icon: 'info',
+    title: 'این بخش  به زودی اضافه خواهد شد',
+    showConfirmButton: false,
+    timer: 3000
+  })
+});
+
+// more-option-recipient ****************************
+$('.conversation').on('click','.more-option-recipient',function(e){
+  Swal.fire({
+    icon: 'info',
+    title: 'این بخش  به زودی اضافه خواهد شد',
+    showConfirmButton: false,
+    timer: 3000
+  })
+});
+
+// more-option-nocomment ****************************
+$('.conversation').on('click','.more-option-nocomment',function(e){
+  let allowvalueComment = $(e.target).parents('li.more-option-nocomment')[0].value;
+  
+  let noCommentId = $(e.target).parents('div.sender').children('a').attr('id');
+  if(!noCommentId){
+    noCommentId = $(e.target).parents('div.receiver').children('a').attr('id');
+   }
+   if(allowvalueComment == 1){
+    allowvalueComment = allowvalueComment-1;
+   }else{
+    allowvalueComment = allowvalueComment+1;
+   }
+   allowComment(noCommentId , allowvalueComment);
+  
+});
+
+// more-option-delete ****************************
+$('.conversation').on('click','.more-option-delete',function(e){
+  let commentId = $(e.target).parents('div.sender').children('a').attr('id');
+  if(!commentId){
+   commentId = $(e.target).parents('div.receiver').children('a').attr('id');
+  }
+  deleteMessage(chanel_id , commentId);
+
+});
+
+// ************************* more option comment handle ****************************
+
+// more-option-fa-reply ****************************
+$('.conversation').on('click','.comment-cadr .fa-reply',function(e){
+  let replyeId = $(e.target).parents()[2].id;
+  let replyText = $($($(e.target).parents()[2]).children()[0]).children('div.message-text').html();
+  if(!replyText){
+    let targetFileName = $($($($(e.target).parents()[2]).children()[0]).children('div.archive_box_comment').children()[0]).children('img.archive_view_comment');
+    replyText = targetFileName.attr('alt')
+  }
+  if(!!$($('.prv_file')).children().length){
+    $('.reply_to').css({bottom: '139px'})
+    $('.conversation_comment').css({height: '67%'});
+  }else{
+    $('.reply_to').css({bottom: '60px'});
+    $('.conversation_comment').css({height: '83%'});
+  }
+  let outReplyeTo = 
+  `<div class="reply_to_content_box">
+      <i class="fas fa-times-circle"></i>
+      <span>
+          <h5>در پاسخ به :</h5>
+          <h6 clsss="${replyeId}">${replyText}</h6>
+      </span>
+  </div>`
+  
+  $('.reply_to').html(outReplyeTo)
+  $('.reply_to').show()
+});
+
+$('.reply_to').on('click','i.fa-times-circle',function(){
+  $('.reply_to').html('');
+  $('.reply_to').hide();
+  $('.conversation_comment').css({height: 'auto'});
+});
+
+// more-option-fa-copy ****************************
+$('.conversation').on('click','.comment-cadr .fa-copy',function(e){
+  Swal.fire({
+    icon: 'info',
+    title: 'این بخش  به زودی اضافه خواهد شد',
+    showConfirmButton: false,
+    timer: 3000
+  })
+});
+
+// more-option-fa-trash ****************************
+$('.conversation').on('click','.comment-cadr .fa-trash',function(e){
+  let commentId = $(e.target).parents()[2].id;
+  deletecomment(commentId)
 });
 
 // ************************* sendcomment ****************************
@@ -913,35 +1170,42 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
     success: function(response) {
       try{
           let res = jQuery.parseJSON(response);
-           // console.log(res);
-           if(!!$('.prv_file').children().length){
-            $('.upload_img_success').css({display : 'block'});
-            $('.upload_msg_success').css({display : 'block'});
-          
-            setTimeout(function(){
-              $('.msg_upload_bg').css({visibility: "hidden"});
-              $('.upload_img_success').css({display : 'none'});
-              $('.upload_msg_success').css({display : 'none'});
-              $('.sending').css({display : 'inline-flex'});
-            },7000);
-            setTimeout(function(){
-              $.each(uploader.files, function (i, file) {
-                uploader.removeFile(file);
-                $(`.msg_upload_lists li`).remove();
-                $(`.prv_file span`).remove();
-                preview_file = ``;
-                uploadFileShowModal = ``;
-              });
-              if ($('.prv_file').children().length == 0){
-                $('.prv_file').css({ visibility: "hidden" });
-              }
-            }, 7000);
-            listArchive = [];
-           }
-          
-         
-          $('textarea.form-control').val('')
-          get_comment_reply(primery_id);
+          if(res.result == "ok"){
+            if(!!$('.prv_file').children().length){
+              $('.upload_img_success').css({display : 'block'});
+              $('.upload_msg_success').css({display : 'block'});
+            
+              setTimeout(function(){
+                $('.msg_upload_bg').css({visibility: "hidden"});
+                $('.upload_img_success').css({display : 'none'});
+                $('.upload_msg_success').css({display : 'none'});
+                $('.sending').css({display : 'inline-flex'});
+              },7000);
+              setTimeout(function(){
+                $.each(uploader.files, function (i, file) {
+                  uploader.removeFile(file);
+                  $(`.msg_upload_lists li`).remove();
+                  $(`.prv_file span`).remove();
+                  preview_file = ``;
+                  uploadFileShowModal = ``;
+                });
+                if ($('.prv_file').children().length == 0){
+                  $('.prv_file').css({ visibility: "hidden" });
+                }
+              }, 7000);
+              listArchive = [];
+             }
+            $('textarea.form-control').val('')
+            get_comment_reply(primery_id);
+          }else{
+            Swal.fire({
+              icon: 'error',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 2000
+            })
+          }
+           
       }catch(err){
         console.log(err);
       }
@@ -955,9 +1219,47 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
   });
 };
 
+// ************************* deletecomment ****************************
+let deletecomment = (id) => {
+  $.ajax({
+    url: api_address + "/notices/delete_comment_reply",
+    type: "post",
+    data: {
+      comment_reply__id : id,
+  },
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      try{
+        let res = jQuery.parseJSON(response);
+        if(res.result == 'ok'){
+          get_comment_reply(primery_id)
+        }else{
+          console.log(res);
+
+        }
+      }catch (err){
+        console.log(err);
+      }
+    },
+    cache : function(response) {
+      console.log(response);
+    },
+    error: function(response) {
+      console.log(response);
+    },
+  });
+};
 // ************************* add_new_channel ****************************
 $(".new-chanel").click(function() {
-    $(".add_new_channel").css({ visibility: "inherit" });
+    // $(".add_new_channel").css({ visibility: "inherit" });
+    Swal.fire({
+      icon: 'info',
+      title: 'این بخش  به زودی اضافه خواهد شد',
+      showConfirmButton: false,
+      timer: 3000
+    })
 });
 
 $(".close_add").click(function() {

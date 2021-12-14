@@ -75,7 +75,6 @@
         border-top: 1px solid #000;
     }
     body {
-        /* background: url("http://shurl.esy.es/y") no-repeat fixed center; */
         background-size: cover;
     }
     
@@ -139,7 +138,6 @@
         margin: 0;
         height: 60px;
         width: 100%;
-        /* background-color: #eee; */
         z-index: 1000;
         background: linear-gradient(0deg, rgb(202 126 255) 0%, rgb(49 122 255 / 96%) 100%);
     }
@@ -265,9 +263,7 @@
         padding: 10px !important;
         background-color: #fbfbfb;
     }
-    /*#searchBox-inner input {
-    box-shadow: none;
-  }*/
+   
     
     .searchBox-inner input:focus {
         outline: none;
@@ -296,8 +292,6 @@
         background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(29,223,219,1) 60%, rgba(255,255,255,1) 100%);
     }
     .loading {
-        /* display:    none; */
-
         top:        0;
         left:       0;
         height:     100%;
@@ -408,7 +402,6 @@
     
     .newMessage-back {
         text-align: center;
-        /* vertical-align: baseline; */
         padding: 12px 5px !important;
         display: block;
         cursor: pointer;
@@ -476,9 +469,7 @@
         margin: 0 !important;
         height: 100%;
         border-radius: 24px 0 0 24px;
-        /*width: 100%;*/
         border-left: 1px solid rgba(0, 0, 0, 0.08);
-        /*overflow-y: auto;*/
     }
     
     .archive_view_comment{
@@ -528,9 +519,7 @@
     .message {
         padding: 0 !important;
         margin: 0 !important;
-        background-size: cover;
         overflow-y: auto;
-        /* border: 1px solid #f7f7f7; */
         background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgb(250 252 255) 100%);
         height: calc(100% - 120px);
         position: relative;
@@ -571,7 +560,6 @@
     }
     
     .message-main-receiver {
-        /*padding: 10px 20px;*/
         max-width: 100%;
     }
     
@@ -602,7 +590,6 @@
         width: auto !important;
         padding: 4px 10px 7px !important;
         border-radius: 10px 10px 10px 0;
-        /* background: #ffe291; */
         background: linear-gradient(0deg, rgb(255 255 255) 0%, rgb(73 255 120) 100%);
         font-size: 12px;
         text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
@@ -613,7 +600,6 @@
     .sender {
         float: left;
         width: auto !important;
-        /* background: #dcf8c6; */
         background: linear-gradient(0deg, rgb(253 253 253) 0%, rgb(58 164 255) 100%);
         border-radius: 10px 10px 0 10px;
         padding: 4px 10px 7px !important;
@@ -621,10 +607,25 @@
         text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         word-wrap: break-word;
     }
+    
+    
+    
+    /*conversation_message*/
+    .conversation_message{
+        height: auto;
+        width: auto;
+    }
+
+    /*conversation_comment*/
+    .conversation_comment{
+        height: auto;
+        width: auto;
+    }
+
+
     /*otion list*/
     
     .more-option {
-        /* visibility: hidden; */
         text-align: left;
         position: relative;
     }
@@ -724,6 +725,13 @@
         height: auto;
     }
 
+    .comment-cadr .fa-reply{
+        cursor: pointer;
+    }
+    .comment-cadr .fa-trash{
+        cursor: pointer;
+    }
+
      /*reply_comment*/
 
      .reply_comment{
@@ -737,6 +745,38 @@
         height: 100%;
         cursor: pointer;
         color: #939393;
+        text-decoration: none !important;
+    }
+
+    /*Reply to*/
+    .reply_to{
+        display: none;
+        position: absolute;
+        width: 100%;
+        background: #dbdbdb;
+        height: auto;
+        bottom: 139px;
+    }
+    .reply_to_content_box{
+        position: relative;
+        padding: 6px;
+    }
+    .reply_to_content_box span{
+        border-right: solid 2px yellow;
+        padding: 4px 13px !important;
+        display: inline-block;
+        margin-right: 40px;
+        background: #ffffff5e;
+    }
+    .reply_to_content_box i{
+        position: absolute;
+        right: 13px;
+        top: 30px;
+        font-size: 21px;
+    }
+    .reply_to_content_box i:hover{
+        cursor: pointer;
+        color: red;
     }
 
     /*Reply*/
@@ -822,6 +862,10 @@
     .reply div{
         height: auto;
     }
+
+    
+
+
     /*previwe file*/
     .prv_file{
         visibility: hidden;
@@ -1123,12 +1167,7 @@
         content: counter(percentage) '%';
       }
     
-      .swal2-container.swal2-center>.swal2-popup{
-        height: auto;
-    }
-    .swal2-html-container{
-        width: auto;
-    }
+
     
     @media screen and (min-width:1024px) and (max-width:2560px) {
         
