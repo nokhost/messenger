@@ -1,0 +1,45 @@
+.accordion-wrapper {
+    display: inline-block;
+    width: 88%;
+    margin: 0 ;
+  }
+  
+  .accordion + .title {
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+  }
+  
+  .accordion ~ .title strong {
+    line-height: 24px;
+    color: black;
+  }
+  
+  .accordion ~ .title .side-icon {
+    display: block;
+  }
+  
+  .accordion:checked ~ .title .side-icon {
+    display: none;
+  }
+  
+  .accordion ~ .title .down-icon {
+    display: none;
+  }
+  
+  .accordion:checked ~ .title .down-icon {
+    display: block;
+  }
+  
+  .accordion ~ .content {
+    display: none;
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .accordion:checked ~ .content {
+    display: block;
+  }
