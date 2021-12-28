@@ -1,0 +1,63 @@
+div.member-seen{
+    display: none;
+    position: fixed;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+div.seen-box{
+    width: 390px;
+    height: 500px;
+    margin: 4% auto;
+    background-color: white;
+    border-radius: 15px;
+}
+div.member-seen-box{
+    overflow: overlay;
+}
+div.member-seen-box::-webkit-scrollbar{
+    display: none;
+}
+.member-seen .row{
+    width: auto;
+    height: auto;
+}
+.member-seen-header{
+    background-color: #1ba8f0;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+.member-seen-header p{
+    display: inline-block;
+    margin: 15px 0;
+    
+}
+.member-seen-header i{
+    position: absolute;
+    right: 28px;
+    top: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.member-list-seen{
+    padding: 7px 24px 9px;
+    list-style: none;
+}
+.member-list-seen p{
+    display: inline-block;
+    
+}
+.member-list-seen li{
+    line-height: 0;
+    padding: 7px 24px 9px;
+    list-style: none;
+}
+.member-list-seen .fa-eye,.fa-clock{
+    float: left;
+}
