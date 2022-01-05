@@ -41,7 +41,6 @@
           <div class="row">
             <div class="clo-md-12 icon-header">
               <i class="fas fa-times-circle info-close"></i>
-              <i class="fas fa-trash"></i>
               <i class="far fa-edit info-edit"></i>
             </div>
           </div>
@@ -93,15 +92,10 @@
                 <i class="fas fa-chevron-left"></i>
                 <hr />
               </li>
-              <li class="menu-admin">
-                <i class="fas fa-user-shield"></i>
-                <p>مدیران</p>
-                <i class="fas fa-chevron-left"></i>
-                <hr />
-              </li>
+              
               <li class="menu-users">
                 <i class="fas fa-users"></i>
-                <p>اعضاء</p>
+                <p>افزودن اعضاء</p>
                 <i class="fas fa-chevron-left"></i>
                 <hr />
               </li>
@@ -199,6 +193,10 @@
                 </div>
                 <div class="row">
                   <div class="col-md-12">
+                    <div class="sellect_all-box">
+                      <label for="selsct-all-user-upadte-chanel">انتخاب همه :</label>
+                      <input type="checkbox" id="selsct-all-user-upadte-chanel">
+                    </div>
                     <ul class="users-list-chanel">
                     </ul>
                   </div>
@@ -239,6 +237,7 @@
     <div class="container">
       <div class="msg_upload_bg">
         <div class="msg_upload_box">
+          
           <span class="msg_upload_header">
             <img class="sending" src="./assets/images/sending.gif" alt="" />
             <div class="upload_img_success">
@@ -251,6 +250,10 @@
             </div>
           </span>
           <ul class="msg_upload_lists"></ul>
+          <span class="Cancel-send">
+            <p>لغو ارسال</p>
+            <i class="fas fa-window-close"></i>
+          </span>
           <span class="msg_upload_footer">
             <div class="upload_msg_success">
               <h4>پیام با موفقیت ارسال شد</h4>
@@ -545,10 +548,6 @@
             <div class="close_player">
               <i class="far fa-times-circle"></i>
             </div>
-            <div class="text_player">
-              <h2>پخش فایل صوتی</h2>
-            </div>
-            <br />
             <audio controls="" autoplay="" name="media"></audio>
           </div>
         </div>

@@ -17,9 +17,6 @@ div.seen-box{
     background-color: white;
     border-radius: 15px;
 }
-div.member-seen-box{
-    overflow: overlay;
-}
 div.member-seen-box::-webkit-scrollbar{
     display: none;
 }
@@ -48,6 +45,7 @@ div.member-seen-box::-webkit-scrollbar{
 .member-list-seen{
     padding: 7px 24px 9px;
     list-style: none;
+    overflow: scroll;
 }
 .member-list-seen p{
     display: inline-block;

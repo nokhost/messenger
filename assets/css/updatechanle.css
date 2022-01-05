@@ -101,6 +101,17 @@ div.info-name{
 .info-member-chanel li{
     padding:  0 40px;
 }
+.info-member-chanel li input{
+    display: none;
+}
+.info-member-chanel li .spinner-border{
+    position: relative;
+    top: inherit;
+    right: inherit;
+    width: 15px;
+    height: 15px;
+    float: left;
+}
 .info-member-chanel li .fa-user-shield{
     float: left;
 }
@@ -424,6 +435,16 @@ div.add-usre-chanel{
 }
 .update-chanel{
     display: none;
+}
+.sellect_all-box{
+    text-align: center;
+    display: none;
+}
+@media screen and (min-width:1440px) and (max-width:2560px) {
+    .update_info_chanel{
+        right: 30%;
+        left: 30%;
+    }
 }
 @media screen and (min-width:1028px) and (max-width:1440px) {
     .update_info_chanel{

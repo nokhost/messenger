@@ -33,7 +33,7 @@
     
     .play_audio{
         position: fixed;
-        background: gray;
+        background: #808080ab;
         top: 0;
         bottom: 0;
         left: 0;
@@ -41,8 +41,9 @@
         z-index: 1;
         height: 100%;
         text-align: center;
-        opacity: .8;
         display: none;
+        margin: auto;
+        padding: 211px 0;
     }
     .run_player{
         display: block;
@@ -50,16 +51,17 @@
     .box_player{
         background-color: aqua;
         opacity: 1;
-        width: 23%;
+        width: 319px;
         height: auto;
-        position: absolute;
-        top: 32%;
-        left: 35%;
-        border-radius: 40px;
+        /* position: absolute; */
+        display: inline-block;
+        /* top: 32%; */
+        /* left: 0; */
+        border-radius: 15px;
     }
     .close_player{
         text-align: right;
-        padding: 17px;
+        padding: 3px;
         font-size: 30px;
         width: fit-content;
         height: fit-content;
@@ -107,6 +109,7 @@
         height: 100%;
         float: right;
         border-radius: 0 24px 24px 0;
+        scrollbar-width: none; 
     }
     
     .side-one {
@@ -1303,6 +1306,9 @@
         border-radius: 19px;
         overflow: auto;
     }
+    .msg_upload_box::-webkit-scrollbar {
+        display: none;
+      }
     .msg_upload_lists{
         padding: 0 10px;
     }
@@ -1342,7 +1348,22 @@
     .msg_upload_file_box h5 i.fa-check-circle{
         color: rgb(4, 172, 4);
     }
-    
+    .Cancel-send{
+        font-weight: 900;
+        color: white;
+        background-color: #ffd400;
+        cursor: pointer;
+        padding: 10px 0;
+        border-radius: 8px;
+        display: block;
+        width: 135px;
+        margin: 10px auto;
+        line-height: 0;
+    }
+    .Cancel-send p{
+        display: inline-block;
+        margin-left: 8px;
+    }
 
     @keyframes growProgressBar {
         0%, 33% { --pgPercentage: 0; }
@@ -1378,7 +1399,12 @@
         counter-reset: percentage var(--value);
         content: counter(percentage) '%';
       }
-    
+    .text-info{
+        top: 35%;
+        right: 100px;
+        width: 100px;
+        height: 100px;
+    }
 
     
     @media screen and (min-width:1440px) and (max-width:2560px) {
