@@ -397,6 +397,15 @@ div.add-admin-chanel{
 .student-term li hr{
     margin: 12px 0 0 0;
 }
+.users-list-chanel{
+    overflow: auto;
+    height: 145px;
+    -ms-overflow-style: none; 
+    scrollbar-width: none;  
+}
+.users-list-chanel::-webkit-scrollbar {
+    display: none;
+  }
 .users-list-chanel li{
     padding: 0 40px 15px;
     cursor: pointer;

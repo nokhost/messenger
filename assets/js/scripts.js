@@ -3,7 +3,7 @@ let api_address = "";
 let token = "";
 if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "94C72F95B8B929D01BFB578CE7DED509";
+  token = "2AD0E9C909A337FF9CB8483C6DDF4A8D";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -29,6 +29,17 @@ let listChanel = ``;
 let addmembers = ``;
 let upadtememberchanel = [];
 let sendData = 'send'
+let techerlist = ''
+let personelList = ''
+let studentList = ''
+let memberInfo = [];
+let timerint = {};
+let headePost = ``;
+
+// ************************* exit-mesengher ****************************
+$('.exit-mesengher').on('click',function (){
+  window.close()
+});
 
 // ************************* list_channel ****************************
 let ChanleList = ()=>{
@@ -138,13 +149,14 @@ $(window).on('load',function () {
 
 // ************************* sideBar ****************************
 $('.sideBar').on('click', function() {
-  if (parseInt($(window).width()) < 768) {
+  if (parseInt($(window).width()) < 992) {
       $('.side').hide();
+      $('.conversation').show();
   }
 });
 
 $(window).resize(function() {
-  if (parseInt($(window).width()) > 768) {
+  if (parseInt($(window).width()) > 992) {
       $('.side').show();
   }
 
@@ -154,7 +166,6 @@ $(window).resize(function() {
 let conversation = '';
 let number_rows = 0;
 let heade_chanel_name = '';
-
 
 $(".sideBar").on("click", ".sideBar-body", function(e) {
   $('.heading-refresh i').css({"visibility":"inherit"});
@@ -231,6 +242,8 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
               description = description.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
               description = description.replace(/\n/g, '<br/>');
               // Echo link
+              let regx =/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+              let emoji = description.replace(regx, match => `[e-${match.codePointAt(0).toString(16)}]`);
                 
                 if (!!(element.list_archive.length)) {
                   let show_file = '';
@@ -299,16 +312,15 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                     comment = 'اولین یادداشت را بگذارید';
                 }
                 if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
-                  noCommentText = `فعال کردن یادداشت ها`
+                  noCommentText = `فعال کردن یادداشت ها`;
+                  enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
                 }else if(!!(element.allow_comment == 0) &&  !!(element.count_comment > 0)){
                   noCommentText = `فعال کردن یادداشت ها`
                 }else{
                   noCommentText = 'غیر فعال کردن یادداشت ها';
                 }
-                if(element.allow_comment !== '0'){
+                if(!(element.allow_comment == 0)){
                   enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
-                }else{
-                  enabelcomment = ''
                 }
                 if(element.status == 1){
                   moreOption = `<i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
@@ -405,7 +417,6 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
         }else{
           $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
         }
-        
         conversation = out;
         commentBox = 'close';
       }catch(err){
@@ -429,6 +440,7 @@ let player =(session ,file__id )=>{
     `;
     $('audio').html(out);
 }
+
 $('.close_player').on("click",function () {
   $('.play_audio').removeClass('run_player');
   $('.box_player audio').trigger("pause");
@@ -494,21 +506,6 @@ $(window).on('click', function(e) {
     $(".selected").last().removeClass('selected');
   }
 
-  // *** close prev list file for upload *** 
- 
-  if(!$(e.target).parents('.conversation').length &&!$(e.target).parents('.prv_file').length && $(e.target).attr('class') !== 'fas fa-times'){
-      // $.each(uploader.files, function (i, file) {
-      //   uploader.removeFile(file);
-      //   $(`.msg_upload_lists li`).remove();
-      //   $(`.prv_file span`).remove();
-      //   preview_file = ``;
-      //   uploadFileShowModal = ``;
-      // });
-      // if ($('.prv_file').children().length == 0){
-      //   $('.prv_file').css({ visibility: "hidden" });
-      // }
-  }
-
   // *** clear box msg after click other chanel *** 
 
   if(!$(e.target).parents('.conversation').length){
@@ -543,7 +540,7 @@ $('.heading-back').on('click', function() {
 
 $(".heading-refresh i").on("click", function() {
   if(commentBox == 'open'){
-    get_comment_reply(primery_id)
+    get_comment_reply(primery_id,headePost)
   }else{
 
     get_news_channel(15 , chanel_id)
@@ -569,32 +566,43 @@ let sendMessage  = (id , text , archive)=>{
     success: function(response) {
       try{
           let res = jQuery.parseJSON(response);
-          if(!!$('.prv_file').children().length){
-            $('.upload_img_success').css({display : 'block'});
-            $('.upload_msg_success').css({display : 'block'});
+          if (res.result == 'ok') {
+            if(!!$('.prv_file').children().length){
+              $('.upload_img_success').css({display : 'block'});
+              $('.upload_msg_success').css({display : 'block'});
+            
+              setTimeout(function(){
+                $('.msg_upload_bg').css({visibility: "hidden"});
+                $('.upload_img_success').css({display : 'none'});
+                $('.upload_msg_success').css({display : 'none'});
+                $('.sending').css({display : 'inline-flex'});
+              },5000);
+              setTimeout(function(){
+                $.each(uploader.files, function (i, file) {
+                  uploader.removeFile(file);
+                  $(`.msg_upload_lists li`).remove();
+                  $(`.prv_file span`).remove();
+                  preview_file = ``;
+                  uploadFileShowModal = ``;
+                });
+                if ($('.prv_file').children().length == 0){
+                  $('.prv_file').css({ visibility: "hidden" });
+                }
+              }, 5000);
+              listArchive = [];
+             }
+            $('textarea.form-control').val('')
+            get_news_channel(15 , chanel_id);
+          }else{
+            console.log(res);
+            Swal.fire({
+              icon: 'error',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
           
-            setTimeout(function(){
-              $('.msg_upload_bg').css({visibility: "hidden"});
-              $('.upload_img_success').css({display : 'none'});
-              $('.upload_msg_success').css({display : 'none'});
-              $('.sending').css({display : 'inline-flex'});
-            },5000);
-            setTimeout(function(){
-              $.each(uploader.files, function (i, file) {
-                uploader.removeFile(file);
-                $(`.msg_upload_lists li`).remove();
-                $(`.prv_file span`).remove();
-                preview_file = ``;
-                uploadFileShowModal = ``;
-              });
-              if ($('.prv_file').children().length == 0){
-                $('.prv_file').css({ visibility: "hidden" });
-              }
-            }, 5000);
-            listArchive = [];
-           }
-          $('textarea.form-control').val('')
-          get_news_channel(15 , chanel_id);
       }catch(err){
         console.log(err);
       }
@@ -605,9 +613,7 @@ let sendMessage  = (id , text , archive)=>{
       console.log(ajaxOptions);
       console.log(thrownError);
     }
-  });
- 
-  
+  }); 
 }
 
 $('.reply-send i').on('click', function() {
@@ -759,7 +765,6 @@ let deleteMessage  = (channel , news)=>{
               let res = jQuery.parseJSON(response);
               if(res.result == 'ok'){
                 get_news_channel(15 , chanel_id);
-                console.log();
               }else{
               Swal.fire({
                 icon: 'error',
@@ -1053,9 +1058,6 @@ $('.Cancel-send').on('click' , function () {
       if ($('.prv_file').children().length == 0){
         $('.prv_file').css({ visibility: "hidden" });
       }
-      
-        
-      
 });
 // ************************* allow_comment ****************************
 let allowComment = (id , allow) => {
@@ -1151,9 +1153,9 @@ let get_comment_reply = (id , componentthispost) =>{
             commentsArry.forEach((elem) =>{
               if(elem.comment_reply__id == element.reply_to){
                 if(elem.description){
-                  replyComment = `<a class="reply_comment"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.description}</h6> </a> <br>`;
+                  replyComment = `<a class="reply_comment" href="#${element.reply_to}"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.description}</h6> </a> <br>`;
                 }else{
-                  replyComment = `<a class="reply_comment"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.fileName}</h6> </a> <br>`;
+                  replyComment = `<a class="reply_comment" href="#${element.reply_to}"> <h5>در پاسخ به:</h5><h6 class="${element.reply_to}">${elem.fileName}</h6> </a> <br>`;
                 }
               }
             })
@@ -1266,7 +1268,7 @@ let get_comment_reply = (id , componentthispost) =>{
 }
 
 $('.conversation').on('click', '.comment', function(e) {
-  let headePost = ``
+  
   if ($(this).parents('div.receiver').length) {
     let name = '';
     let text = $(this).parents('div.receiver').children('div.message-text').html();
@@ -1318,7 +1320,6 @@ $('.conversation').on('click', '.comment', function(e) {
     `
     
   }
- 
     $('textarea.form-control').val('');
     primery_id = e.currentTarget.id;
     e.preventDefault();
@@ -1337,6 +1338,23 @@ $("#conversation").on('click', '.close-comment-box', function() {
     $('.conversation_comment').hide();
 });
 
+// ************************* go to replay handle ****************************
+$(".conversation").on('click','.reply_comment' , function(e) {
+	e.preventDefault();
+  if($($($(this).attr("href")).children()[0]).hasClass( "go_to_reply" )){
+    $($($(this).attr("href")).children()[0]).removeClass('go_to_reply');
+  }
+  let $scrollTo = $(`#${$($(this).attr("href")).attr('id')}`);
+  let $container =  $(".comment-box");
+
+  $container.animate({
+    scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
+  },'slow');
+  
+  $($($(this).attr("href")).children()[0]).addClass('go_to_reply');
+  
+});
+
 // ************************* more option handle ****************************
 
 // open other option ****************************
@@ -1352,7 +1370,7 @@ $(".conversation").on('click', '.fa-ellipsis-v', function(e) {
 $('.conversation').on('click', '.more-option-comments', function(e) {
   primery_id = e.currentTarget.id;
   e.preventDefault();
-  get_comment_reply(primery_id);
+  get_comment_reply(primery_id,headePost);
   commentBox = 'open';
   postId = $(e.target).parents()[1].id;
 });
@@ -1430,7 +1448,6 @@ $('.conversation').on('click','.more-option-recipient',function(e){
   let newsid = $(this).parents('div.receiver').children('a').attr('id')
   if(!(newsid)){
     newsid = $(this).parents('div.sender').children('a').attr('id')
-    console.log(newsid);
   }
   if (newsid){
     
@@ -1448,9 +1465,9 @@ $('.conversation').on('click','.more-option-nocomment',function(e){
     noCommentId = $(e.target).parents('div.receiver').children('a').attr('id');
    }
    if(allowvalueComment == 1){
-    allowvalueComment = allowvalueComment-1;
+    allowvalueComment = allowvalueComment-1 ;
    }else{
-    allowvalueComment = allowvalueComment+1;
+    allowvalueComment = allowvalueComment+1 ;
    }
    allowComment(noCommentId , allowvalueComment);
   
@@ -1582,7 +1599,7 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
               listArchive = [];
              }
             $('textarea.form-control').val('')
-            get_comment_reply(primery_id);
+            get_comment_reply(primery_id,headePost);
           }else{
             Swal.fire({
               icon: 'error',
@@ -1638,7 +1655,7 @@ let deletecomment = (id) => {
           try{
             let res = jQuery.parseJSON(response);
             if(res.result == 'ok'){
-              get_comment_reply(primery_id)
+              get_comment_reply(primery_id,headePost)
             }else{
               console.log(res);
     
@@ -1675,6 +1692,8 @@ let deletecomment = (id) => {
   
 };
 // ************************* add_new_channel ****************************
+
+//**************create new chanel
 let insert_channel = (chanelData , arrymember)=>{
     let arr_member = JSON.stringify(arrymember)
     let name = ''
@@ -1696,7 +1715,6 @@ let insert_channel = (chanelData , arrymember)=>{
       arr_member : arr_member,
       allow_comment : allow_comment,
       image_channel : chanelImage,
-
   },
     beforeSend: function(request) {
         request.setRequestHeader("Authorization", "Bearer " + token);
@@ -1712,14 +1730,18 @@ let insert_channel = (chanelData , arrymember)=>{
             timer: 3000
           })
           console.log(res);
+          ChanleList();
+          $(".close_add").click();
         }else{
           console.log();
+          arrymember = [];
           Swal.fire({
             icon: res.result,
             title: res.data.message,
             showConfirmButton: false,
             timer: 3000
           })
+          
         }
       }catch (err){
         console.log(err);
@@ -1738,7 +1760,7 @@ $('.create_chanel button').on('click',function() {
   let is_admin = 0 ;
   for (let i = 0; i < $('.chanel_list_member').children().length; i++) {
     member__id = $('.chanel_list_member').children()[i].id;
-    if($(`#${member__id} .member_admin input`).prop('checked')){
+    if($(`.chanel_list_member li#${member__id} .member_admin input`).prop('checked')){
       is_admin = 1
     }else{
       is_admin = 0
@@ -1747,30 +1769,41 @@ $('.create_chanel button').on('click',function() {
         "member__id" : member__id,
         "is_admin" : is_admin
       }
-      arrymember.push(arrymemberobject);
+      arrymember = $.grep(arrymember, function(e){ 
+        return e.member__id !== member__id; 
+      });
+    arrymember.push(arrymemberobject);
   }
   insert_channel(chanelData , arrymember);
-
 });
+
+//************** show wizard => add chanel
 $(".new-chanel").click(function() {
     $(".add_new_channel").css({ visibility: "inherit" });
-    
 });
+
+//************* close wizard box => add chanel
 $(".close_add").click(function() {
   chanelData =[];
   allmember = [];
   arrymember = [];
   chanelImage = ``;
   $('#channelName').val('')
+  memberInfo = []
+  sendMemberToNextStep(memberInfo ,'' , 'next' )
   $.each(FileUpload.files, function (file) {
   })
     $(".add_new_channel").css({ visibility: "hidden" });
     $('.step_2').css({ display: "none" });
     $('.step_3').css({ display: "none" });
     $('.step_1').css({ display: "block" });
+    $('.step_1 .enable_comments input').prop('checked' , false);
 
 });
+
+//************* next step1 to step2 wizard box => add chanel
 $('.step_1 .next_btn button').on('click', function(){
+  $('.added_person').css({visibility : "hidden"});
   let chanelName = $('#channelName').val();
   let allowComment = 0;
   if(!(chanelName == '')){
@@ -1812,29 +1845,19 @@ $('.step_1 .next_btn button').on('click', function(){
     })
   }
 });
+
+//************* preve step2 to step1 wizard box => add chanel
 $('.preve_step_1 button').on('click', function(){
   $('.step_2').css({ display: "none" });
   $('.step_1').css({ display: "block" });
 });
+
+//************* next step2 to step3 wizard box => add chanel
 $('.step_2 .next_btn button').on('click', function(){
-  let cuntmember = false;
-  allmember.forEach(element  => {
-    if (element.memberlist.length){
-      cuntmember = true;
-    }
-    
-  })
-  let allowNextStep = false ;
-  for (let i = 0; i < $('.badge-pill').length; i++) {
-    const element = $('.badge-pill')[i];
-    if($(element).html() !== ''){
-      allowNextStep = true
-    }
-  }
-  if(allowNextStep && cuntmember){
+  if(allmember.length){
     $('.step_2').css({ display: "none" });
     $('.step_3').css({ display: "block" });
-    sendMemberToNextStep('' , '' , 'next')
+    sendMemberToNextStep(memberInfo , '' , 'next')
   }else{
     $('#channelName').css({ border: "red solid 1px" });
     const Toast = Swal.mixin({
@@ -1853,11 +1876,36 @@ $('.step_2 .next_btn button').on('click', function(){
       title: 'باید حداقل یک عضو انتخاب کنید'
     })
   }
+  
 });
+
+//************* preve step3 to step2 wizard box => add chanel
 $('.preve_step_2 button').on('click', function(){
   $('.step_3').css({ display: "none" });
   $('.step_2').css({ display: "block" });
+  $('.added_person').css({ visibility: "hidden" });
+  let member__id = ''
+  let is_admin = 0 ;
+  for (let i = 0; i < $('.chanel_list_member').children().length; i++) {
+    member__id = $('.chanel_list_member').children()[i].id;
+    if($(`.chanel_list_member li#${member__id} .member_admin input`).prop('checked')){
+      is_admin = 1
+    }else{
+      is_admin = 0
+    }
+    let arrymemberobject = {
+        "member__id" : member__id,
+        "is_admin" : is_admin
+      }
+      arrymember = $.grep(arrymember, function(e){ 
+        return e.member__id !== member__id; 
+      });
+    arrymember.push(arrymemberobject);
+  }
 });
+
+//************* upload image wizard box => add chanel
+
 $("#profile-image1").on("click", function() {
   // $("#profile-image-upload").click();
   Swal.fire({
@@ -1943,65 +1991,20 @@ FileUpload.bind('UploadComplete', function (up, file , info) {
   });
 });
 
-
-// *********** delete member
+// *********** delete member final step wizard box => add chanel
 $('.chanel_list_member').on('click','.member_delete i',function(){
-  function arrayRemove(arr, value) { 
-    
-    return arr.filter(function(ele){ 
-        return ele != value; 
-    });
-}
+  
   let tagetId = $(this).parents('li').attr('id');
 
-  const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-      confirmButton: 'btn btn-success',
-      cancelButton: 'btn btn-danger'
-    },
-    buttonsStyling: false,
-    
+  memberInfo = $.grep(memberInfo, function(e){ 
+    return e.id != tagetId; 
+
   });
-  swalWithBootstrapButtons.fire({
-    title: 'آیا کاربر حذف شود؟',
-    text: "در صورت کلیک روی گزینه بله کاربر شما از لیست اعضای کانال حذف خواهد شد!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'بله',
-    cancelButtonText: 'خیر',
-    reverseButtons: true
-  }).then((result) => {
-    if (result.isConfirmed) {
-      allmember.forEach((elem , index) => {
-        elem.memberlist.forEach((element ,i) => {
-          if (tagetId == element.id){
-            let result = arrayRemove(allmember[index].memberlist, element);
-            allmember[index].memberlist = result
-            sendMemberToNextStep('' , '', 'next')
-          }
-        });
-      });
-      swalWithBootstrapButtons.fire({
-        title: 'حذف شد!',
-        text: 'کاربر شما با موفقیت حذف شد',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1500,
-      })
-    }else if (result.dismiss === Swal.DismissReason.cancel) {
-      swalWithBootstrapButtons.fire({
-          title: 'لغو شد',
-          text: "حذف کاربر لغو شد  :)",
-          icon: 'error',
-          showConfirmButton: false,
-          timer: 1500,
-        })
-    }
-  })
+  sendMemberToNextStep(memberInfo ,'' , 'next' )
   
 });
 
-// *********** add teacher 
+// *********** add teacher for add new chanel and  update member chanel in the edite chanel 
 
 let get_list_teacher = (Location)=>{
   $.ajax({
@@ -2011,6 +2014,21 @@ let get_list_teacher = (Location)=>{
       status : 'all',
     },
     beforeSend: function(request) {
+      let loading =
+      `
+      <li class="loadinglist">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </li>
+      `
+      if(Location == 'update-chanel'){
+        $('.users-list-chanel').html(loading)
+
+      }
+      if(Location == 'add-chanel'){
+        $('.person_list').html(loading)
+      }
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
@@ -2018,6 +2036,7 @@ let get_list_teacher = (Location)=>{
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           let list_teacher = res.data.Rows;
+          techerlist = list_teacher;
           let out_list_techer = ``
           let input = '<input type="checkbox">'
           list_teacher.forEach(element => {
@@ -2027,12 +2046,9 @@ let get_list_teacher = (Location)=>{
               addmembers.forEach(el => {
                if(el.user__id == element.teacher__id){
                  input = `<input type="checkbox" checked>`
-                 
                 }
               });
-
-
-              out_list_techer += 
+              out_list_techer +=
               `
               <li id="${element.teacher__id}">
               <i class="fas fa-chalkboard-teacher"></i>
@@ -2041,12 +2057,8 @@ let get_list_teacher = (Location)=>{
               </li>
               `
               input = `<input type="checkbox">`
-              
-              
-              
-              
             }else if(Location == 'add-chanel'){
-              out_list_techer += 
+              out_list_techer +=
             `
             <li class="teacher">
               <div class="person_icon">
@@ -2085,21 +2097,39 @@ let get_list_teacher = (Location)=>{
   });
 }
 $('.teacher').on('click',function () {
+  checkSellectInput('.header_person_box_checkbox input','.person_checkbox input')
   $('.title_added_person h5').html('انتخاب معلم');
-  $('.header_person_box_checkbox input').prop('checked', false);
-  get_list_teacher('add-chanel')
-  $(".add_btn_person").css({ visibility: "inherit" });
+  if (techerlist == ''){
+    get_list_teacher('add-chanel')
+  }else{
+    handelUsersList('teacher','add-chanel');
+  }
   $(".added_person").css({ visibility: "inherit" });
   $(".person_list").css({ visibility: "inherit" });
+  $("li.student .accordion-wrapper .accordion").prop('checked' , false)
 
 });
 
-// *********** add personel
+// *********** add personel for add new chanel and  update member chanel in the edite chanel 
 let get_list_personel = (Location)=>{
   $.ajax({
     url: api_address + "/users/get_list_personel",
     type: "post",
     beforeSend: function(request) {
+      let loading =
+      `
+      <li class="loadinglist">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </li>
+      `
+      if(Location == 'update-chanel'){
+        $('.users-list-chanel').html(loading)
+      }
+      if(Location == 'add-chanel'){
+        $('.person_list').html(loading)
+      }
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
@@ -2107,6 +2137,7 @@ let get_list_personel = (Location)=>{
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           let list_personel = res.data.Rows;
+          personelList = list_personel;
           let out_list_personel= ``
           let input = '<input type="checkbox">'
           list_personel.forEach(element => {
@@ -2169,15 +2200,19 @@ let get_list_personel = (Location)=>{
   });
 }
 $('.personel').on('click',function () {
+  checkSellectInput('.header_person_box_checkbox input','.person_checkbox input')
   $('.title_added_person h5').html('انتخاب پرسنل');
-  $('.header_person_box_checkbox input').prop('checked', false);
-  get_list_personel('add-chanel')
-  $(".add_btn_person").css({ visibility: "inherit" });
+  if (personelList == '') {
+    get_list_personel('add-chanel')
+  }else{
+    handelUsersList('personel','add-chanel');
+  }
   $(".added_person").css({ visibility: "inherit" });
   $(".person_list").css({ visibility: "inherit" });
+  $("li.student .accordion-wrapper .accordion").prop('checked' , false)
 });
 
-// *********** add student
+// *********** add student and get list of class for add new chanel and  update member chanel in the edite chanel 
 let classes_of_branch = (Location)=>{
   $.ajax({
     url: api_address + "/amoozesh/classes_of_branch",
@@ -2193,6 +2228,7 @@ let classes_of_branch = (Location)=>{
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           let list_student = res.data.Rows;
+          studentList = list_student
           let out_list_student = ``
           list_student.forEach(element => {
             if(Location == 'student'){
@@ -2252,6 +2288,20 @@ let list_student_of_class = (classid , branchid , Location)=>{
       branch__id : branchid
     },
     beforeSend: function(request) {
+      let loading =
+      `
+      <li class="loadinglist">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </li>
+      `
+        if(Location == 'classesOfBranch'){
+          $('.person_list').html(loading)
+        }
+        if(Location == 'student-term'){
+          $('.users-list-chanel').html(loading)
+        }
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
@@ -2317,7 +2367,7 @@ let list_student_of_class = (classid , branchid , Location)=>{
           if(Location == 'classesOfBranch'){
             $('.person_list').html(out_list_student);
             enablechecked()
-            $(".add_btn_person").css({ visibility: "inherit" });
+            // $(".add_btn_person").css({ visibility: "inherit" });
             $(".added_person").css({ visibility: "inherit" });
             $(".person_list").css({ visibility: "inherit" });
           }else if(Location == 'student-term'){
@@ -2339,150 +2389,285 @@ let list_student_of_class = (classid , branchid , Location)=>{
     }
   });
 }
-
 $('.student').on('click',function () {
   $(".added_person").css({ visibility: "hidden" });
   $(".person_list").css({ visibility: "hidden" });
-  $(".add_btn_person").css({ visibility: "hidden" });
-  classes_of_branch('student')
-  
+  if (studentList == '') {
+    classes_of_branch('student')
+  }else{
+    handelUsersList('student');
+  }
+  checkSellectInput('.header_person_box_checkbox input','.person_checkbox input')
 });
 $('.classesOfBranch').on('click','li',function () {
   $('.title_added_person h5').html($(this).text());
-  $('.header_person_box_checkbox input').prop('checked', false);
   let classid = this.id;
   let branchid = $(this).children('p').attr('id');
-
   list_student_of_class(classid , branchid , 'classesOfBranch')
-})
+});
 
-// ***********
-$( ".header_person_box_checkbox input" ).change(function() {
-    let $input = $( this );
-    if($input.is( ":checked" )&&$('.person_list').children().length){
-      $('.person_checkbox input').prop('checked', true);
-      // $(".add_btn_person").css({ visibility: "inherit" });
-    }else{
-      $('.person_checkbox input').prop('checked', false);
-      // $(".add_btn_person").css({ visibility: "hidden" });
+// *************** handel user list for Reduce requset to server
+let handelUsersList = (roll,location)=>{
+  if (roll == 'teacher') {
+          let out_list_techer = ``
+          let input = '<input type="checkbox">'
+          techerlist.forEach(element => {
+           
+            if(location == 'update-chanel'){
+             
+              addmembers.forEach(el => {
+               if(el.user__id == element.teacher__id){
+                 input = `<input type="checkbox" checked>`
+                }
+              });
+              out_list_techer +=
+              `
+              <li id="${element.teacher__id}">
+              <i class="fas fa-chalkboard-teacher"></i>
+                <p>${element.name} ${element.family}</p>
+                ${input}
+              </li>
+              `
+              input = `<input type="checkbox">`
+            }else if(location == 'add-chanel'){
+              out_list_techer +=
+            `
+            <li class="teacher">
+              <div class="person_icon">
+                  <i class="fas fa-chalkboard-teacher"></i>
+              </div>
+              <div class="person_name">
+                  <h5>${element.name} ${element.family}</h5>
+              </div>
+              <div class="person_checkbox">
+                  <input id="${element.teacher__id}" class="teacher" type="checkbox">
+              </div>
+            </li>
+            `
+            }
+            
+          });
+          if(location == 'update-chanel'){
+            $('.users-list-chanel').html(out_list_techer)
+          }else if(location == 'add-chanel'){
+            $('.person_list').html(out_list_techer)
+          }
+          enablechecked()
+  }
+  if(roll == 'personel'){
+    let out_list_personel= ``
+    let input = '<input type="checkbox">'
+    personelList.forEach(element => {
+      if(location == 'add-chanel'){
+        out_list_personel += 
+        `
+        <li class="personel">
+          <div class="person_icon">
+              <i class="fas fa-user-tie"></i>
+          </div>
+          <div class="person_name">
+              <h5>${element.f_name} ${element.l_name}</h5>
+          </div>
+          <div class="person_checkbox">
+              <input id="${element.personel__id}" class="personel" type="checkbox">
+          </div>
+        </li>
+        `
+      }else if(location == 'update-chanel'){
+        addmembers.forEach(el => {
+          if(el.user__id == element.personel__id){
+            input = `<input type="checkbox" checked>`
+            
+           }
+         });
+
+        out_list_personel += 
+        `
+        <li id = "${element.personel__id}">
+        <i class="fas fa-user-tie"></i>
+          <p>${element.f_name} ${element.l_name}</p>
+          ${input}
+        </li>
+        
+        `
+        input = `<input type="checkbox">`
+      }
+      
+    });
+    if(location == 'add-chanel'){
+      $('.person_list').html(out_list_personel)
+      enablechecked()
+    }else if(location == 'update-chanel'){
+      $('.users-list-chanel').html(out_list_personel)
     }
-})
+  }
+
+  if(roll == 'student'){
+    let out_list_student = ``
+    studentList.forEach(element => {
+      if(roll == 'student'){
+        out_list_student += 
+        `
+        <li id="${element.class__id}">
+          <i class="fas fa-book-open"></i>
+          ${element.name_class}
+          <span class="badge badge-primary badge-pill">${element.count_student}</span>
+          <p id="${element.branch__id}"></p>
+          <hr>
+        </li>
+
+        `
+      }else if(roll == 'position-student'){
+        out_list_student += 
+      `
+      <li id="${element.class__id}">
+        <i class="fas fa-book-open"></i>
+        <p id="${element.branch__id}">${element.name_class}</p>
+        <span></span>
+        <hr>
+      </li>
+
+      `
+      }
+      
+    });
+    if(roll == 'student'){
+      $('.classesOfBranch').html(out_list_student)
+    }else if(roll == 'position-student'){
+      $('.student-term').html(out_list_student)
+    }
+  }
+}
+
+// *************** input sellect all member for  => add chanel
+$( ".header_person_box_checkbox input" ).change(function() {
+  if ($('.person_checkbox input').length) {
+    selectAndUnsellect($(this) , '.person_checkbox input');
+  }else{
+    $('.header_person_box_checkbox input').prop('checked' , false)
+  }
+});
+
+// *************** input sellect member for  => add chanel
 $('.person_list').on('change','.person_checkbox input',function() {
   let $input = $( this );
-  let inputarry = $('.person_list').children('li').children('div.person_checkbox').children();
-  let test = '';
-  for (let i = 0; i < inputarry.length; i++) {
-    
-    test += $(inputarry[i]).prop('checked');
-    test = test.replace('false' , ' ')
-    if(test == ' '){
-      
-      // $(".add_btn_person").css({ visibility: "hidden" });
-    }else{
-    }
-    
+  let name = ''
+  let posion = ''
+  if ($input.parents('li.teacher').length){
+    name = $input.parents('li.teacher').children('div.person_name').children().text();
+    posion = 'teacher'
+  }else if($input.parents('li.personel').length){
+    name = $input.parents('li.personel').children('div.person_name').children().text();
+    posion = 'personel'
+  }else if($input.parents('li.student').length){
+    name = $input.parents('li.student').children('div.person_name').children().text();
+    posion = 'student'
   }
-  if($input.is( ":checked" )){
+  if($input.prop('checked')){
+    let creatObjectMember =
+      {
+        "name" : name,
+        "id" : $input.attr('id'),
+        "termDescription" : $('.title_added_person').text(),
+        "posion" : posion,
+      }
+      memberInfo.push(creatObjectMember);
+    }
+    if(!($input.prop('checked'))){
+      memberInfo = $.grep(memberInfo, function(e){ 
+        return e.id != $input.attr('id'); 
+
+      });
+    }
+    sendMemberToNextStep(memberInfo)
+
+    if($input.is( ":checked" )){
     // $(".add_btn_person").css({ visibility: "inherit" });
   }else{
     $( ".header_person_box_checkbox input" ).prop('checked', false);
-    
-
   }
 });
 
-$('.add_btn_person').on('click',function () {
-  let inputarry = $('.person_list').children('li').children('div.person_checkbox').children();
-  let memberInfo = [];
-  allowsendImfo = '';
-  for (let i = 0; i < inputarry.length; i++) {
-    if ($(inputarry[i]).prop('checked')) {
-      allowsendImfo = true;
-     let creatObjectMember =
-      {
-        "name" : $(inputarry[i]).parents('li').children('div.person_name').children().text(),
-        "id" : $(inputarry[i]).attr('id'),
-        "termDescription":$('.title_added_person').text(),
+// ***************  selectAndUnsellect all member function => add chanel
+let selectAndUnsellect = (inputAll , inputList , location)=>{
+  let unSellectAll = ''
+  let listElement = ''
+  if (inputAll.prop('checked')) {
+    for (let index = 0; index < $(`${inputList}`).length; index++) {
+      if(location == 'edit'){
+        listElement = $($(`${inputList} input`)[index]).prop('checked')
+      }else{
+        listElement = $($(`${inputList}`)[index]).prop('checked')
       }
-      memberInfo.push(creatObjectMember);
-    }else{
-      if(!allowsendImfo){
-        allowsendImfo = false;
+      let id = ($(`${inputList}`)[index]).id;
+      if( !(listElement)){
+        $(`${inputList}#${id}`).click();
       }
     }
   }
-  if(allowsendImfo && allowsendImfo !== ''){
-    if ($('.person_list').children('li').attr('class') == 'teacher') {
-      $('li.teacher span').html(memberInfo.length);
-      sendMemberToNextStep(memberInfo , 'teacher')
-      
-    }else if($('.person_list').children('li').attr('class') == 'personel'){
-      $('li.personel span').html(memberInfo.length);
-      sendMemberToNextStep(memberInfo , 'personel')
-    }else if($('.person_list').children('li').attr('class') == 'student'){
-      $('li.student span').html(memberInfo.length);
-      sendMemberToNextStep(memberInfo , 'student')
-    }
-    $('.title_added_person h5').html('');
-    $('.person_list').html('');
-    $('.header_person_box_checkbox input').prop('checked', false);
-    $(".added_person").css({ visibility: "hidden" });
-    $(".person_list").css({ visibility: "hidden" });
-    $(".add_btn_person").css({ visibility: "hidden" });
-  }else{
-    const Toast = Swal.mixin({
-      toast: true,
-      showConfirmButton: false,
-      timer: 1500,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-      }
-    })
+  if (inputAll.prop('checked') == false) {
     
-    Toast.fire({
-      icon: 'error',
-      title: 'باید حداقل یک عضو انتخاب کنید'
-    })
+    for (let index = 0; index < $(`${inputList}`).length; index++) {
+      if(location == 'edit'){
+        listElement = $($(`${inputList} input`)[index]).prop('checked')
+        let id = ($(`${inputList}`)[index]).id;
+        if(listElement){
+          $(`${inputList}#${id}`).click();
+        }
+      }else{
+        listElement = $($(`${inputList}`)[index]).prop('checked')
+        if(listElement){
+          unSellectAll = true
+        }else{
+          unSellectAll = false
+          break;
+        }
+      }
+    }
   }
-  
+    if (unSellectAll) {
+      $(`${inputList}`).click();
+    }
+}
 
+// ***************  check input member list for input sellect all function => add chanel
+let checkSellectInput = (inputAll , inputList ,roll)=>{
+  $(`${inputAll}`).prop('checked' , false);
+  // let sellectAll =''
+  // let end = 0
+  // if(roll == 'student'){
+  //   end = $(`${inputList}`).length;
+  // }else{
+  //   end = $(`${inputList}`).length-1;
+  // }
+  // for (let index = 0; index < end; index++) {
+  //   if( ($($(`${inputList}`)[index]).prop('checked'))){
+  //     sellectAll = true
+  //   }else{
+  //     sellectAll = false
+  //     break;
+  //   }
+  // }
+  // if(sellectAll){
+  //   $(`${inputAll}`).prop('checked' , true);
+  // }else{
+  //   $(`${inputAll}`).prop('checked' , false);
+  // }
 
-});
+}
+
+// *************** show all member befor add chanel 
+
 let sendMemberToNextStep = (memberlist , posion , btnevent)=>{
   let outMemberlist = ``;
-  let allmemberObject = {
-    "posion" : posion,
-    "memberlist" : memberlist
+  if(memberlist !== []){
+    allmember = memberlist
   }
   
-  allmember.forEach((element , i) => {
-    if(element.posion == posion){
-      if( posion == 'student'){
-        allmember[i].memberlist.forEach((element , i)=>{
-          if(element.termDescription == $('.title_added_person').text()){
-            if(allmemberObject !== ''){
-              allmember[i] = allmemberObject;
-            }
-            allmemberObject = '';
-          }
-        })
-      }else if( posion == 'personel' || posion == 'teacher'){
-        if(allmemberObject !== ''){
-          allmember[i] = allmemberObject;
-        }
-        allmemberObject = '';
-      }
-    }
-  });
-  if(allmemberObject !== '' && memberlist !== ''){
-    allmember.push(allmemberObject)
-  }
   if(btnevent == "next"){
-    allmember.forEach(element => {
+    memberlist.forEach(element => {
       if(element.posion == 'teacher'){
-        element.memberlist.forEach(element =>{
+        // element.memberlist.forEach(element =>{
           outMemberlist +=
           `
             <li id="${element.id}">
@@ -2500,10 +2685,10 @@ let sendMemberToNextStep = (memberlist , posion , btnevent)=>{
               </div>
             </li>
           `
-        })
+        // })
 
       }else if(element.posion == 'personel'){
-        element.memberlist.forEach(element =>{
+        // element.memberlist.forEach(element =>{
           outMemberlist +=
           `
             <li id="${element.id}">
@@ -2521,9 +2706,9 @@ let sendMemberToNextStep = (memberlist , posion , btnevent)=>{
               </div>
             </li>
           `
-        });
+        // });
       }else if(element.posion == 'student'){
-        element.memberlist.forEach(element =>{
+        // element.memberlist.forEach(element =>{
           outMemberlist +=
           `
             <li id="${element.id}">
@@ -2541,42 +2726,45 @@ let sendMemberToNextStep = (memberlist , posion , btnevent)=>{
               </div>
             </li>
           `
-        });
+        // });
       }
-
     });
     $('.chanel_list_member').html(outMemberlist)
+    arrymember.forEach(element => {
+      if (element.is_admin) {
+        $(`.chanel_list_member li#${element.member__id} .member_admin input`).prop('checked', true);
+      }
+    });
   }
+ 
 }
+
+// *************** Select input items that have already been selected
 let enablechecked = () =>{
   allmember.forEach(element  => {
-    element.memberlist.forEach(element  => {
-      $(`#${element.id}`).prop('checked', true);
-    })
+      $(`.step_2 #${element.id}`).prop('checked', true);
   })
   
 }
-//****************************************** */
+
+// ************************* edite channel ****************************
 
 $('.heading-name').on('click' , function () {
-  $('.update_info_chanel').css({display:'block'})
-  member_channel('heading-name')
-})
+  $('.update_info_chanel').css({display:'block'});
+  member_channel('heading-name');
+});
 $('.header_chanel_info .info-edit').on('click' , function(){
   $('.info_chanel').css({display:'none'});
   $('.update-chanel').css({display:'block'});
   $('.menu-list').css({display:'block'});
   $('.footer-update-chanel button').css({display:'none'});
   $('.back-to-info-chanel').css({display:'block'});
-
-
 });
 $('.back-to-info-chanel').on('click',function(){
   $('.update-chanel').css({display:'none'});
   $('.info_chanel').css({display:'block'});
-  member_channel('heading-name')
-
-})
+  member_channel('heading-name');
+});
 $('.back-menu-list').on('click',function(){
   $('.update-info').css({display:'none'});
   $('.add-admin-chanel').css({display:'none'});
@@ -2593,7 +2781,7 @@ $('.back-menu-list').on('click',function(){
   $('.update_enable_comments input').prop('checked' , true);
   $('.users-list-chanel li').remove();
   // image
-})
+});
 $('.menu-list .menu-edite').on('click' , function(){
   $('.header-update-chanel p.chanle-name').text('ویرایش کانال');
   $('.back-menu-list').css({display:'block'});
@@ -2601,15 +2789,6 @@ $('.menu-list .menu-edite').on('click' , function(){
   $('.menu-list').css({display:'none'});
   $('.update-info').css({display:'block'});
   $('.save-change-info').css({display:'block'});
-  
-});
-$('.menu-list .menu-admin').on('click' , function(){
-  $('.header-update-chanel p.chanle-name').text('مدیریت دسترسی');
-  $('.back-menu-list').css({display:'block'});
-  $('.back-to-info-chanel').css({display:'none'});
-  $('.menu-list').css({display:'none'});
-  $('.add-admin-chanel').css({display:'block'});
-  member_channel('menu-admin')
 });
 $('.menu-list .menu-users').on('click' , function(){
   $('.header-update-chanel p.chanle-name').text('مدیریت اعضاء');
@@ -2635,7 +2814,7 @@ $('.uploade-image-chanel').on('click',function(){
     showConfirmButton: false,
     timer: 3000
   })
-})
+});
 $('.save-change-info').on('click' , function(){
   let namechanel = $('.update-name-chanel input').val()
   let descriptionchanel = $('.update-description-chanel textarea').val();
@@ -2733,17 +2912,22 @@ $('.users-list-chanel').on('click' ,'input', function(){
   
 });
 $('.sellect_all-box input').on('click', function(){
-  $(`.users-list-chanel li`).click();
+  if ($('.users-list-chanel').children().length && $('.users-list-chanel').children()[0].className !== 'loadinglist') {
+    selectAndUnsellect($(this) , '.users-list-chanel li' , 'edit');
+    
+  }else{
+    $('.sellect_all-box input').prop('checked' , false)
+  }
 });
 $('.info-member-chanel').on('click','li i.fa-user-shield', function(){
-  let userId = $(this).parents('li').attr('id');
+  let userId = $(this).parents('li').attr('class');
   let isadmin = $(this).parents('li').children('input').prop('checked');
   if(isadmin){
     isadmin = 0;
-    update_member(userId ,isadmin )
+    update_member(userId ,isadmin)
   }else{
     isadmin = 1;
-    update_member(userId ,isadmin )
+    update_member(userId ,isadmin)
   }
 });
 $('.header-update-chanel .fa-times-circle').on('click',function () {
@@ -2759,58 +2943,62 @@ $('.header-update-chanel .fa-times-circle').on('click',function () {
     $('.area-box textarea').val('');
     $('.update_enable_comments input').prop('checked' , true);
     $('.users-list-chanel li').remove();
-})
+});
 $('.info-close').on('click',function(){
   $('.update_info_chanel').css({display:'none'});
-})
+});
 $('.add-member-update-chanel').on('click',function(){
   let arr_member = JSON.stringify(upadtememberchanel)
-  add_member(arr_member)
-  $('.users-list-chanel li').remove()
+  if (upadtememberchanel.length) {
+    add_member(arr_member)
+  }else{
+    Swal.fire({
+      icon: 'error',
+      title: "عضوی برای افزودن به کانال انتخاب نشده یا اعضای انتخاب شده در کانال وجود دارند",
+      showConfirmButton: false,
+      timer: 2000
+    })
+    
+  }
+  $('.users-list-chanel li').remove();
   member_channel('menu-admin')
   $('.sellect_all-box').css({display:'none'});
 });
-let timerint
 $('.info-member-chanel ').on('click','li i.fa-trash',function(){
-  let deleteid = $(this).parents('li').attr('id');
-  $(`li#${deleteid} i.fa-user-shield`).css({display:'none'});
-  let timer = 1
-    $(`li#${deleteid} i.fa-trash`).replaceWith(`
+  let deleteid = $(this).parents('li').attr('class');
+  $(`li.${deleteid} i.fa-user-shield`).css({display:'none'});
+  let timer = 5
+    $(`li.${deleteid} i.fa-trash`).replaceWith(`
     <span>
       <p class = "give-up" style = "float: left;color: blue; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
     </span>
     `);
-    timerint = setInterval (() =>{
-      if (timer > 6) {
-        clearInterval(timerint);
-      }
-      if (timer < 6) {
-        $(`li#${deleteid} .give-up`).replaceWith(
-          `
-          <p class = "give-up animate__animated animate__heartBeat" style = "float: left;color: blue; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
-          `
-          );
-          timer += 1;
-      }
-      if (timer == 5) {
-        clearInterval(timerint);
-        deletemember(deleteid);
-      }
-      
-      
-  },1000)
+  timerint[deleteid] = setInterval (() =>{
+    if (timer > 0) {
+      $(`li.${deleteid} .give-up`).replaceWith(
+        `
+        <p class = "give-up animate__animated animate__heartBeat" style = "float: left;color: blue; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
+        `
+        );
+        timer -= 1;
+    }
+    if (timer == 0) {
+      clearInterval(timerint[deleteid]);
+      deletemember(deleteid);
+    }
+    },1000);
+    
 });
 $('.info-member-chanel ').on('click','li .give-up',function(){
-  let deleteid = $(this).parents('li').attr('id');
-  $(`li#${deleteid} i.fa-user-shield`).css({display:'block'});
-  $(`li#${deleteid} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: red;cursor: pointer; margin-right: 20px;"></i>`);
-  clearInterval(timerint);
+  let deleteid = $(this).parents('li').attr('class');
+  $(`li.${deleteid} i.fa-user-shield`).css({display:'block'});
+  $(`li.${deleteid} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: red;cursor: pointer; margin-right: 20px;"></i>`);
+  clearInterval(timerint[deleteid]);
 });
 $('.member-seen-header .fa-times-circle').on('click' ,function(){
   $('div.member-seen').css({display: 'none'});
   $('.sellect_all-box').css({display:'none'});
-})
-
+});
 
 let member_channel = (Location)=>{
   $.ajax({
@@ -2854,7 +3042,7 @@ let member_channel = (Location)=>{
             }
             out_member_chanel += 
             `
-            <li id="${element.user__id}">
+            <li class="${element.user__id}">
               ${membericon}
               <p class="member-name">${element.name_family}</p>
               <i class="fas fa-trash" style = "float: left;color: red;cursor: pointer; margin-right: 20px;"></i>
@@ -3042,7 +3230,6 @@ let add_member = (list) => {
   });
 }
 let deletemember = (id) => {
-  console.log('delete', id);
   $.ajax({
     url: api_address + "/notices/delete_member",
     type: "post",
@@ -3057,12 +3244,12 @@ let deletemember = (id) => {
       try{
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
-          $(`li#${id} span`).replaceWith('<i class="fas fa-ban" style = "float: left;color: darkred; margin-right: 20px;"></i>');
+          $(`li.${id} span`).replaceWith('<i class="fas fa-ban" style = "float: left;color: darkred; margin-right: 20px;"></i>');
           // clearInterval(timerint);
         }else{
           console.log(res);
-          $(`li#${id} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: red;cursor: pointer; margin-right: 20px;"></i>`)
-          $(`li#${id} i.fa-user-shield`).css({display:'block'});
+          $(`li.${id} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: red;cursor: pointer; margin-right: 20px;"></i>`)
+          $(`li.${id} i.fa-user-shield`).css({display:'block'});
           Swal.fire({
             icon: 'error',
             title: res.data.message,
@@ -3151,6 +3338,7 @@ let list_receiver_news_channel = (id) => {
     }
   });
 }
+
 // ************************* get_session_archive  ****************************
 
 let get_session_archive = () =>{

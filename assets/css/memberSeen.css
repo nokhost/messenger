@@ -45,7 +45,7 @@ div.member-seen-box::-webkit-scrollbar{
 .member-list-seen{
     padding: 7px 24px 9px;
     list-style: none;
-    overflow: scroll;
+    overflow: auto;
 }
 .member-list-seen p{
     display: inline-block;
