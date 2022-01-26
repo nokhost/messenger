@@ -1742,7 +1742,6 @@ let insert_channel = (chanelData , arrymember)=>{
             showConfirmButton: false,
             timer: 3000
           })
-          console.log(res);
           ChanleList();
           $(".close_add").click();
         }else{
@@ -1804,8 +1803,8 @@ $(".close_add").click(function() {
   $('#channelName').val('')
   memberInfo = []
   sendMemberToNextStep(memberInfo ,'' , 'next' )
-  $.each(imgChanelUpload.files, function (file) {
-  })
+  removeImgChanel(imgChanelUpload);
+  $(`#profile-pic img`).attr('src','./assets/images/gallery.png')
     $(".add_new_channel").css({ visibility: "hidden" });
     $('.step_2').css({ display: "none" });
     $('.step_3').css({ display: "none" });
@@ -1920,13 +1919,8 @@ $('.preve_step_2 button').on('click', function(){
 //************* upload image wizard box => add chanel
 
 $("#profile-image1").on("click", function() {
-  if(imgChanelUpload.files.length > 1){
-    for ( let i = 0 ; i < files.length ; i++ ) {
-      imgChanelUpload.removeFile(files[i]);
-    }
-  }
+  removeImgChanel(imgChanelUpload);
   $("#profile-image-upload").click();
-
 });
 
 
@@ -1944,7 +1938,7 @@ let imgChanelUpload = new plupload.Uploader({
 });
 imgChanelUpload.init();
 imgChanelUpload.bind('FilesAdded', function (up, files) {
-  handelJustOneFile(imgChanelUpload.files);
+  handelJustOneFile(imgChanelUpload.files , imgChanelUpload);
 });
 imgChanelUpload.bind('UploadProgress',function (up, file ) {
   UploadProgress(up, file , '#profile-pic');
@@ -1956,13 +1950,12 @@ imgChanelUpload.bind('FileUploaded', function (up, file, info) {
 });
 imgChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
 imgChanelUpload.bind('UploadComplete', function (up, file , info) {
-  UploadComplete (up, file , info)
-  
+  UploadComplete (up, file , info ,imgChanelUpload)
 });
-let handelJustOneFile = (files)=>{
-  if(imgChanelUpload.files.length > 1){
+let handelJustOneFile = (files , tarrgetElement)=>{
+  if(tarrgetElement.files.length > 1){
     for ( let i = 0 ; i < files.length ; i++ ) {
-      imgChanelUpload.removeFile(files[i]);
+      tarrgetElement.removeFile(files[i]);
     }
     const Toast = Swal.mixin({
       toast: true,
@@ -1979,26 +1972,31 @@ let handelJustOneFile = (files)=>{
       title: 'شما نمیتوانید چند فایل انتخاب کنید'
     });
   }else{
-    imgChanelUpload.start();
+    tarrgetElement.start();
   }
-} 
-let showImagePreview = ( files ) => {
-
-}
-let UploadProgress = (up, file , tarrget) =>{
-  $(`${tarrget} .fileProgress`).show();
+ } 
+let UploadProgress = (up, file , tarrgetId) =>{
+  let $fa_camera = ($(`${tarrgetId} .fa-camera`));
+  let display = 'display: grid;'
+  if($fa_camera.length){
+    $fa_camera.hide();
+    display = 'display: contents;'
+  }
+  $(`${tarrgetId} .fileProgress`).show();
     let progress = 0;
     progress += file.percent ;
-    $(`${tarrget}`).children('h5.fileProgress').children()[0].style.cssText = `--value:${progress}; --size:100px;`;
+    if (progress == 100) {
+      $(`${tarrgetId} img`).attr('src','./assets/images/white.png')
+    }
+    $(`${tarrgetId}`).children('h5.fileProgress').children()[0].style.cssText = `--value:${progress}; --size:100px; ${display}`;
 }
-let FileUploaded = (up, file, info , tarrget) =>{
-  $(`${tarrget} .fileProgress`).hide();
+let FileUploaded = (up, file, info , tarrgetId) =>{
+  $(`${tarrgetId} .fileProgress`).hide();
   let myresponse = $.parseJSON(info['response']);
   chaneleImgId = myresponse.Data.File_id;
   if(myresponse.ResultCode == '200'){
-    $(`${tarrget} img`).attr('src' , `http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${file._options.params.Session_id}&File_id=${chaneleImgId}`)
+    $(`${tarrgetId} img`).attr('src' , `http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${file._options.params.Session_id}&File_id=${chaneleImgId}`)
   }else{
-    console.log(myresponse);
     const Toast = Swal.mixin({
       toast: true,
       showConfirmButton: false,
@@ -2011,26 +2009,31 @@ let FileUploaded = (up, file, info , tarrget) =>{
     })
     Toast.fire({
       icon: 'error',
-      title: 'آپلود ناموفق'
+      title: myresponse.Data.Message,
     })
   }
   
 }
-let UploadComplete = (up, file , info) =>{
-// chanelImage = {}
-  // plupload.each(up.files, function (file) {
-  //    chanelImage = {
-  //     "description":file.name,
-  //     "extera__id":"",
-  //     "file_size":file.size,
-  //     "archive__id":"",
-  //     "file_type":file.type.slice(file.type.indexOf("/")+1,file.type.length),
-  //     "file__id":chaneleImgId,
-  //     "file_name":file.name
-  //    }
-  //    chanelImage = JSON.stringify(chanelImage)
-    
-  // });
+let UploadComplete = (up, file , info , targetElement) =>{
+chanelImage = {}
+$.each(targetElement.files, function (i, file) {
+     chanelImage = {
+      "description":file.name,
+      "extera__id":"",
+      "file_size":file.size,
+      "archive__id":"",
+      "file_type":file.type.slice(file.type.indexOf("/")+1,file.type.length),
+      "file__id":chaneleImgId,
+      "file_name":file.name
+     }
+     chanelImage = JSON.stringify(chanelImage)
+});
+}
+let removeImgChanel = (tarrget) =>{
+  $.each(tarrget.files, function (i, file) {
+    tarrget.removeFile(file);
+  });
+  
 }
 
 // *********** delete member final step wizard box => add chanel
@@ -2836,7 +2839,9 @@ $('.back-menu-list').on('click',function(){
   $('.area-box textarea').val('');
   $('.update_enable_comments input').prop('checked' , true);
   $('.users-list-chanel li').remove();
-  // image
+  removeImgChanel(imgUpdateChanelUpload);
+  $(`uploade-image-chanel img`).attr('src' , './assets/images/blue.png');
+  $(`.uploade-image-chanel i.fa-camera`).show();
 });
 $('.menu-list .menu-edite').on('click' , function(){
   $('.header-update-chanel p.chanle-name').text('ویرایش کانال');
@@ -2856,20 +2861,30 @@ $('.menu-list .menu-users').on('click' , function(){
   member_channel()
 });
 $('.menu-list .menu-deleteChanel').on('click' , function(){
-  Swal.fire({
-    icon: 'info',
-    title: 'این بخش به زودی اضافه خواهد شد',
-    showConfirmButton: false,
-    timer: 3000
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false,
+    
+  });
+  swalWithBootstrapButtons.fire({
+    title: 'آیا کانال حذف شود ؟',
+    text: "در صورت کلیک روی گزینه بله کانال حذف خواهد شد!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'بله',
+    cancelButtonText: 'خیر',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      delete_channel(chanel_id , swalWithBootstrapButtons)
+    }
   })
 });
 $('.uploade-image-chanel').on('click',function(){
-  Swal.fire({
-    icon: 'info',
-    title: 'قابلیت آپدیت عکس کانال به زودی اضافه خواهد شد',
-    showConfirmButton: false,
-    timer: 3000
-  })
+  removeImgChanel(imgUpdateChanelUpload);
 });
 $('.save-change-info').on('click' , function(){
   let namechanel = $('.update-name-chanel input').val()
@@ -2881,7 +2896,7 @@ $('.save-change-info').on('click' , function(){
     allow_commentchanel = 0
   }
   if(namechanel !== ''){
-    update_info_channel(namechanel,descriptionchanel,'',allow_commentchanel);
+    update_info_channel(namechanel,descriptionchanel,chanelImage,allow_commentchanel);
   }else{
     Swal.fire({
       icon: 'error',
@@ -2999,6 +3014,9 @@ $('.header-update-chanel .fa-times-circle').on('click',function () {
     $('.area-box textarea').val('');
     $('.update_enable_comments input').prop('checked' , true);
     $('.users-list-chanel li').remove();
+    removeImgChanel(imgUpdateChanelUpload);
+    $(`uploade-image-chanel img`).attr('src', './assets/images/blue.png');
+    $(`.uploade-image-chanel i.fa-camera`).show();
 });
 $('.info-close').on('click',function(){
   $('.update_info_chanel').css({display:'none'});
@@ -3171,6 +3189,9 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $('.users-list-chanel li').remove();
           ChanleList()
           $(`.sideBar #${chanel_id}`).trigger('click');
+          removeImgChanel(imgUpdateChanelUpload);
+          $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
+          $(`.uploade-image-chanel i.fa-camera`).show();
         }else{
           console.log(res);
           Swal.fire({
@@ -3394,6 +3415,78 @@ let list_receiver_news_channel = (id) => {
     }
   });
 }
+let delete_channel = (id , message)=>{
+  $.ajax({
+    url: api_address + "/notices/delete_channel",
+    type: "post",
+    data: {
+      channel__id : id,
+  },
+    beforeSend: function(request) {
+        request.setRequestHeader("Authorization", "Bearer " + token);
+    },
+    success: function(response) {
+      try{
+        let res = jQuery.parseJSON(response);
+        if(res.result == 'ok'){
+          message.fire({
+            title: `کانال شما با موفقیت حذف شد`,
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }else{
+          message.fire({
+            title: res.data.message,
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      }catch(err){
+        console.log(err);
+      }
+    },
+    complete :function (data) {
+      
+    },
+    cache : function(response) {
+      console.log(response);
+    },
+    error:function(response){
+      console.log(response);
+    }
+  });
+}
+
+let imgUpdateChanelUpload = new plupload.Uploader({
+  browse_button: 'uploade-image-chanel',
+  chunk_size:(200*1024) + 'b',
+  max_retries: 3,
+  url: 'http://archive.atiehsazan.ir/Api/Upload/index.php',
+  multipart_params: {
+      chunk_size: 200*1024,
+  },
+  filters : [
+    {title : "Image files", extensions : "jpg,jpeg,png"},
+  ],
+});
+imgUpdateChanelUpload.init();
+imgUpdateChanelUpload.bind('FilesAdded', function (up, files) {
+  handelJustOneFile(imgUpdateChanelUpload.files , imgUpdateChanelUpload);
+});
+imgUpdateChanelUpload.bind('UploadProgress',function (up, file ) {
+  UploadProgress(up, file , '.uploade-image-chanel');
+  
+});
+imgUpdateChanelUpload.bind('Error', function (up, err) {});
+imgUpdateChanelUpload.bind('FileUploaded', function (up, file, info) {
+  FileUploaded(up, file, info , '.uploade-image-chanel')
+});
+imgUpdateChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
+imgUpdateChanelUpload.bind('UploadComplete', function (up, file , info) {
+  UploadComplete (up, file , info,imgUpdateChanelUpload)
+});
 
 // ************************* get_session_archive  ****************************
 
@@ -3409,6 +3502,7 @@ let get_session_archive = () =>{
       session = res.data.session
       uploader.settings.multipart_params["Session_id"] = session;
       imgChanelUpload.settings.multipart_params["Session_id"] = session;
+      imgUpdateChanelUpload.settings.multipart_params["Session_id"] = session;
     }
   })
 };
