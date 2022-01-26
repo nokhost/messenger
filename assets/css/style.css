@@ -297,16 +297,7 @@
         height: calc(100% - 120px);
         background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(29,223,219,1) 60%, rgba(255,255,255,1) 100%);
     }
-    .loading {
-        top:        0;
-        left:       0;
-        height:     100%;
-        width:      100%;
-        background: rgba( 255, 255, 255, .8 ) 
-                    url('../images/loading.gif') 
-                    50% 50% 
-                    no-repeat;
-    }
+    
     .sideBar-body {
         position: relative;
         padding: 10px !important;
@@ -1453,6 +1444,9 @@
         left: 25%;
         right: 25%;
         margin: 22% auto;
+    }
+    span.full_channel_name{
+        display: none;
     }
     @media screen and (min-width:1440px) and (max-width:2560px) {
         

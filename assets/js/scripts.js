@@ -3,7 +3,7 @@ let api_address = "";
 let token = "";
 if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "2AD0E9C909A337FF9CB8483C6DDF4A8D";
+  token = "06D2A91CF74B35000E3B2FDF1292C26D";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -35,6 +35,7 @@ let studentList = ''
 let memberInfo = [];
 let timerint = {};
 let headePost = ``;
+let chaneleImgId = ''
 
 // ************************* exit-mesengher ****************************
 $('.exit-mesengher').on('click',function (){
@@ -48,6 +49,7 @@ let ChanleList = ()=>{
         type: "post",
         timeout: 50000,
         beforeSend: function(request) {
+            $('.loader').show();
             request.setRequestHeader("Authorization", "Bearer " + token);
         },
         success: function(response) {
@@ -57,9 +59,15 @@ let ChanleList = ()=>{
               let out = "";
               
               if(res.result == 'ok'){
-                listChanel = res.data
+                $('.loader').hide();
+                listChanel = res.data;
+                
                 let badge = ``;
                 res.data.list_channel.forEach((element) => {
+                  let channel_name = element.channel_name
+                  if (channel_name.length > 15){
+                    channel_name = element.channel_name.substr(0,15) + '...';
+                  }
                   count_news_new = element.count_news_new;
                   if (count_news_new >= 1)  {
                     badge = `<span class="count_not_read">${count_news_new}</span>`;
@@ -90,7 +98,9 @@ let ChanleList = ()=>{
                         <div class="col-sm-9 col-xs-9 sideBar-main">
                           <div class="row">
                             <div class="col-sm-8 col-xs-8 sideBar-name">
-                              <span class="name-meta">${element.channel_name}
+                              <span class="name-meta">${channel_name}
+                            </span>
+                            <span class="full_channel_name">${element.channel_name}
                             </span>
                             <br>
                             <span style="font-size: 10px; color: #838080;">${element.last_news}</span>
@@ -173,6 +183,7 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
   let str = e.currentTarget.innerText;
   let endStr = str.search('\n');
   str = str.substr(0, endStr);
+  str = $(e.currentTarget).children('div.col-sm-9.col-xs-9.sideBar-main').children('div.row').children('div.col-sm-8.col-xs-8.sideBar-name').children('span.full_channel_name')[0].innerText;
   heade_chanel_name = `<a class="heading-name-meta">${str}</a>`;
   $(".heading-name").html(heade_chanel_name);
   $(".chanel-name").html(heade_chanel_name);
@@ -656,7 +667,6 @@ $('.reply-send i').on('click', function() {
       }
     }else{
       if (!!$('.prv_file').children().length && textInsertMessage !== ''){
-        
         uploader.start();
       }else if(textInsertMessage !== ''){
         sendMessage(chanel_id  , textInsertMessage);
@@ -946,19 +956,16 @@ let uploader = new plupload.Uploader({
   uploader.bind('FileUploaded', function (up, file, info) {
         try {
           let myresponse = $.parseJSON(info['response']);
-          // console.dir(myresponse);
           ($(`li#${file.id} img`)).attr('id' , myresponse.Data.File_id)
           if (myresponse['Result'] === "Ok") {
             $(`#${file.id} .fileProgress`).hide();
             $(`.msg_upload_lists li#${file.id}`).children('h5.icon').html('<i class="fas fa-check-circle"></i>')
             $('.upload_img_success h4').html(myresponse.Data.Message)
-              //console.log(myresponse['Data']['File_id']);
           } else {
             $(`#${file.id} .fileProgress`).hide();
             $(`.msg_upload_lists li#${file.id}`).children('h5.icon').html('<i class="fas fa-exclamation-triangle"></i>')
             $('.upload_img_faile h4').html(myresponse.Data.Message)
             errUploadedFile = false;
-              //console.log(myresponse['Data']['Message']);
           }
         } catch (ex) {
             alert(ex);
@@ -1655,10 +1662,22 @@ let deletecomment = (id) => {
           try{
             let res = jQuery.parseJSON(response);
             if(res.result == 'ok'){
+              swalWithBootstrapButtons.fire({
+                title: 'حذف شد!',
+                text: 'پیام شما با موفقیت حذف شد',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+              })
               get_comment_reply(primery_id,headePost)
             }else{
-              console.log(res);
-    
+              swalWithBootstrapButtons.fire({
+                title: 'عملیات انجام نشد',
+                text: res.data.message,
+                icon: res.result,
+                showConfirmButton: false,
+                timer: 1500,
+              });
             }
           }catch (err){
             console.log(err);
@@ -1671,13 +1690,7 @@ let deletecomment = (id) => {
           console.log(response);
         },
       });
-      swalWithBootstrapButtons.fire({
-        title: 'حذف شد!',
-        text: 'پیام شما با موفقیت حذف شد',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1500,
-      })
+      
     }else if (result.dismiss === Swal.DismissReason.cancel) {
       swalWithBootstrapButtons.fire({
           title: 'لغو شد',
@@ -1791,7 +1804,7 @@ $(".close_add").click(function() {
   $('#channelName').val('')
   memberInfo = []
   sendMemberToNextStep(memberInfo ,'' , 'next' )
-  $.each(FileUpload.files, function (file) {
+  $.each(imgChanelUpload.files, function (file) {
   })
     $(".add_new_channel").css({ visibility: "hidden" });
     $('.step_2').css({ display: "none" });
@@ -1807,7 +1820,7 @@ $('.step_1 .next_btn button').on('click', function(){
   let chanelName = $('#channelName').val();
   let allowComment = 0;
   if(!(chanelName == '')){
-    FileUpload.start()
+    imgChanelUpload.start()
     if($('#comment_on').prop( "checked" )){
       allowComment = 1;
     }
@@ -1907,89 +1920,118 @@ $('.preve_step_2 button').on('click', function(){
 //************* upload image wizard box => add chanel
 
 $("#profile-image1").on("click", function() {
-  // $("#profile-image-upload").click();
-  Swal.fire({
-    icon: 'info',
-    title: 'قابلیت آپلود عکس کانال به زودی اضافه خواهد شد',
-    showConfirmButton: false,
-    timer: 3000
-  })
+  if(imgChanelUpload.files.length > 1){
+    for ( let i = 0 ; i < files.length ; i++ ) {
+      imgChanelUpload.removeFile(files[i]);
+    }
+  }
+  $("#profile-image-upload").click();
 
 });
-let previewFile = () => {
-  let preview = document.querySelector("#profile-image1");
-  let file = document.querySelector("input[type=file]").files[0];
-  let reader = new FileReader();
 
-  reader.addEventListener(
-      "load",
-      function() {
-          preview.src = reader.result;
-      },
-      false
-  );
 
-  if (file) {
-      reader.readAsDataURL(file);
-  }
-};
-let FileUpload = new plupload.Uploader({
+let imgChanelUpload = new plupload.Uploader({
   browse_button: 'profile-image-upload',
   chunk_size:(200*1024) + 'b',
   max_retries: 3,
   url: 'http://archive.atiehsazan.ir/Api/Upload/index.php',
   multipart_params: {
       chunk_size: 200*1024,
-  }
+  },
+  filters : [
+    {title : "Image files", extensions : "jpg,jpeg,png"},
+  ],
 });
-FileUpload.init();
-FileUpload.bind('FilesAdded', function (up, files) {
-  if(!(FileUpload.files.length <= 1)){
-    // console.log('شما بیش از یک عکس برای ارسال انتخاب نموده اید');
-    // plupload.each(files, function (file) {
-    // });
-  }
-  plupload.each(up.files, function (file) {
-    let img = file.type.includes('image');
-    if(img){
-
-    }else{
-      console.log('پسوند فایل شما معتبر نمی باشد');
-    }
-  })
-    let prevFile ='';
-    let uploadFilepeogress
+imgChanelUpload.init();
+imgChanelUpload.bind('FilesAdded', function (up, files) {
+  handelJustOneFile(imgChanelUpload.files);
 });
-FileUpload.bind('UploadProgress',function (up, file) {});
-FileUpload.bind('Error', function (up, err) {});
-let chaneleImgId = ''
-FileUpload.bind('FileUploaded', function (up, file, info) {
-  let myresponse = $.parseJSON(info['response']);
-  // if(1 !== up.files.length){
-  //   up.files.length-1
-    
-  // }else{
-  // }
-  chaneleImgId = myresponse.Data.File_id
-});
-FileUpload.bind('ChunkUploaded', function (up, file, info) {});
-FileUpload.bind('UploadComplete', function (up, file , info) {
+imgChanelUpload.bind('UploadProgress',function (up, file ) {
+  UploadProgress(up, file , '#profile-pic');
   
-  chanelImage = {}
-  plupload.each(up.files, function (file) {
-     chanelImage = {
-      "description":file.name,
-      "extera__id":"",
-      "file_size":file.size,
-      "archive__id":"",
-      "file_type":file.type.slice(file.type.indexOf("/")+1,file.type.length),
-      "file__id":chaneleImgId,
-      "file_name":file.name
-     }
-     chanelImage = JSON.stringify(chanelImage)
-    
-  });
 });
+imgChanelUpload.bind('Error', function (up, err) {});
+imgChanelUpload.bind('FileUploaded', function (up, file, info) {
+  FileUploaded(up, file, info , '#profile-pic')
+});
+imgChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
+imgChanelUpload.bind('UploadComplete', function (up, file , info) {
+  UploadComplete (up, file , info)
+  
+});
+let handelJustOneFile = (files)=>{
+  if(imgChanelUpload.files.length > 1){
+    for ( let i = 0 ; i < files.length ; i++ ) {
+      imgChanelUpload.removeFile(files[i]);
+    }
+    const Toast = Swal.mixin({
+      toast: true,
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+    Toast.fire({
+      icon: 'error',
+      title: 'شما نمیتوانید چند فایل انتخاب کنید'
+    });
+  }else{
+    imgChanelUpload.start();
+  }
+} 
+let showImagePreview = ( files ) => {
+
+}
+let UploadProgress = (up, file , tarrget) =>{
+  $(`${tarrget} .fileProgress`).show();
+    let progress = 0;
+    progress += file.percent ;
+    $(`${tarrget}`).children('h5.fileProgress').children()[0].style.cssText = `--value:${progress}; --size:100px;`;
+}
+let FileUploaded = (up, file, info , tarrget) =>{
+  $(`${tarrget} .fileProgress`).hide();
+  let myresponse = $.parseJSON(info['response']);
+  chaneleImgId = myresponse.Data.File_id;
+  if(myresponse.ResultCode == '200'){
+    $(`${tarrget} img`).attr('src' , `http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${file._options.params.Session_id}&File_id=${chaneleImgId}`)
+  }else{
+    console.log(myresponse);
+    const Toast = Swal.mixin({
+      toast: true,
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+    Toast.fire({
+      icon: 'error',
+      title: 'آپلود ناموفق'
+    })
+  }
+  
+}
+let UploadComplete = (up, file , info) =>{
+// chanelImage = {}
+  // plupload.each(up.files, function (file) {
+  //    chanelImage = {
+  //     "description":file.name,
+  //     "extera__id":"",
+  //     "file_size":file.size,
+  //     "archive__id":"",
+  //     "file_type":file.type.slice(file.type.indexOf("/")+1,file.type.length),
+  //     "file__id":chaneleImgId,
+  //     "file_name":file.name
+  //    }
+  //    chanelImage = JSON.stringify(chanelImage)
+    
+  // });
+}
 
 // *********** delete member final step wizard box => add chanel
 $('.chanel_list_member').on('click','.member_delete i',function(){
@@ -2264,7 +2306,21 @@ let classes_of_branch = (Location)=>{
           }
           
         }else{
-          console.log(res);
+          const Toast = Swal.mixin({
+            toast: true,
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          
+          Toast.fire({
+            icon: res.result,
+            title: res.data.message,
+          })
         }
       }catch(err){
         console.log(err);
@@ -3352,7 +3408,7 @@ let get_session_archive = () =>{
       let res = jQuery.parseJSON(response);
       session = res.data.session
       uploader.settings.multipart_params["Session_id"] = session;
-      FileUpload.settings.multipart_params["Session_id"] = session;
+      imgChanelUpload.settings.multipart_params["Session_id"] = session;
     }
   })
 };
