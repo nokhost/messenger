@@ -12,6 +12,9 @@
     -webkit-transform: translateZ(0);
     -ms-transform: translateZ(0);
     transform: translateZ(0);
+    position: absolute;
+    top: 50%;
+    right: 50%;
   }
   @-webkit-keyframes load5 {
     0%,

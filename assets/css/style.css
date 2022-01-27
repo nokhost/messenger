@@ -296,6 +296,7 @@
         border: 1px solid #f7f7f7;
         height: calc(100% - 120px);
         background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(29,223,219,1) 60%, rgba(255,255,255,1) 100%);
+        display: block;
     }
     
     .sideBar-body {
@@ -1449,9 +1450,11 @@
         display: none;
     }
     @media screen and (min-width:1440px) and (max-width:2560px) {
-        
+        form{
+            height: 698px;
+        }
         .added_person {
-            height: 1555px;
+            height: 330px;
         }
         .chanel_list_member_box {
             height: auto;

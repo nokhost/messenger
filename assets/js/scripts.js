@@ -3,7 +3,7 @@ let api_address = "";
 let token = "";
 if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "06D2A91CF74B35000E3B2FDF1292C26D";
+  token = "5FA6521DE91BC4D0D8E1D5C2245477D6";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -37,6 +37,10 @@ let timerint = {};
 let headePost = ``;
 let chaneleImgId = ''
 
+// ************************* refresh listChanel and Conve ****************************
+let refresListChanel =  setInterval (() =>{
+  ChanleList();
+  },30000);
 // ************************* exit-mesengher ****************************
 $('.exit-mesengher').on('click',function (){
   window.close()
@@ -54,10 +58,9 @@ let ChanleList = ()=>{
         },
         success: function(response) {
           try{
-            $(".sideBar").ready(function() {
+           
               let res = jQuery.parseJSON(response);
               let out = "";
-              
               if(res.result == 'ok'){
                 $('.loader').hide();
                 listChanel = res.data;
@@ -135,7 +138,7 @@ let ChanleList = ()=>{
                 })
               }
               
-          });
+          
           }catch(err){
             console.log(err);
           }
@@ -172,6 +175,23 @@ $(window).resize(function() {
 
 });
 
+// ************************* searchText ****************************
+$(`#searchText`).keyup(function(){
+  let input, filter, sideBar, sideBar_body, full_channel_name, i, txtValue;
+  input = $("#searchText");
+  filter = input.val();
+  sideBar = $(".sideBar");
+  sideBar_body = $(".sideBar-body");
+  for (i = 0; i < sideBar_body.length; i++) {
+      full_channel_name = $(sideBar_body[i]).children('div.col-sm-9.col-xs-9.sideBar-main').children('div.row').children('div.col-sm-8.col-xs-8.sideBar-name').children('span.full_channel_name')[0];
+      txtValue = full_channel_name.textContent || full_channel_name.innerText;
+      if (txtValue.indexOf(filter) > -1) {
+          sideBar_body[i].style.display = "";
+      } else {
+          sideBar_body[i].style.display = "none";
+      }
+  }
+});
 // ************************* get_news_channel ****************************
 let conversation = '';
 let number_rows = 0;
@@ -202,6 +222,7 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
       $('.last_message a').hide()
     }
   });
+  $("#searchText").val("")
   get_news_channel( row, chanel_id,'clickChanel');
 });
 
@@ -221,215 +242,241 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
     success: function(response) {
       try{
         let res = jQuery.parseJSON(response);
-        number_rows =  res.data.detail_rows.last_row
-        myuser_id = res.data.myuser_id;
-        let list_news = res.data.list_news;
-        let last_row = res.data.detail_rows.last_row;
-        let out = '';
-        let comment = '';
-        let archive = '';
-        let moreOption = '';
-        let contentComment = '';
-        let anchorTagComment = '';
-        let noCommentText = '';
-        let description = '';
-        let enabelcomment = ``;
-        if (last_row == -1) {
-            out = `
-            <div class="row" style="height: auto;">
-              <div class="col-md-12" style="text-align: center;">
-                <br>
-                <br>
-                <h5>هیچ پیامی یافت نشد! </h5>
-                <img class="bg_conversation" src="./assets/images/no_message.png" alt="">
+        if (res.result == 'ok'){
+          number_rows =  res.data.detail_rows.last_row
+          myuser_id = res.data.myuser_id;
+          let list_news = res.data.list_news;
+          let last_row = res.data.detail_rows.last_row;
+          let out = '';
+          let comment = '';
+          let archive = '';
+          let moreOption = '';
+          let contentComment = '';
+          let anchorTagComment = '';
+          let noCommentText = '';
+          let description = '';
+          let enabelcomment = ``;
+          let notReadMsg = [];
+          if (last_row == -1) {
+              out = `
+              <div class="row" style="height: auto;">
+                <div class="col-md-12" style="text-align: center;">
+                  <br>
+                  <br>
+                  <h5>هیچ پیامی یافت نشد! </h5>
+                  <img class="bg_conversation" src="./assets/images/no_message.png" alt="">
+                </div>
               </div>
-            </div>
-          `;
-        } else {
-            list_news.forEach((element) => {
-              description = element.description
-              let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g
-              // Replace plain text links by hyperlinks
-              description = description.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
-              description = description.replace(/\n/g, '<br/>');
-              // Echo link
-              let regx =/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
-              let emoji = description.replace(regx, match => `[e-${match.codePointAt(0).toString(16)}]`);
+            `;
+          } else {
+              list_news.forEach((element) => {
+                if (element.seen_date == '') {
+                  notReadMsg.push(element.news__id)
+                }
                 
-                if (!!(element.list_archive.length)) {
-                  let show_file = '';
-                    element.list_archive.forEach((element) => {
-                      let fileType = element.file_type;
-                        if (fileType == 'pdf') {
-                          show_file +=`
-                          <span class="viwe_box_item">
-                          <img class="archive_view_post" src="./assets/images/pdf.png" alt=""></img> 
-                          <i id="${element.file__id}" class="fas fa-download"></i>
-                          <div class="spinner-border text-secondary" role="status">
-                              <span class="sr-only">Loading...</span>
-                          </div>
-                          </span>`;
-                        }else if (fileType == 'mpeg' || fileType == 'aac' || fileType =='mp3' ){
-                          show_file +=`
-                          <span class="viwe_box_item" >
-                          <img class="archive_view_post" src="./assets/images/player_icon.png" alt=""></img> 
-                          <i id="${element.file__id}" class="fas fa-cloud-download-alt audio_play" type = ${fileType}></i>
-                          <div class="spinner-border text-secondary" role="status">
-                              <span class="sr-only">Loading...</span>
+                description = element.description
+                let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g
+                // Replace plain text links by hyperlinks
+                description = description.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
+                description = description.replace(/\n/g, '<br/>');
+                // Echo link
+                let regx =/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+                let emoji = description.replace(regx, match => `[e-${match.codePointAt(0).toString(16)}]`);
+                  
+                  if (!!(element.list_archive.length)) {
+                    let show_file = '';
+                      element.list_archive.forEach((element) => {
+                        let fileType = element.file_type;
+                          if (fileType == 'pdf') {
+                            show_file +=`
+                            <span class="viwe_box_item">
+                            <img class="archive_view_post" src="./assets/images/pdf.png" alt=""></img> 
+                            <i id="${element.file__id}" class="fas fa-download"></i>
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="sr-only">Loading...</span>
                             </div>
-                          </span>`;
-                        }else if (fileType == 'jpg' || fileType == 'jpeg' || fileType == 'png' || fileType == 'gif' ){
-                          show_file +=`
-                          <span class="viwe_box_item" >
-                          <img class="archive_view_post" src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" alt=""></img> 
-                          <i id="${element.file__id}" class="fas fa-download"></i>
-                          <div class="spinner-border text-secondary" role="status">
-                              <span class="sr-only">Loading...</span>
-                            </div>
-                          </span>`;
-                        }else if ( fileType == 'mp4'){
-                          show_file +=`
-                          <span class="viwe_box_item" >
-                          <img class="archive_view_post" src="./assets/images/video_icon.png" alt=""></img> 
-                          <i id="${element.file__id}" class="fas fa-download"></i>
-                          <div class="spinner-border text-secondary" role="status">
-                              <span class="sr-only">Loading...</span>
-                            </div>
-                          </span>`;
-                        }else{
-                          show_file +=`
-                          <span class="viwe_box_item" >
-                          <img class="archive_view_post" src="./assets/images/document_icon.png" alt=""></img>
-                           <i id="${element.file__id}" class="fas fa-download"></i> 
-                           <div class="spinner-border text-secondary" role="status">
-                              <span class="sr-only">Loading...</span>
-                            </div>
-                           </span>`;
-                        }
-                        
-                    })
-                    archive = `<br> <div class="archive_box"> ${show_file} </div> <br>`
-                } else {
-                  archive = `<hr/>`
+                            </span>`;
+                          }else if (fileType == 'mpeg' || fileType == 'aac' || fileType =='mp3' ){
+                            show_file +=`
+                            <span class="viwe_box_item" >
+                            <img class="archive_view_post" src="./assets/images/player_icon.png" alt=""></img> 
+                            <i id="${element.file__id}" class="fas fa-cloud-download-alt audio_play" type = ${fileType}></i>
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                            </span>`;
+                          }else if (fileType == 'jpg' || fileType == 'jpeg' || fileType == 'png' || fileType == 'gif' ){
+                            show_file +=`
+                            <span class="viwe_box_item" >
+                            <img class="archive_view_post" src="http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${element.file__id}" alt=""></img> 
+                            <i id="${element.file__id}" class="fas fa-download"></i>
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                            </span>`;
+                          }else if ( fileType == 'mp4'){
+                            show_file +=`
+                            <span class="viwe_box_item" >
+                            <img class="archive_view_post" src="./assets/images/video_icon.png" alt=""></img> 
+                            <i id="${element.file__id}" class="fas fa-download"></i>
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                            </span>`;
+                          }else{
+                            show_file +=`
+                            <span class="viwe_box_item" >
+                            <img class="archive_view_post" src="./assets/images/document_icon.png" alt=""></img>
+                             <i id="${element.file__id}" class="fas fa-download"></i> 
+                             <div class="spinner-border text-secondary" role="status">
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                             </span>`;
+                          }
+                          
+                      })
+                      archive = `<br> <div class="archive_box"> ${show_file} </div> <br>`
+                  } else {
+                    archive = `<hr/>`
+                    if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
+                      
+                      archive = ``;
+                    }
+                      
+                  }
+                  if (!(element.count_comment == 0)) {
+                      comment = `${element.count_comment} یادداشت`;
+                  } else {
+                      comment = 'اولین یادداشت را بگذارید';
+                  }
                   if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
-                    
+                    noCommentText = `فعال کردن یادداشت ها`;
+                    enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
+                  }else if(!!(element.allow_comment == 0) &&  !!(element.count_comment > 0)){
+                    noCommentText = `فعال کردن یادداشت ها`
+                  }else{
+                    noCommentText = 'غیر فعال کردن یادداشت ها';
+                  }
+                  if(!(element.allow_comment == 0)){
+                    enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
+                  }
+                  if(element.status == 1){
+                    moreOption = `<i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                    <ul class="more-option-list">
+                      <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
+                      <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
+                      <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
+                      ${enabelcomment}
+                      <li class="more-option-delete"><i class="fas fa-trash"></i><span>حذف</span></li>
+                    </ul>`;
+                    contentComment = `<div class="col-xs-12">
+                    <i class="far fa-comment-dots"></i>
+                    <span class="comment-title">${comment}</span>
+                    <i class="fas fa-angle-left"></i>
+                  </div>`
+                  }else{
+                    moreOption = ``;
+                    contentComment = ``;
                     archive = ``;
                   }
+                  if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
+                    anchorTagComment = `
+                        <a id = ${element.news__id} class="comment" href="">
+                              
+                         </a>`;
                     
-                }
-                if (!(element.count_comment == 0)) {
-                    comment = `${element.count_comment} یادداشت`;
-                } else {
-                    comment = 'اولین یادداشت را بگذارید';
-                }
-                if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
-                  noCommentText = `فعال کردن یادداشت ها`;
-                  enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
-                }else if(!!(element.allow_comment == 0) &&  !!(element.count_comment > 0)){
-                  noCommentText = `فعال کردن یادداشت ها`
-                }else{
-                  noCommentText = 'غیر فعال کردن یادداشت ها';
-                }
-                if(!(element.allow_comment == 0)){
-                  enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
-                }
-                if(element.status == 1){
-                  moreOption = `<i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                  <ul class="more-option-list">
-                    <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
-                    <li class="more-option-share"><i class="fas fa-share-alt"></i><span>اشتراک گذاری</span></li>
-                    <li class="more-option-recipient"><i class="fas fa-user-friends"></i><span>لیست دریافت کنندگان</span></li>
-                    ${enabelcomment}
-                    <li class="more-option-delete"><i class="fas fa-trash"></i><span>حذف</span></li>
-                  </ul>`;
-                  contentComment = `<div class="col-xs-12">
-                  <i class="far fa-comment-dots"></i>
-                  <span class="comment-title">${comment}</span>
-                  <i class="fas fa-angle-left"></i>
-                </div>`
-                }else{
-                  moreOption = ``;
-                  contentComment = ``;
-                  archive = ``;
-                }
-                if(!!(element.allow_comment == 0) && !!(element.count_comment == 0)){
-                  anchorTagComment = `
-                      <a id = ${element.news__id} class="comment" href="">
-                            
-                       </a>`;
-                  
-                }else{
-                  anchorTagComment = 
-                      `<a id = ${element.news__id} class="comment" href="">
-                         ${contentComment}
-                      </a>
-                      `;
-                      
-                }
-                if (element.user__id == myuser_id) {
-                    out +=
-                        `
-                          <div class="row message-body">
-                              <div class="col-sm-12 message-main-receiver">
-                                <div class="receiver">
-                                  <div class="message-text">${description}</div>
-                                  ${archive}
-                                  ${anchorTagComment}
-                                  <br>
-                                  <span class="message-time pull-right"> ${element.datetime} </span>
-                                  <div class="more-option">
-                                    ${moreOption}
+                  }else{
+                    anchorTagComment = 
+                        `<a id = ${element.news__id} class="comment" href="">
+                           ${contentComment}
+                        </a>
+                        `;
+                        
+                  }
+                  if (element.user__id == myuser_id) {
+                      out +=
+                          `
+                            <div class="row message-body">
+                                <div class="col-sm-12 message-main-receiver">
+                                  <div class="receiver">
+                                    <div class="message-text">${description}</div>
+                                    ${archive}
+                                    ${anchorTagComment}
+                                    <br>
+                                    <span class="message-time pull-right"> ${element.datetime} </span>
+                                    <div class="more-option">
+                                      ${moreOption}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
+              `
+                  } else {
+                      out +=
+                          `
+                            <div class="row message-body">
+                                <div class="col-sm-12 message-main-sender">
+                                  <div class="sender">
+                                    <span class="contact_name">${element.name_family}</span>
+                                    <div class="message-text">${element.description.replace(/\n/g, '<br/>')}</div>
+                                    ${archive}
+                                    ${anchorTagComment}
+                                    <br>
+                                    <span class="message-time pull-right"> ${element.datetime} </span>
+                                    <div class="more-option">
+                                      ${moreOption}
+                                    </div>
+                                  </div>
+                                </div>
                             </div>
-            `
-                } else {
-                    out +=
-                        `
-                          <div class="row message-body">
-                              <div class="col-sm-12 message-main-sender">
-                                <div class="sender">
-                                  <span class="contact_name">${element.name_family}</span>
-                                  <div class="message-text">${element.description.replace(/\n/g, '<br/>')}</div>
-                                  ${archive}
-                                  ${anchorTagComment}
-                                  <br>
-                                  <span class="message-time pull-right"> ${element.datetime} </span>
-                                  <div class="more-option">
-                                    ${moreOption}
-                                  </div>
-                                </div>
-                              </div>
-                          </div>
-            `
-                }
-            });
-        }
-        out = 
-        `<div style="overflow: auto;" class="conversation_body">
-            <div class="row last_message"><a href="">نمایش پیام های بیشتر!</a></div>
-            ${out}
-        </div>`
-        $('.conversation_empty').hide();
-        
-        $("#conversation .conversation_message").html(out);
-        $('.conversation_comment').css({height: "100%"});
-        // $('.conversation_message').css({height: "100%"});
-        $('.conversation_comment').hide();
-        $('.conversation_message').show();
-        if(scrollEndMsg == 'showMore'){
-          $('#conversation').animate({ scrollTop: 0 }, 1000);
-        }else if(scrollEndMsg == 'clickChanel'){
-          $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight }, 1000);
-          ChanleList();
+              `
+                  }
+              });
+          }
+          out = 
+          `<div style="overflow: auto;" class="conversation_body">
+              <div class="row last_message"><a href="">نمایش پیام های بیشتر!</a></div>
+              ${out}
+          </div>`
+          $('.conversation_empty').hide();
           
+          $("#conversation .conversation_message").html(out);
+          $('.conversation_comment').css({height: "100%"});
+          // $('.conversation_message').css({height: "100%"});
+          $('.conversation_comment').hide();
+          $('.conversation_message').show();
+          if(scrollEndMsg == 'showMore'){
+            $('#conversation').animate({ scrollTop: 0 }, 1000);
+          }else if(notReadMsg[0]){
+            for (let i = 0; i < $('.message-body a').length; i++) {
+              if($('.message-body a')[i].id == notReadMsg[0]){
+                let $scrollTo =$(`#${notReadMsg[0]}`);
+                let $container =  $("#conversation");
+                $container.animate({
+                  scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
+                });
+                break;
+              }
+            }
+            ChanleList();
+          }else if(scrollEndMsg == 'clickChanel'){
+            $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight }, 1000);
+            ChanleList();
+          }else{
+            $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
+          }
+          conversation = out;
+          commentBox = 'close';
         }else{
-          $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
+          Swal.fire({
+            icon: 'error',
+            title: res.data.message,
+            showConfirmButton: false,
+            timer: 2000
+          });
         }
-        conversation = out;
-        commentBox = 'close';
+        
       }catch(err){
         console.log(err);
       }
@@ -572,11 +619,13 @@ let sendMessage  = (id , text , archive)=>{
 
   },
     beforeSend: function(request) {
+        $('.reply-send i.fa-send').replaceWith('<div class="spinner-grow text-success" role="status" style = "height: 2rem;"><span class="sr-only">Loading...</span></div>');
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
       try{
           let res = jQuery.parseJSON(response);
+          $('.reply-send .spinner-grow').replaceWith('<i class="fa fa-send fa-2x" aria-hidden="true "></i>');
           if (res.result == 'ok') {
             if(!!$('.prv_file').children().length){
               $('.upload_img_success').css({display : 'block'});
@@ -627,7 +676,7 @@ let sendMessage  = (id , text , archive)=>{
   }); 
 }
 
-$('.reply-send i').on('click', function() {
+$('.reply-send').on('click', 'i', function() {
     sendData = 'send';
     let textInsertMessage = $('textarea.form-control').val().trim();
     if(commentBox == 'open'){
@@ -1936,6 +1985,7 @@ let imgChanelUpload = new plupload.Uploader({
     {title : "Image files", extensions : "jpg,jpeg,png"},
   ],
 });
+
 imgChanelUpload.init();
 imgChanelUpload.bind('FilesAdded', function (up, files) {
   handelJustOneFile(imgChanelUpload.files , imgChanelUpload);
@@ -1952,6 +2002,7 @@ imgChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
 imgChanelUpload.bind('UploadComplete', function (up, file , info) {
   UploadComplete (up, file , info ,imgChanelUpload)
 });
+
 let handelJustOneFile = (files , tarrgetElement)=>{
   if(tarrgetElement.files.length > 1){
     for ( let i = 0 ; i < files.length ; i++ ) {
@@ -1974,7 +2025,7 @@ let handelJustOneFile = (files , tarrgetElement)=>{
   }else{
     tarrgetElement.start();
   }
- } 
+} 
 let UploadProgress = (up, file , tarrgetId) =>{
   let $fa_camera = ($(`${tarrgetId} .fa-camera`));
   let display = 'display: grid;'
@@ -2090,7 +2141,7 @@ let get_list_teacher = (Location)=>{
              
               addmembers.forEach(el => {
                if(el.user__id == element.teacher__id){
-                 input = `<input type="checkbox" checked>`
+                 input = `<input type="checkbox" checked disabled>`
                 }
               });
               out_list_techer +=
@@ -2204,8 +2255,7 @@ let get_list_personel = (Location)=>{
             }else if(Location == 'update-chanel'){
               addmembers.forEach(el => {
                 if(el.user__id == element.personel__id){
-                  input = `<input type="checkbox" checked>`
-                  
+                  input = `<input type="checkbox" checked disabled>`
                  }
                });
 
@@ -2407,7 +2457,7 @@ let list_student_of_class = (classid , branchid , Location)=>{
             }else if(Location == 'student-term'){
               addmembers.forEach(el => {
                 if(el.user__id == element.student__id){
-                  input = `<input type="checkbox" checked>`
+                  input = `<input type="checkbox" checked disabled>`
                   
                  }
                });
@@ -2560,7 +2610,6 @@ let handelUsersList = (roll,location)=>{
       $('.users-list-chanel').html(out_list_personel)
     }
   }
-
   if(roll == 'student'){
     let out_list_student = ``
     studentList.forEach(element => {
@@ -2671,7 +2720,9 @@ let selectAndUnsellect = (inputAll , inputList , location)=>{
         listElement = $($(`${inputList} input`)[index]).prop('checked')
         let id = ($(`${inputList}`)[index]).id;
         if(listElement){
-          $(`${inputList}#${id}`).click();
+          if($($(`${inputList} input`)[index]).attr('disabled') !== 'disabled'){
+            $(`${inputList}#${id}`).click();
+          }
         }
       }else{
         listElement = $($(`${inputList}`)[index]).prop('checked')
@@ -2692,27 +2743,6 @@ let selectAndUnsellect = (inputAll , inputList , location)=>{
 // ***************  check input member list for input sellect all function => add chanel
 let checkSellectInput = (inputAll , inputList ,roll)=>{
   $(`${inputAll}`).prop('checked' , false);
-  // let sellectAll =''
-  // let end = 0
-  // if(roll == 'student'){
-  //   end = $(`${inputList}`).length;
-  // }else{
-  //   end = $(`${inputList}`).length-1;
-  // }
-  // for (let index = 0; index < end; index++) {
-  //   if( ($($(`${inputList}`)[index]).prop('checked'))){
-  //     sellectAll = true
-  //   }else{
-  //     sellectAll = false
-  //     break;
-  //   }
-  // }
-  // if(sellectAll){
-  //   $(`${inputAll}`).prop('checked' , true);
-  // }else{
-  //   $(`${inputAll}`).prop('checked' , false);
-  // }
-
 }
 
 // *************** show all member befor add chanel 
@@ -2886,6 +2916,34 @@ $('.menu-list .menu-deleteChanel').on('click' , function(){
 $('.uploade-image-chanel').on('click',function(){
   removeImgChanel(imgUpdateChanelUpload);
 });
+let imgUpdateChanelUpload = new plupload.Uploader({
+  browse_button: 'uploade-image-chanel',
+  chunk_size:(200*1024) + 'b',
+  max_retries: 3,
+  url: 'http://archive.atiehsazan.ir/Api/Upload/index.php',
+  multipart_params: {
+      chunk_size: 200*1024,
+  },
+  filters : [
+    {title : "Image files", extensions : "jpg,jpeg,png"},
+  ],
+});
+imgUpdateChanelUpload.init();
+imgUpdateChanelUpload.bind('FilesAdded', function (up, files) {
+  handelJustOneFile(imgUpdateChanelUpload.files , imgUpdateChanelUpload);
+});
+imgUpdateChanelUpload.bind('UploadProgress',function (up, file ) {
+  UploadProgress(up, file , '.uploade-image-chanel');
+  
+});
+imgUpdateChanelUpload.bind('Error', function (up, err) {});
+imgUpdateChanelUpload.bind('FileUploaded', function (up, file, info) {
+  FileUploaded(up, file, info , '.uploade-image-chanel')
+});
+imgUpdateChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
+imgUpdateChanelUpload.bind('UploadComplete', function (up, file , info) {
+  UploadComplete (up, file , info,imgUpdateChanelUpload)
+});
 $('.save-change-info').on('click' , function(){
   let namechanel = $('.update-name-chanel input').val()
   let descriptionchanel = $('.update-description-chanel textarea').val();
@@ -2935,6 +2993,7 @@ $('.student-term').on('click' ,'li', function(){
   $('.sellect_all-box').css({display:'block'});
 });
 $('.users-list-chanel').on('click' ,'li', function(){
+  let disabled = $(this).children('input').attr('disabled') !== 'disabled';
   let objectmember = {}
   let presonid = $(this).attr('id');
   let personCheckbox = $(this).children('input').prop('checked');
@@ -2944,14 +3003,14 @@ $('.users-list-chanel').on('click' ,'li', function(){
         isadmin = element.is_admin;
     }
   });
-  if (personCheckbox) {
+  if (personCheckbox && disabled) {
     $(this).children('input').prop('checked' , false)
   }else{
     $(this).children('input').prop('checked' , true)
   }
   personCheckbox = $(this).children('input').prop('checked')
   let chekrpead = true
-  if(personCheckbox){
+  if(personCheckbox && disabled){
     objectmember =
     {
       "member__id" : presonid,
@@ -2979,13 +3038,11 @@ $('.users-list-chanel').on('click' ,'li', function(){
 });
 $('.users-list-chanel').on('click' ,'input', function(){
   let id = $(this).parents('li').attr('id');
-  $(`li#${id}`).click();
-  
+    $(`li#${id}`).click();
 });
 $('.sellect_all-box input').on('click', function(){
   if ($('.users-list-chanel').children().length && $('.users-list-chanel').children()[0].className !== 'loadinglist') {
     selectAndUnsellect($(this) , '.users-list-chanel li' , 'edit');
-    
   }else{
     $('.sellect_all-box input').prop('checked' , false)
   }
@@ -3106,13 +3163,10 @@ let member_channel = (Location)=>{
             }
             if (element.is_admin == 1){
               adminCheck = 'checked'
-              
               adminIcon = `<i class="fas fa-user-shield" style="color: green; cursor: pointer;"></i>`
-             
             }else{
               adminCheck = ``
               adminIcon = `<i class="fas fa-user-shield" style="color: #c3c3c3; cursor: pointer;"></i>`
-              
             }
             out_member_chanel += 
             `
@@ -3435,6 +3489,8 @@ let delete_channel = (id , message)=>{
             showConfirmButton: false,
             timer: 1500,
           });
+          
+          setTimeout(()=>{location.reload();}, 2000);
         }else{
           message.fire({
             title: res.data.message,
@@ -3458,35 +3514,6 @@ let delete_channel = (id , message)=>{
     }
   });
 }
-
-let imgUpdateChanelUpload = new plupload.Uploader({
-  browse_button: 'uploade-image-chanel',
-  chunk_size:(200*1024) + 'b',
-  max_retries: 3,
-  url: 'http://archive.atiehsazan.ir/Api/Upload/index.php',
-  multipart_params: {
-      chunk_size: 200*1024,
-  },
-  filters : [
-    {title : "Image files", extensions : "jpg,jpeg,png"},
-  ],
-});
-imgUpdateChanelUpload.init();
-imgUpdateChanelUpload.bind('FilesAdded', function (up, files) {
-  handelJustOneFile(imgUpdateChanelUpload.files , imgUpdateChanelUpload);
-});
-imgUpdateChanelUpload.bind('UploadProgress',function (up, file ) {
-  UploadProgress(up, file , '.uploade-image-chanel');
-  
-});
-imgUpdateChanelUpload.bind('Error', function (up, err) {});
-imgUpdateChanelUpload.bind('FileUploaded', function (up, file, info) {
-  FileUploaded(up, file, info , '.uploade-image-chanel')
-});
-imgUpdateChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
-imgUpdateChanelUpload.bind('UploadComplete', function (up, file , info) {
-  UploadComplete (up, file , info,imgUpdateChanelUpload)
-});
 
 // ************************* get_session_archive  ****************************
 
