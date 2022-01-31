@@ -3,7 +3,7 @@ let api_address = "";
 let token = "";
 if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "5FA6521DE91BC4D0D8E1D5C2245477D6";
+  token = "A73FD4E44F0C8ECCD5C6482F0837BE19";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -36,11 +36,13 @@ let memberInfo = [];
 let timerint = {};
 let headePost = ``;
 let chaneleImgId = ''
+let cuntNotReadNews = 0;
+let lastRow = 0
 
 // ************************* refresh listChanel and Conve ****************************
 let refresListChanel =  setInterval (() =>{
   ChanleList();
-  },30000);
+},30000);
 // ************************* exit-mesengher ****************************
 $('.exit-mesengher').on('click',function (){
   window.close()
@@ -106,7 +108,7 @@ let ChanleList = ()=>{
                             <span class="full_channel_name">${element.channel_name}
                             </span>
                             <br>
-                            <span style="font-size: 10px; color: #838080;">${element.last_news}</span>
+                            <span style="font-size: 10px; color: #cfcfcf;">${element.last_news}</span>
                             </div>
                             <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
                               <span class="time-meta pull-right">
@@ -196,8 +198,10 @@ $(`#searchText`).keyup(function(){
 let conversation = '';
 let number_rows = 0;
 let heade_chanel_name = '';
+let row = 15;
 
 $(".sideBar").on("click", ".sideBar-body", function(e) {
+  row = 15
   $('.heading-refresh i').css({"visibility":"inherit"});
   $('.reply').css({"visibility":"inherit"})
   let str = e.currentTarget.innerText;
@@ -209,19 +213,9 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
   $(".chanel-name").html(heade_chanel_name);
   $('.heading-avatar-icon img').css({"visibility":"inherit"});
   let img = $(e.currentTarget).children('div.col-sm-3.col-xs-3.sideBar-avatar').children('div.avatar-icon').children('img').attr('src')
-  $(".heading-avatar-icon img").attr('src' , img) 
-  $(".info-img img").attr('src' , img) 
+  $(".heading-avatar-icon img").attr('src' , img)
+  $(".info-img img").attr('src' , img)
   chanel_id = this.id;
-  let row = 15;
-  $('#conversation').on('click','.last_message a',function (e) {
-    e.preventDefault();
-    if(row <= number_rows){
-      row = row + 5;
-      get_news_channel( row , chanel_id , 'showMore');
-    }else{
-      $('.last_message a').hide()
-    }
-  });
   $("#searchText").val("")
   get_news_channel( row, chanel_id,'clickChanel');
 });
@@ -237,13 +231,18 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
     },
     
     beforeSend: function(request) {
-        request.setRequestHeader("Authorization", "Bearer " + token);
+      $('.moreMessage').show();
+      $('.lastMoreMessage').show();
+      request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
       try{
         let res = jQuery.parseJSON(response);
+        $('.moreMessage').hide();
+        $('.lastMoreMessage').hide();
         if (res.result == 'ok'){
-          number_rows =  res.data.detail_rows.last_row
+          number_rows =  res.data.detail_rows.last_row;
+          lastRow = number_rows
           myuser_id = res.data.myuser_id;
           let list_news = res.data.list_news;
           let last_row = res.data.detail_rows.last_row;
@@ -436,8 +435,18 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
           }
           out = 
           `<div style="overflow: auto;" class="conversation_body">
-              <div class="row last_message"><a href="">نمایش پیام های بیشتر!</a></div>
+              <div class="row last_message lastMoreMessage">
+                <div class="spinner-border text-secondary" role="status" style="top: inherit; right: 50%; height: 22px; display: block;">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+              
               ${out}
+              <div class="row last_message moreMessage">
+                <div class="spinner-border text-secondary" role="status" style="top: inherit; right: 50%; height: 22px; display: block;">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
           </div>`
           $('.conversation_empty').hide();
           
@@ -447,7 +456,7 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
           $('.conversation_comment').hide();
           $('.conversation_message').show();
           if(scrollEndMsg == 'showMore'){
-            $('#conversation').animate({ scrollTop: 0 }, 1000);
+            $('#conversation').animate({ scrollTop: 20 });
           }else if(notReadMsg[0]){
             for (let i = 0; i < $('.message-body a').length; i++) {
               if($('.message-body a')[i].id == notReadMsg[0]){
@@ -461,10 +470,10 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
             }
             ChanleList();
           }else if(scrollEndMsg == 'clickChanel'){
-            $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight }, 1000);
+            $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight });
             ChanleList();
           }else{
-            $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight;
+            $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight; 
           }
           conversation = out;
           commentBox = 'close';
@@ -507,8 +516,32 @@ $('.close_player').on("click",function () {
  
 });
 
+// ************************* handle load more by scroll conversation ****************************
+$("#conversation").scroll(function() {
+  let height = $('#conversation')[0].scrollHeight - $('#conversation').height();
+  height = Math.round(height);
+  let scrollTop =  $('#conversation').scrollTop();
+  scrollTop = Math.round(scrollTop);
+  cuntNotReadNews =$(`.sideBar #${chanel_id} .count_not_read`)[0];
+  if (cuntNotReadNews) {
+    cuntNotReadNews = parseInt(cuntNotReadNews.innerText)
+  }else{
+    cuntNotReadNews = 0;
+  }
+  if( height == scrollTop  && cuntNotReadNews)  {
+    get_news_channel( 15, chanel_id,'clickChanel');
+  }
+  if ( scrollTop == 0 ){
+    if(lastRow+1 >= row && commentBox !== 'open'){
+      get_news_channel( row , chanel_id , 'showMore');
+      row = row + 5;
+    }
+    
+  }
+});
 // ************************* handle click window and conversation ****************************
 $(window).on('click', function(e) {
+
   // *** download file ***
 
   let file__id = e.target.id;
@@ -566,16 +599,23 @@ $(window).on('click', function(e) {
 
   // *** clear box msg after click other chanel *** 
 
-  if(!$(e.target).parents('.conversation').length){
+  if(!$(e.target).parents('.conversation').length && !$(e.target).parents('.fg-emoji-container').length){
     $('textarea.form-control').val('');
   }
 
   // *** clear box msg after click other chanel *** 
 
   if(!$(e.target).parents('.conversation').length){
-    $('.reply_to').html('');
-    $('.reply_to').hide();
-    $('.conversation_comment').css({height: 'auto'});
+    if($('.reply_to').children().length == 0){
+      $('.reply_to').html('');
+      $('.reply_to').hide();
+      if($('.prv_file').children().length){
+        $('.conversation_comment').css({height: '84%'});
+      }else{
+        $('.conversation_comment').css({height: '100%'});
+      }
+    }
+    
   }
 
   // *** reset textarea css *** 
@@ -743,43 +783,67 @@ $('.reply-send').on('click', 'i', function() {
   
 });
 
-// ************************* handle textarea css ****************************
-$('.form-control').keyup('',function(){
+// ************************* handle textarea multiline css ****************************
+$('textarea.form-control').keyup('',function(){
   let text = $('textarea.form-control').val().split('\n')
-  if(text.length > 1){
+  if(text.length < 1){
     $('.reply-main textarea').css({overflow : 'auto'}); 
   }else if(text.length == 1){
-    // $('#conversation').css({height : ''});
-    // $('.reply').css({height : '60px'});
-    // $('.reply-main').css({height : 'auto'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
+    $('#conversation').css({height : 'calc(100% - 120px)'});
+    $('.conversation_comment').css({height : '68%'});
+    $('.reply').css({height : '60px'});
+    $('.reply-main').css({height : 'auto'});
+    $('.reply-main textarea').css({overflow : 'hidden'});
+    $('.prv_file').css({bottom : '60px'});
+    $('.reply_to').css({bottom : '139px'});
   }else if(text.length == 2){
-    // $('#conversation').css({height : '81%'});
-    // $('.reply').css({height : '70px'});
-    // $('.reply-main').css({height : '57px'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
+    $('#conversation').css({height : 'calc(100% - 144px)'});
+    $('.conversation_comment').css({height : '67%'});
+    $('.reply').css({height : '84px'});
+    $('.reply-main').css({height : '57px'});
+    $('.reply-main textarea').css({overflow : 'hidden'});
+    $('.prv_file').css({bottom : '84px'});
+    $('.reply_to').css({bottom : '163px'});
   }else if(text.length == 3){
-    // $('#conversation').css({height : '74%'});
-    // $('.reply').css({height : '100px'});
-    // $('.reply-main').css({height : '77px'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
+    $('#conversation').css({height : 'calc(100% - 160px)'});
+    $('.conversation_comment').css({height : '66%'});
+    $('.reply').css({height : '100px'});
+    $('.reply-main').css({height : '77px'});
+    $('.reply-main textarea').css({overflow : 'hidden'});
+    $('.prv_file').css({bottom : '100px'});
+    $('.reply_to').css({bottom : '179px'});
   }else if(text.length == 4){
-    // $('#conversation').css({height : '71%'});
-    // $('.reply').css({height : '119px'});
-    // $('.reply-main').css({height : '100px'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
+    $('#conversation').css({height : 'calc(100% - 175px)'});
+    $('.conversation_comment').css({height : '64%'});
+    $('.reply').css({height : '119px'});
+    $('.reply-main').css({height : '100px'});
+    $('.reply-main textarea').css({overflow : 'hidden'});
+    $('.prv_file').css({bottom : '115px'});
+    $('.reply_to').css({bottom : '194px'});
   }else if(text.length == 5){
-    // $('#conversation').css({height : '67%'});
-    // $('.reply').css({height : '144px'});
-    // $('.reply-main').css({height : '122px'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
+    $('#conversation').css({height : 'calc(100% - 200px)'});
+    $('.conversation_comment').css({height : '62%'});
+    $('.reply').css({height : '144px'});
+    $('.reply-main').css({height : '122px'});
+    $('.reply-main textarea').css({overflow : 'hidden'});
+    $('.prv_file').css({bottom : '140px'});
+    $('.reply_to').css({bottom : '219px'});
   }else if(text.length == 6){
-    // $('#conversation').css({height : '63%'});
-    // $('.reply').css({height : '168px'});
-    // $('.reply-main').css({height : '150px'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
+    $('#conversation').css({height : 'calc(100% - 227px)'});
+    $('.reply').css({height : '168px'});
+    $('.conversation_comment').css({height : '60%'});
+    $('.reply-main').css({height : '150px'});
+    $('.reply-main textarea').css({overflow : 'hidden'});
+    $('.prv_file').css({bottom : '167px'});
+    $('.reply_to').css({bottom : '246px'});
   }else if(text.length > 6){
-    // $('.reply-main textarea').css({overflow : 'auto'}); 
+    $('#conversation').css({height : 'calc(100% - 227px)'});
+    $('.reply').css({height : '168px'});
+    $('.conversation_comment').css({height : '60%'});
+    $('.reply-main').css({height : '150px'});
+    $('.prv_file').css({bottom : '167px'});
+    $('.reply_to').css({bottom : '246px'});
+    $('.reply-main textarea').css({overflow : 'auto'}); 
   }else{
     // $('#conversation').css({height : ''});
     // $('.reply').css({height : '60px'});
@@ -919,19 +983,17 @@ let uploader = new plupload.Uploader({
             </li>
           `;
         });
-        if(!$($('.prv_file')).children().length){
-          // $('.reply_to').css({bottom: '139px'})
-          // $('.conversation_comment').css({height: '67%'});
-        }
         $('.prv_file').html(preview_file);
         $('.msg_upload_lists').html(uploadFileShowModal);
         if ($('.prv_file').children().length){
           $('.prv_file').css({ visibility: "inherit"})
-          
-          
         }
     }
     if(commentBox == 'open') {
+      if($('.reply_to').children().length){
+        $('.reply_to').css({bottom: '139px'})
+      }
+      $('.conversation_comment').css({height: '84%'});
       if(uploader.files.length <= 1){
         FilesAdded();
       }else{
@@ -974,13 +1036,16 @@ let uploader = new plupload.Uploader({
       }
     }
     $('.prv_file').on('click','.fa-times',function () {
+      
       let clicked_file_id = $(this).parents()[0].id;
       plupload.each(files, function (file) {
         if (file && file.id == clicked_file_id) {
-          if ($('.prv_file').children().length == 1){
-            $('.prv_file').css({ visibility: "hidden" });
+          if($('.reply_to').children().length){
             $('.reply_to').css({bottom: '60px'});
             $('.conversation_comment').css({height: '83%'});
+            }
+          if ($('.prv_file').children().length == 1){
+            $('.prv_file').css({ visibility: "hidden" });
           }
           uploader.removeFile(file);
           $(`.msg_upload_lists li#${clicked_file_id}`).remove();
@@ -1041,7 +1106,9 @@ let uploader = new plupload.Uploader({
         }
         listArchive.push(fileObject);
       });
-      listArchive = JSON.stringify(listArchive)
+      if(listArchive.length){
+        listArchive = JSON.stringify(listArchive);
+      }
       let textInsertMessage = $('textarea.form-control').val().trim();
       if(commentBox == 'open'){
         if(!!$($('.reply_to')).children().length){
@@ -1067,7 +1134,7 @@ let uploader = new plupload.Uploader({
         if (sendData == 'send') {
           sendMessage(chanel_id , textInsertMessage , listArchive )
         }else{
-          console.log('error');
+          console.log('error',sendData);
         }
       }
     }else{
@@ -1114,6 +1181,7 @@ $('.Cancel-send').on('click' , function () {
       if ($('.prv_file').children().length == 0){
         $('.prv_file').css({ visibility: "hidden" });
       }
+      listArchive = [];
 });
 // ************************* allow_comment ****************************
 let allowComment = (id , allow) => {
@@ -1264,25 +1332,25 @@ let get_comment_reply = (id , componentthispost) =>{
           }
             if (myuser_id == element.user__id) {
                 msg +=
-                    `
-                    <div class="row comment-message-body">
-                      <div id="${element.comment_reply__id}" class="col-sm-12 message-main-receiver">
-                        <div class="receiver">
-                        ${replyComment}
-                        ${archive}
-                        <div class="message-text">${text}</div>
-                          <span class="message-time pull-right">${element.datetime}</span>
-                          <div class="more-option">
-                            ${moreOption}
-                          </div>
-                        </div>
+              `
+                <div class="row comment-message-body">
+                  <div id="${element.comment_reply__id}" class="col-sm-12 message-main-receiver">
+                    <div class="receiver">
+                    ${replyComment}
+                    ${archive}
+                    <div class="message-text">${text}</div>
+                      <span class="message-time pull-right">${element.datetime}</span>
+                      <div class="more-option">
+                        ${moreOption}
                       </div>
                     </div>
+                  </div>
+                </div>
               `
 
             } else {
                 msg +=
-                    `
+                `
                   <div class="row comment-message-body">
                     <div id="${element.comment_reply__id}" class="col-sm-12 message-main-sender">
                       <div class="sender">
@@ -1299,12 +1367,12 @@ let get_comment_reply = (id , componentthispost) =>{
                   </div>
                 
                 `
-
             }
             
         });
         let out = conversation;
-        out = `
+        out = 
+        `
               <div class="row comment-cadr">
                 <div class="col-md-12 comment-box">
                   <div class="row close-comment-box">
@@ -1316,7 +1384,6 @@ let get_comment_reply = (id , componentthispost) =>{
                     
                 </div>
               </div>
-                
         `;
         $("#conversation .conversation_comment").html(out);
     }
@@ -1324,7 +1391,7 @@ let get_comment_reply = (id , componentthispost) =>{
 }
 
 $('.conversation').on('click', '.comment', function(e) {
-  
+  e.preventDefault();
   if ($(this).parents('div.receiver').length) {
     let name = '';
     let text = $(this).parents('div.receiver').children('div.message-text').html();
@@ -1378,7 +1445,6 @@ $('.conversation').on('click', '.comment', function(e) {
   }
     $('textarea.form-control').val('');
     primery_id = e.currentTarget.id;
-    e.preventDefault();
     get_comment_reply(primery_id ,headePost);
     commentBox = 'open';
     postId = $(e.target).parents()[1].id;
@@ -1402,7 +1468,7 @@ $(".conversation").on('click','.reply_comment' , function(e) {
   }
   let $scrollTo = $(`#${$($(this).attr("href")).attr('id')}`);
   let $container =  $(".comment-box");
-
+console.log($scrollTo.offset().top - $container.offset().top + $container.scrollTop());
   $container.animate({
     scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
   },'slow');
@@ -1572,7 +1638,11 @@ $('.conversation').on('click','.comment-cadr .fa-reply',function(e){
 $('.reply_to').on('click','i.fa-times-circle',function(){
   $('.reply_to').html('');
   $('.reply_to').hide();
-  $('.conversation_comment').css({height: 'auto'});
+  if($('.prv_file').children().length){
+    $('.conversation_comment').css({height: '84%'});
+  }else{
+    $('.conversation_comment').css({height: 'auto'});
+  }
 });
 
 // more-option-fa-copy ****************************
@@ -1624,11 +1694,13 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
       extra__id : extraid,
   },
     beforeSend: function(request) {
+      $('.reply-send i.fa-send').replaceWith('<div class="spinner-grow text-success" role="status" style = "height: 2rem;"><span class="sr-only">Loading...</span></div>');
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
       try{
           let res = jQuery.parseJSON(response);
+          $('.reply-send .spinner-grow').replaceWith('<i class="fa fa-send fa-2x" aria-hidden="true "></i>');
           if(res.result == "ok"){
             if(!!$('.prv_file').children().length){
               $('.upload_img_success').css({display : 'block'});
@@ -2870,7 +2942,7 @@ $('.back-menu-list').on('click',function(){
   $('.update_enable_comments input').prop('checked' , true);
   $('.users-list-chanel li').remove();
   removeImgChanel(imgUpdateChanelUpload);
-  $(`uploade-image-chanel img`).attr('src' , './assets/images/blue.png');
+  $(`.uploade-image-chanel img`).attr('src' , './assets/images/blue.png');
   $(`.uploade-image-chanel i.fa-camera`).show();
 });
 $('.menu-list .menu-edite').on('click' , function(){
@@ -2880,6 +2952,10 @@ $('.menu-list .menu-edite').on('click' , function(){
   $('.menu-list').css({display:'none'});
   $('.update-info').css({display:'block'});
   $('.save-change-info').css({display:'block'});
+  $('.update-name-chanel input').val($('.chanel-name a.heading-name-meta')[0].innerText);
+  $('.area-box textarea').val($('.chanel-description p.decription-text')[0].innerText)
+  let img = $('.update-headder-info-box .info-img img').attr('src')
+  $(".uploade-image-chanel img").attr('src' , img) ;
 });
 $('.menu-list .menu-users').on('click' , function(){
   $('.header-update-chanel p.chanle-name').text('مدیریت اعضاء');
@@ -2962,9 +3038,7 @@ $('.save-change-info').on('click' , function(){
       showConfirmButton: false,
       timer: 1500
     })
-    
   }
- 
 });
 $('.position-teacher').on('click' , function(){
   upadtememberchanel=[]
@@ -3072,7 +3146,7 @@ $('.header-update-chanel .fa-times-circle').on('click',function () {
     $('.update_enable_comments input').prop('checked' , true);
     $('.users-list-chanel li').remove();
     removeImgChanel(imgUpdateChanelUpload);
-    $(`uploade-image-chanel img`).attr('src', './assets/images/blue.png');
+    $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
     $(`.uploade-image-chanel i.fa-camera`).show();
 });
 $('.info-close').on('click',function(){
