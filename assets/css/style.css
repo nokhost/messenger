@@ -589,7 +589,9 @@
     .comment-title {
         margin: 0 5px 0 43px;
     }
-    
+    .comment-title:hover{
+        color: currentcolor;
+    }
     .previous a {
         text-decoration: none;
         font-weight: 700;
@@ -1427,9 +1429,15 @@
     }
     .exit-mesengher{
         float: right;
-        width: 55px;
-        padding-top: 6px;
+        width: 25px;
         cursor: pointer;
+        height: 21px;
+        margin: 7px;
+        padding: 0px 6px;
+        border-radius: 8px;
+    }
+    .exit-mesengher:hover{
+        background-color: red;
     }
     .exit-mesengher i{
         font-size: 20px;
