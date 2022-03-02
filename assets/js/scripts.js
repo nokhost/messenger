@@ -242,7 +242,6 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
         $('.moreMessage').hide();
         $('.lastMoreMessage').hide();
         if (res.result == 'ok'){
-          console.log(res);
           number_rows =  res.data.detail_rows.last_row;
           lastRow = number_rows
           myuser_id = res.data.myuser_id;
@@ -542,7 +541,9 @@ $("#conversation").scroll(function() {
   }
 });
 // ************************* handle click window and conversation ****************************
-$(window).on('click', function(e) {
+let ua = navigator.userAgent,
+event = (ua.match(/iPad/i) || ua.match(/iPhone/)) ? "touchstart" : "click";
+$(window).on(event, '.clickable_element', function(e) {
 
   // *** download file ***
 
@@ -570,6 +571,7 @@ $(window).on('click', function(e) {
             player(session , file__id);
             
           }else{
+            
             $(`#${file__id}`).css({display : 'block'});
             $(`#${file__id} + .spinner-border`).css({display : 'none'})
             let win = window.open(`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`, '_blank');
@@ -1475,7 +1477,7 @@ $('.conversation').on('click', '.comment', function(e) {
     }
     headePost =
     `
-    <div class="row post_comment" style="height: auto;">
+    <div class="row post_comment" style="height: auto; margin: inherit;">
           <div class="col-sm-12 message-main-sender">
             <div class="sender" style = "height: auto !important;">
               <span class="contact_name">${name}</span>
@@ -1500,7 +1502,7 @@ $('.conversation').on('click', '.comment', function(e) {
     }
     headePost =
     `
-    <div class="row post_comment" style="height: auto;">
+    <div class="row post_comment" style="height: auto; margin: inherit;">
           <div class="col-sm-12 message-main-sender">
               <div class="sender" style = "height: auto !important;">
               <span class="contact_name">${name}</span>
