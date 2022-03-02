@@ -541,9 +541,7 @@ $("#conversation").scroll(function() {
   }
 });
 // ************************* handle click window and conversation ****************************
-let ua = navigator.userAgent,
-event = (ua.match(/iPad/i) || ua.match(/iPhone/)) ? "touchstart" : "click";
-$(window).on(event, '.clickable_element', function(e) {
+$(window).on('click', function(e) {
 
   // *** download file ***
 
@@ -571,7 +569,6 @@ $(window).on(event, '.clickable_element', function(e) {
             player(session , file__id);
             
           }else{
-            
             $(`#${file__id}`).css({display : 'block'});
             $(`#${file__id} + .spinner-border`).css({display : 'none'})
             let win = window.open(`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`, '_blank');
