@@ -1,7 +1,7 @@
 let url = window.location.href;    
 let api_address = "";
 let token = "";
-if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url =='file:///C:/Users/darvi/Desktop/messenger/index.html'){
+if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
   token = "0D1B0DBA0A84F13255C9AC66887064F4";
 }else{
@@ -242,6 +242,7 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
         $('.moreMessage').hide();
         $('.lastMoreMessage').hide();
         if (res.result == 'ok'){
+          console.log(res);
           number_rows =  res.data.detail_rows.last_row;
           lastRow = number_rows
           myuser_id = res.data.myuser_id;
@@ -571,7 +572,12 @@ $(window).on('click', function(e) {
           }else{
             $(`#${file__id}`).css({display : 'block'});
             $(`#${file__id} + .spinner-border`).css({display : 'none'})
-            window.open(`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`, '_blank');
+            let win = window.open(`http://archive.atiehsazan.ir/Api/GetFile/?Session_id=${session}&File_id=${file__id}`, '_blank');
+            if(win){
+              win.focus();
+            }else{
+              alert('Please allow popups for this website');
+            }
           }
         }
       },
@@ -597,10 +603,10 @@ $(window).on('click', function(e) {
   if (!$(e.target).parents('.more-option').length) {
     $(".selected").last().removeClass('selected');
   }
-
-  // *** clear box msg after click other chanel *** 
-
-  if(!$(e.target).parents('.conversation').length && !$(e.target).parents('.fg-emoji-container').length){
+  
+  // *** clear box msg after click other chanel ***
+  
+  if(!$(e.target).parents('.conversation').length && !$(e.target).parents('.fg-emoji-container').length && !$(e.target).parents('.reply_to_content_box').length && !$(e.target).parents('.span_prv_archive').length){
     $('textarea.form-control').val('');
   }
 
@@ -622,10 +628,7 @@ $(window).on('click', function(e) {
   // *** reset textarea css *** 
 
   if(!$(e.target).parents('#conversation').length && !$(e.target).parents('.reply').length){
-    $('#conversation').css({height : ''});
-    $('.reply').css({height : '60px'});
-    $('.reply-main').css({height : 'auto'});
-    $('.reply-main textarea').css({overflow : 'hidden'});
+    multiline()
   }
 
 });
@@ -785,80 +788,140 @@ $('.reply-send').on('click', 'i', function() {
 });
 
 // ************************* handle textarea multiline css ****************************
-$('textarea.form-control').keyup('',function(){
+let multiline = () =>{
   let text = $('textarea.form-control').val().split('\n')
   if(text.length < 1){
     $('.reply-main textarea').css({overflow : 'auto'}); 
   }else if(text.length == 1){
     $('#conversation').css({height : 'calc(100% - 120px)'});
-    console.log($('reply_to').css("display"));
-    if ($('.prv_file').children().length) {
-      $('.conversation_comment').css({height : '90%'});
-      $('.reply_to').css({bottom : '139px'});
-    }else{
-      $('.conversation_comment').css({height : '100%'});
-      
-      $('.reply_to').css({bottom : '60px'});
-    }
     $('.reply').css({height : '60px'});
     $('.reply-main').css({height : 'auto'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '60px'});
-    
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '85%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '85%'});
+      $('.reply_to').css({bottom : '60px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      console.log('ok');
+      $('.conversation_comment').css({height : '68%'});
+      $('.reply_to').css({bottom : '139px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else if(text.length == 2){
     $('#conversation').css({height : 'calc(100% - 144px)'});
-    $('.conversation_comment').css({height : '67%'});
     $('.reply').css({height : '84px'});
     $('.reply-main').css({height : '57px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '84px'});
     $('.reply_to').css({bottom : '163px'});
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '83%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '83%'});
+      $('.reply_to').css({bottom : '84px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      $('.conversation_comment').css({height : '68%'});
+      $('.reply_to').css({bottom : '163px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else if(text.length == 3){
     $('#conversation').css({height : 'calc(100% - 160px)'});
-    $('.conversation_comment').css({height : '66%'});
     $('.reply').css({height : '100px'});
     $('.reply-main').css({height : '77px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '100px'});
-    $('.reply_to').css({bottom : '179px'});
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '82%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '83%'});
+      $('.reply_to').css({bottom : '100px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      $('.conversation_comment').css({height : '67%'});
+      $('.reply_to').css({bottom : '179px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else if(text.length == 4){
     $('#conversation').css({height : 'calc(100% - 175px)'});
-    $('.conversation_comment').css({height : '64%'});
     $('.reply').css({height : '119px'});
     $('.reply-main').css({height : '100px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '115px'});
-    $('.reply_to').css({bottom : '194px'});
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '82%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '83%'});
+      $('.reply_to').css({bottom : '115px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      $('.conversation_comment').css({height : '64%'});
+      $('.reply_to').css({bottom : '194px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else if(text.length == 5){
     $('#conversation').css({height : 'calc(100% - 200px)'});
-    $('.conversation_comment').css({height : '62%'});
     $('.reply').css({height : '144px'});
     $('.reply-main').css({height : '122px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '140px'});
-    $('.reply_to').css({bottom : '219px'});
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '81%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '81%'});
+      $('.reply_to').css({bottom : '140px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      $('.conversation_comment').css({height : '62%'});
+      $('.reply_to').css({bottom : '219px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else if(text.length == 6){
     $('#conversation').css({height : 'calc(100% - 227px)'});
     $('.reply').css({height : '168px'});
-    $('.conversation_comment').css({height : '60%'});
     $('.reply-main').css({height : '150px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '167px'});
-    $('.reply_to').css({bottom : '246px'});
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '81%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '81%'});
+      $('.reply_to').css({bottom : '167px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      $('.conversation_comment').css({height : '62%'});
+      $('.reply_to').css({bottom : '246px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else if(text.length > 6){
     $('#conversation').css({height : 'calc(100% - 227px)'});
     $('.reply').css({height : '168px'});
-    $('.conversation_comment').css({height : '60%'});
     $('.reply-main').css({height : '150px'});
     $('.prv_file').css({bottom : '167px'});
-    $('.reply_to').css({bottom : '246px'});
-    $('.reply-main textarea').css({overflow : 'auto'}); 
+    $('.reply-main textarea').css({overflow : 'auto'});
+    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '81%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '81%'});
+      $('.reply_to').css({bottom : '167px'});
+    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
+      $('.conversation_comment').css({height : '62%'});
+      $('.reply_to').css({bottom : '246px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+    }
   }else{
     // $('#conversation').css({height : ''});
     // $('.reply').css({height : '60px'});
     // $('.reply-main').css({height : 'auto'});
     // $('.reply-main textarea').css({overflow : 'hidden'});
   }
+}
+$('textarea.form-control').keyup('',function(){
+  multiline()
 });
 
 // ************************* delete message ****************************
@@ -999,10 +1062,8 @@ let uploader = new plupload.Uploader({
         }
     }
     if(commentBox == 'open') {
-      if($('.reply_to').children().length){
-        $('.reply_to').css({bottom: '139px'})
-      }
-      $('.conversation_comment').css({height: '90%'});
+      
+      multiline()
       if(uploader.files.length <= 1){
         FilesAdded();
       }else{
@@ -1416,7 +1477,7 @@ $('.conversation').on('click', '.comment', function(e) {
     `
     <div class="row post_comment" style="height: auto;">
           <div class="col-sm-12 message-main-sender">
-            <div class="sender" style = "width: 46% !important; height: auto !important;">
+            <div class="sender" style = "height: auto !important;">
               <span class="contact_name">${name}</span>
               <div class="message-text">${text}</div>
               ${archiveBox}
@@ -1441,7 +1502,7 @@ $('.conversation').on('click', '.comment', function(e) {
     `
     <div class="row post_comment" style="height: auto;">
           <div class="col-sm-12 message-main-sender">
-            <div class="sender" style = "width: 46% !important; height: auto !important;">
+              <div class="sender" style = "height: auto !important;">
               <span class="contact_name">${name}</span>
               <div class="message-text">${text}</div>
               ${archiveBox}
@@ -1624,13 +1685,6 @@ $('.conversation').on('click','.comment-cadr .fa-reply',function(e){
     let targetFileName = $($($($(e.target).parents()[2]).children()[0]).children('div.archive_box_comment').children()[0]).children('img.archive_view_comment');
     replyText = targetFileName.attr('alt')
   }
-  if(!!$($('.prv_file')).children().length){
-    $('.reply_to').css({bottom: '139px'})
-    $('.conversation_comment').css({height: '67%'});
-  }else{
-    $('.reply_to').css({bottom: '60px'});
-    $('.conversation_comment').css({height: '83%'});
-  }
   let outReplyeTo = 
   `<div class="reply_to_content_box">
       <i class="fas fa-times-circle"></i>
@@ -1639,9 +1693,9 @@ $('.conversation').on('click','.comment-cadr .fa-reply',function(e){
           <h6 clsss="${replyeId}">${replyText}</h6>
       </span>
   </div>`
-  
   $('.reply_to').html(outReplyeTo)
   $('.reply_to').show()
+  multiline()
 });
 
 $('.reply_to').on('click','i.fa-times-circle',function(){
@@ -1652,6 +1706,7 @@ $('.reply_to').on('click','i.fa-times-circle',function(){
   }else{
     $('.conversation_comment').css({height: 'auto'});
   }
+  
 });
 
 // more-option-fa-copy ****************************
@@ -2965,6 +3020,7 @@ $('.menu-list .menu-edite').on('click' , function(){
   $('.area-box textarea').val($('.chanel-description p.decription-text')[0].innerText)
   let img = $('.update-headder-info-box .info-img img').attr('src')
   $(".uploade-image-chanel img").attr('src' , img) ;
+
 });
 $('.menu-list .menu-users').on('click' , function(){
   $('.header-update-chanel p.chanle-name').text('مدیریت اعضاء');
