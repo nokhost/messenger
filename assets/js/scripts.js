@@ -1,9 +1,9 @@
 let url = window.location.href;    
 let api_address = "";
 let token = "";
-if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html'){
+if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url =='file:///C:/Users/darvi/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "A73FD4E44F0C8ECCD5C6482F0837BE19";
+  token = "0D1B0DBA0A84F13255C9AC66887064F4";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -38,6 +38,7 @@ let headePost = ``;
 let chaneleImgId = ''
 let cuntNotReadNews = 0;
 let lastRow = 0
+let archbox = 0;
 
 // ************************* refresh listChanel and Conve ****************************
 let refresListChanel =  setInterval (() =>{
@@ -278,7 +279,6 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                 // Replace plain text links by hyperlinks
                 description = description.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
                 description = description.replace(/\n/g, '<br/>');
-                console.log(description);
                 // Echo link
                 let regx =/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
                 let emoji = description.replace(regx, match => `[e-${match.codePointAt(0).toString(16)}]`);
@@ -791,12 +791,20 @@ $('textarea.form-control').keyup('',function(){
     $('.reply-main textarea').css({overflow : 'auto'}); 
   }else if(text.length == 1){
     $('#conversation').css({height : 'calc(100% - 120px)'});
-    $('.conversation_comment').css({height : '68%'});
+    console.log($('reply_to').css("display"));
+    if ($('.prv_file').children().length) {
+      $('.conversation_comment').css({height : '90%'});
+      $('.reply_to').css({bottom : '139px'});
+    }else{
+      $('.conversation_comment').css({height : '100%'});
+      
+      $('.reply_to').css({bottom : '60px'});
+    }
     $('.reply').css({height : '60px'});
     $('.reply-main').css({height : 'auto'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '60px'});
-    $('.reply_to').css({bottom : '139px'});
+    
   }else if(text.length == 2){
     $('#conversation').css({height : 'calc(100% - 144px)'});
     $('.conversation_comment').css({height : '67%'});
@@ -994,7 +1002,7 @@ let uploader = new plupload.Uploader({
       if($('.reply_to').children().length){
         $('.reply_to').css({bottom: '139px'})
       }
-      $('.conversation_comment').css({height: '84%'});
+      $('.conversation_comment').css({height: '90%'});
       if(uploader.files.length <= 1){
         FilesAdded();
       }else{
