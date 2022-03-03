@@ -548,9 +548,26 @@
     .archive_box{
         background-color: white;
         width: 100%;
-        height: 50px;
         border-radius: 10px;
+        overflow-y: scroll;
     }
+    .archive_box::-webkit-scrollbar {
+        width: 10px;
+      }
+      
+      .archive_box::-webkit-scrollbar-track {
+        /* box-shadow: inset 0 0 5px grey;  */
+        border-radius: 10px;
+      }
+       
+      .archive_box::-webkit-scrollbar-thumb {
+        background: #00af9c; 
+        border-radius: 10px;
+      }
+      
+      .archive_box::-webkit-scrollbar-thumb:hover {
+        background: #0b141a; 
+      }
     .archive_box_comment{
         background-color: white;
         width: 100%;
@@ -778,6 +795,7 @@
     
     .close_add i {
         color: #fff;
+        opacity: 1;
     }
     
     .comment-message-body {
@@ -1187,6 +1205,7 @@
     
     .close_add i {
         color: #fff;
+        opacity: 1;
     }
     
     .img_channel {

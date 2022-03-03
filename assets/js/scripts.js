@@ -18,6 +18,7 @@ let uploadFileShowModal = '';
 let errUploadedFile = true;
 let listArchive = [];
 let primery_id = '';
+let comment_id = '';
 let commentBox = 'close';
 let postId = '';
 let count_news_new = 0;
@@ -397,7 +398,7 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                   if (element.user__id == myuser_id) {
                       out +=
                           `
-                            <div class="row message-body">
+                            <div class="row message-body" >
                                 <div class="col-sm-12 message-main-receiver">
                                   <div class="receiver">
                                     <div class="message-text">${description}</div>
@@ -524,6 +525,7 @@ $("#conversation").scroll(function() {
   let scrollTop =  $('#conversation').scrollTop();
   scrollTop = Math.round(scrollTop);
   cuntNotReadNews =$(`.sideBar #${chanel_id} .count_not_read`)[0];
+  console.log(cuntNotReadNews);
   if (cuntNotReadNews) {
     cuntNotReadNews = parseInt(cuntNotReadNews.innerText)
   }else{
@@ -533,11 +535,10 @@ $("#conversation").scroll(function() {
     get_news_channel( 15, chanel_id,'clickChanel');
   }
   if ( scrollTop == 0 ){
-    if(lastRow+1 >= row && commentBox !== 'open'){
-      get_news_channel( row , chanel_id , 'showMore');
+    if(lastRow + 1 >= row && commentBox !== 'open'){
       row = row + 5;
+      get_news_channel( row , chanel_id , 'showMore');
     }
-    
   }
 });
 // ************************* handle click window and conversation ****************************
@@ -1514,6 +1515,7 @@ $('.conversation').on('click', '.comment', function(e) {
   }
     $('textarea.form-control').val('');
     primery_id = e.currentTarget.id;
+    comment_id = $(this)[0].id
     get_comment_reply(primery_id ,headePost);
     commentBox = 'open';
     postId = $(e.target).parents()[1].id;
@@ -1527,6 +1529,11 @@ $("#conversation").on('click', '.close-comment-box', function() {
     commentBox = 'close';
     $('.conversation_message').show();
     $('.conversation_comment').hide();
+    let $scrollTo = $(`#${comment_id}`);
+    let $container =  $("#conversation");
+    $container.animate({
+      scrollTop: $scrollTo.offset().top - 150
+    },'slow');
 });
 
 // ************************* go to replay handle ****************************
@@ -1537,7 +1544,6 @@ $(".conversation").on('click','.reply_comment' , function(e) {
   }
   let $scrollTo = $(`#${$($(this).attr("href")).attr('id')}`);
   let $container =  $(".comment-box");
-console.log($scrollTo.offset().top - $container.offset().top + $container.scrollTop());
   $container.animate({
     scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
   },'slow');
@@ -3311,7 +3317,7 @@ let member_channel = (Location)=>{
             <li class="${element.user__id}">
               ${membericon}
               <p class="member-name">${element.name_family}</p>
-              <i class="fas fa-trash" style = "float: left;color: red;cursor: pointer; margin-right: 20px;"></i>
+              <i class="fas fa-trash" style = "float: left;color: #fd4c4c;cursor: pointer; margin-right: 20px;"></i>
               <input type="checkbox" ${adminCheck}>
               ${adminIcon}
               <div class="spinner-border text-secondary" role="status">
@@ -3517,7 +3523,7 @@ let deletemember = (id) => {
           // clearInterval(timerint);
         }else{
           console.log(res);
-          $(`li.${id} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: red;cursor: pointer; margin-right: 20px;"></i>`)
+          $(`li.${id} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: #fd4c4c;cursor: pointer; margin-right: 20px;"></i>`)
           $(`li.${id} i.fa-user-shield`).css({display:'block'});
           Swal.fire({
             icon: 'error',
