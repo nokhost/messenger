@@ -1038,6 +1038,8 @@
         width: 100%;
         text-align: center;
         margin: 15px auto;
+        position:absolute;
+        bottom: 0;
         
     }
     .step_1 .next_btn {

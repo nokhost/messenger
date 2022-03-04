@@ -525,7 +525,6 @@ $("#conversation").scroll(function() {
   let scrollTop =  $('#conversation').scrollTop();
   scrollTop = Math.round(scrollTop);
   cuntNotReadNews =$(`.sideBar #${chanel_id} .count_not_read`)[0];
-  console.log(cuntNotReadNews);
   if (cuntNotReadNews) {
     cuntNotReadNews = parseInt(cuntNotReadNews.innerText)
   }else{
@@ -3245,14 +3244,14 @@ $('.info-member-chanel ').on('click','li i.fa-trash',function(){
   let timer = 5
     $(`li.${deleteid} i.fa-trash`).replaceWith(`
     <span>
-      <p class = "give-up" style = "float: left;color: blue; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
+      <p class = "give-up" style = "float: left;color: #fd4c4c; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
     </span>
     `);
   timerint[deleteid] = setInterval (() =>{
     if (timer > 0) {
       $(`li.${deleteid} .give-up`).replaceWith(
         `
-        <p class = "give-up animate__animated animate__heartBeat" style = "float: left;color: blue; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
+        <p class = "give-up animate__animated animate__heartBeat" style = "float: left;color: #fd4c4c; margin-right: 20px; cursor: pointer; font-weight: 500;">لغو حذف ${timer}</p>
         `
         );
         timer -= 1;
@@ -3295,13 +3294,14 @@ let member_channel = (Location)=>{
           let adminIcon = ``;
           let membericon =``;
           let adminCheck=``;
+          let textmove = ''
           list_member.forEach(element => {
             if(element.user_type == 'personel'){
-              membericon = `<i class="fas fa-user-tie"></i>`;
+              membericon = `<i class="fas fa-user-tie user_i"></i>`;
             }else if (element.user_type == 'teacher'){
-              membericon = `<i class="fas fa-chalkboard-teacher"></i>`;
+              membericon = `<i class="fas fa-chalkboard-teacher user_i"></i>`;
             }else if(element.user_type == 'student'){
-              membericon = `<i class="fas fa-user-graduate"></i>`;
+              membericon = `<i class="fas fa-user-graduate user_i"></i>`;
             }else{
               membericon = ``;
             }
@@ -3312,11 +3312,19 @@ let member_channel = (Location)=>{
               adminCheck = ``
               adminIcon = `<i class="fas fa-user-shield" style="color: #c3c3c3; cursor: pointer;"></i>`
             }
+            if(element.name_family.length >= 18){
+              textmove = 'textmove'
+            }else{
+              textmove = ''
+            }
             out_member_chanel += 
             `
             <li class="${element.user__id}">
               ${membericon}
-              <p class="member-name">${element.name_family}</p>
+              <span  class="member-name">
+                <p class="${textmove}" >${element.name_family}</p>
+              </span>
+              
               <i class="fas fa-trash" style = "float: left;color: #fd4c4c;cursor: pointer; margin-right: 20px;"></i>
               <input type="checkbox" ${adminCheck}>
               ${adminIcon}

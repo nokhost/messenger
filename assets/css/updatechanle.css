@@ -93,6 +93,7 @@ div.info-name{
 }
 .chanel-name{
     font-weight: 900;
+    float: right;
 }
 .chanel-description div.row{
     padding: 23px;
@@ -106,6 +107,16 @@ div.info-name{
 }
 .info-member-chanel li input{
     display: none;
+}
+.info-member-chanel li .user_i{
+    float: right;
+}
+.info-member-chanel li span{
+    overflow: hidden;
+    position: relative;
+    width: 50%;
+    height: 20px;
+    margin-right: 5px;
 }
 .info-member-chanel li .spinner-border{
     position: relative;
@@ -421,6 +432,10 @@ div.add-admin-chanel{
 div.add-usre-chanel{
     display: none;
 }
+.footer-update-chanel{
+    position: absolute;
+    bottom: 45px;
+}
 .footer-update-chanel div.col-md-12{
     padding: 0 34px;
 }
@@ -475,12 +490,50 @@ div.add-usre-chanel{
     }
 }
 @media screen and (min-width:425px) and (max-width:768px) {
+    .info-member-chanel span{
+        overflow: hidden;
+        width: 125px;
+    }
+    .info-member-chanel p{
+        margin-right: 6px;
+    }
+    .textmove{
+        position: absolute;
+        white-space: nowrap;
+        animation: floatText 5s infinite alternate ease-in-out;
+    }
+    @keyframes floatText {
+        0% { right: 0; }
+        100% { right: -80%; }
+    }
     .update_info_chanel{
         top: 8%;
         bottom: 20%;
     }
 }
+@media screen and (min-width:425px) and (max-width:540px) {
+    /* .info-member-chanel li{
+        padding: 0 20px;
+        font-size: 9px;
+    } */
+}
 @media screen and (min-width:320px) and (max-width:425px) {
+    .info-member-chanel span{
+        overflow: hidden;
+        width: 125px;
+    }
+    .info-member-chanel p{
+        margin-right: 6px;
+    }
+    .textmove{
+        position: absolute;
+        white-space: nowrap;
+        animation: floatText 5s infinite alternate ease-in-out;
+    }
+    @keyframes floatText {
+        0% { right: 0; }
+        100% { right: -80%; }
+    }
     .footer-update-chanel div.col-md-12{
         padding: 0 19px;
     }
@@ -495,8 +548,29 @@ div.add-usre-chanel{
     .admin-list-members li{
         padding: 18px 20px 0;
     }
+    .info-member-chanel li{
+        padding: 0 20px;
+        font-size: 12px;
+        
+    }
 }
 @media screen and (min-width: 280px) and (max-width: 320px){
+    .info-member-chanel span{
+        overflow: hidden;
+        width: 125px;
+    }
+    .info-member-chanel p{
+        margin-right: 6px;
+    }
+    .textmove{
+        position: absolute;
+        white-space: nowrap;
+        animation: floatText 5s infinite alternate ease-in-out;
+    }
+    @keyframes floatText {
+        0% { right: 0; }
+        100% { right: -80%; }
+    }
     .footer-update-chanel div.col-md-12{
         padding: 0 17px ;
     }
