@@ -1,7 +1,7 @@
 let url = window.location.href;    
 let api_address = "";
 let token = "";
-if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html'){
+if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
   token = "0D1B0DBA0A84F13255C9AC66887064F4";
 }else{
@@ -40,6 +40,7 @@ let chaneleImgId = ''
 let cuntNotReadNews = 0;
 let lastRow = 0
 let archbox = 0;
+let allow_comment_update = ''
 
 // ************************* refresh listChanel and Conve ****************************
 let refresListChanel =  setInterval (() =>{
@@ -68,7 +69,6 @@ let ChanleList = ()=>{
               if(res.result == 'ok'){
                 $('.loader').hide();
                 listChanel = res.data;
-                
                 let badge = ``;
                 res.data.list_channel.forEach((element) => {
                   let channel_name = element.channel_name
@@ -96,7 +96,7 @@ let ChanleList = ()=>{
                       img = img[Math.floor(Math.random() * img.length)];
                   }
                   out += `
-                    <div id= '${element.channel__id}' class='row sideBar-body'>
+                    <div id= '${element.channel__id}' class='row sideBar-body' allow_comment = ${element.allow_comment}>
                       <div class="col-sm-3 col-xs-3 sideBar-avatar">
                           <div class="avatar-icon">
                             <img src= ${img}>
@@ -203,6 +203,7 @@ let heade_chanel_name = '';
 let row = 15;
 
 $(".sideBar").on("click", ".sideBar-body", function(e) {
+  allow_comment_update = $(this).attr('allow_comment')
   row = 15
   $('.heading-refresh i').css({"visibility":"inherit"});
   $('.reply').css({"visibility":"inherit"})
@@ -220,6 +221,11 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
   chanel_id = this.id;
   $("#searchText").val("")
   get_news_channel( row, chanel_id,'clickChanel');
+  if(allow_comment_update === '0'){
+    $('#update_comment_on').prop('checked' , false);
+  }else if(allow_comment_update === '1'){
+    $('#update_comment_on').prop('checked' , true);
+  }
 });
 
 let get_news_channel = ( row , id , scrollEndMsg)=>{
@@ -3095,10 +3101,13 @@ $('.save-change-info').on('click' , function(){
   let allow_commentchanel = $('.allow-comment-update-info input#update_comment_on').prop('checked');
   if(allow_commentchanel){
     allow_commentchanel = 1;
+    $('#update_comment_on').prop('checked' , true);
   }else{
-    allow_commentchanel = 0
+    allow_commentchanel = 0;
+    $('#update_comment_on').prop('checked' , false);
   }
   if(namechanel !== ''){
+    
     update_info_channel(namechanel,descriptionchanel,chanelImage,allow_commentchanel);
   }else{
     Swal.fire({
@@ -3358,6 +3367,7 @@ let member_channel = (Location)=>{
   });
 }
 let update_info_channel = (name , description , image_channel , allow_comment)=>{
+  console.log(name , description , image_channel , allow_comment);
   $.ajax({
     url: api_address + "/notices/update_info_channel",
     type: "post",
@@ -3370,6 +3380,7 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
 
   },
     beforeSend: function(request) {
+        $('.save-change-info').prop('disabled', true);
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
@@ -3391,13 +3402,13 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $('.info_chanel').css({display:'block'});
           $('.update-name-chanel input').val('');
           $('.area-box textarea').val('');
-          $('.update_enable_comments input').prop('checked' , true);
           $('.users-list-chanel li').remove();
-          ChanleList()
+          ChanleList();
           $(`.sideBar #${chanel_id}`).trigger('click');
           removeImgChanel(imgUpdateChanelUpload);
           $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
           $(`.uploade-image-chanel i.fa-camera`).show();
+          $('.save-change-info').prop('disabled', false);
         }else{
           console.log(res);
           Swal.fire({
