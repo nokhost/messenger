@@ -40,7 +40,8 @@ let chaneleImgId = ''
 let cuntNotReadNews = 0;
 let lastRow = 0
 let archbox = 0;
-let allow_comment_update = ''
+let allow_comment_update = '';
+let stepLoationUpdate = ''
 
 // ************************* refresh listChanel and Conve ****************************
 let refresListChanel =  setInterval (() =>{
@@ -2117,8 +2118,6 @@ $("#profile-image1").on("click", function() {
   removeImgChanel(imgChanelUpload);
   $("#profile-image-upload").click();
 });
-
-
 let imgChanelUpload = new plupload.Uploader({
   browse_button: 'profile-image-upload',
   chunk_size:(200*1024) + 'b',
@@ -2131,7 +2130,6 @@ let imgChanelUpload = new plupload.Uploader({
     {title : "Image files", extensions : "jpg,jpeg,png"},
   ],
 });
-
 imgChanelUpload.init();
 imgChanelUpload.bind('FilesAdded', function (up, files) {
   handelJustOneFile(imgChanelUpload.files , imgChanelUpload);
@@ -2146,7 +2144,7 @@ imgChanelUpload.bind('FileUploaded', function (up, file, info) {
 });
 imgChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
 imgChanelUpload.bind('UploadComplete', function (up, file , info) {
-  UploadComplete (up, file , info ,imgChanelUpload)
+  UploadCompleted (up, file , info ,imgChanelUpload)
 });
 
 let handelJustOneFile = (files , tarrgetElement)=>{
@@ -2211,7 +2209,7 @@ let FileUploaded = (up, file, info , tarrgetId) =>{
   }
   
 }
-let UploadComplete = (up, file , info , targetElement) =>{
+let UploadCompleted = (up, file , info , targetElement) =>{
 chanelImage = {}
 $.each(targetElement.files, function (i, file) {
      chanelImage = {
@@ -2223,7 +2221,9 @@ $.each(targetElement.files, function (i, file) {
       "file__id":chaneleImgId,
       "file_name":file.name
      }
+     console.log(chanelImage);
      chanelImage = JSON.stringify(chanelImage)
+     console.log(chanelImage);
 });
 }
 let removeImgChanel = (tarrget) =>{
@@ -2994,6 +2994,7 @@ $('.header_chanel_info .info-edit').on('click' , function(){
   $('.menu-list').css({display:'block'});
   $('.footer-update-chanel button').css({display:'none'});
   $('.back-to-info-chanel').css({display:'block'});
+  stepLoationUpdate = 'update-chanel';
 });
 $('.back-to-info-chanel').on('click',function(){
   $('.update-chanel').css({display:'none'});
@@ -3001,6 +3002,7 @@ $('.back-to-info-chanel').on('click',function(){
   member_channel('heading-name');
 });
 $('.back-menu-list').on('click',function(){
+  stepLoationUpdate = 'update-chanel';
   $('.update-info').css({display:'none'});
   $('.add-admin-chanel').css({display:'none'});
   $('.add-usre-chanel').css({display:'none'});
@@ -3020,6 +3022,7 @@ $('.back-menu-list').on('click',function(){
   $(`.uploade-image-chanel i.fa-camera`).show();
 });
 $('.menu-list .menu-edite').on('click' , function(){
+  stepLoationUpdate = 'subMenu';
   $('.header-update-chanel p.chanle-name').text('ویرایش کانال');
   $('.back-menu-list').css({display:'block'});
   $('.back-to-info-chanel').css({display:'none'});
@@ -3030,9 +3033,9 @@ $('.menu-list .menu-edite').on('click' , function(){
   $('.area-box textarea').val($('.chanel-description p.decription-text')[0].innerText)
   let img = $('.update-headder-info-box .info-img img').attr('src')
   $(".uploade-image-chanel img").attr('src' , img) ;
-
 });
 $('.menu-list .menu-users').on('click' , function(){
+  stepLoationUpdate = 'subMenu';
   $('.header-update-chanel p.chanle-name').text('مدیریت اعضاء');
   $('.back-menu-list').css({display:'block'});
   $('.back-to-info-chanel').css({display:'none'});
@@ -3093,7 +3096,7 @@ imgUpdateChanelUpload.bind('FileUploaded', function (up, file, info) {
 });
 imgUpdateChanelUpload.bind('ChunkUploaded', function (up, file, info) {});
 imgUpdateChanelUpload.bind('UploadComplete', function (up, file , info) {
-  UploadComplete (up, file , info,imgUpdateChanelUpload)
+  UploadCompleted (up, file , info , imgUpdateChanelUpload)
 });
 $('.save-change-info').on('click' , function(){
   let namechanel = $('.update-name-chanel input').val()
@@ -3107,7 +3110,6 @@ $('.save-change-info').on('click' , function(){
     $('#update_comment_on').prop('checked' , false);
   }
   if(namechanel !== ''){
-    
     update_info_channel(namechanel,descriptionchanel,chanelImage,allow_commentchanel);
   }else{
     Swal.fire({
@@ -3211,21 +3213,26 @@ $('.info-member-chanel').on('click','li i.fa-user-shield', function(){
   }
 });
 $('.header-update-chanel .fa-times-circle').on('click',function () {
-    $('.update-info').css({display:'none'});
-    $('.add-admin-chanel').css({display:'none'});
-    $('.add-usre-chanel').css({display:'none'});
-    $('.back-menu-list').css({display:'none'});
-    $('.update-chanel').css({display:'none'});
-    $('.update_info_chanel').css({display:'none'});
-    $('.info_chanel').css({display:'block'});
-    $('.sellect_all-box').css({display:'none'});
-    $('.update-name-chanel input').val('');
-    $('.area-box textarea').val('');
-    $('.update_enable_comments input').prop('checked' , true);
-    $('.users-list-chanel li').remove();
-    removeImgChanel(imgUpdateChanelUpload);
-    $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
-    $(`.uploade-image-chanel i.fa-camera`).show();
+    // $('.update-info').css({display:'none'});
+    // $('.add-admin-chanel').css({display:'none'});
+    // $('.add-usre-chanel').css({display:'none'});
+    // $('.back-menu-list').css({display:'none'});
+    // $('.update-chanel').css({display:'none'});
+    // $('.update_info_chanel').css({display:'none'});
+    // $('.info_chanel').css({display:'block'});
+    // $('.sellect_all-box').css({display:'none'});
+    // $('.update-name-chanel input').val('');
+    // $('.area-box textarea').val('');
+    // $('.update_enable_comments input').prop('checked' , true);
+    // $('.users-list-chanel li').remove();
+    // removeImgChanel(imgUpdateChanelUpload);
+    // $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
+    // $(`.uploade-image-chanel i.fa-camera`).show();
+    if(stepLoationUpdate == 'subMenu'){
+      $('.back-menu-list').trigger('click');
+    }else if(stepLoationUpdate == 'update-chanel'){
+      $('.back-to-info-chanel').trigger('click');
+    }
 });
 $('.info-close').on('click',function(){
   $('.update_info_chanel').css({display:'none'});
@@ -3275,7 +3282,7 @@ $('.info-member-chanel ').on('click','li i.fa-trash',function(){
 $('.info-member-chanel ').on('click','li .give-up',function(){
   let deleteid = $(this).parents('li').attr('class');
   $(`li.${deleteid} i.fa-user-shield`).css({display:'block'});
-  $(`li.${deleteid} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: red;cursor: pointer; margin-right: 20px;"></i>`);
+  $(`li.${deleteid} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: #fd4c4c;;cursor: pointer; margin-right: 20px;"></i>`);
   clearInterval(timerint[deleteid]);
 });
 $('.member-seen-header .fa-times-circle').on('click' ,function(){
@@ -3330,10 +3337,9 @@ let member_channel = (Location)=>{
             `
             <li class="${element.user__id}">
               ${membericon}
-              <span  class="member-name">
+              <div  class="member-name">
                 <p class="${textmove}" >${element.name_family}</p>
-              </span>
-              
+              </div>
               <i class="fas fa-trash" style = "float: left;color: #fd4c4c;cursor: pointer; margin-right: 20px;"></i>
               <input type="checkbox" ${adminCheck}>
               ${adminIcon}
@@ -3367,7 +3373,6 @@ let member_channel = (Location)=>{
   });
 }
 let update_info_channel = (name , description , image_channel , allow_comment)=>{
-  console.log(name , description , image_channel , allow_comment);
   $.ajax({
     url: api_address + "/notices/update_info_channel",
     type: "post",
@@ -3404,7 +3409,7 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $('.area-box textarea').val('');
           $('.users-list-chanel li').remove();
           ChanleList();
-          $(`.sideBar #${chanel_id}`).trigger('click');
+          // $(`.sideBar #${chanel_id}`).trigger('click');
           removeImgChanel(imgUpdateChanelUpload);
           $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
           $(`.uploade-image-chanel i.fa-camera`).show();

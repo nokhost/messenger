@@ -111,11 +111,10 @@ div.info-name{
 .info-member-chanel li .user_i{
     float: right;
 }
-.info-member-chanel li span{
+.info-member-chanel li div{
     overflow: hidden;
     position: relative;
     width: 50%;
-    height: 20px;
     margin-right: 5px;
 }
 .info-member-chanel li .spinner-border{
