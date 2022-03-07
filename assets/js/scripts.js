@@ -1,7 +1,6 @@
 let url = window.location.href;    
 let api_address = "";
 let token = "";
-console.log(url);
 if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url == 'file:///C:/Users/milad/OneDrive/Desktop/new%20message/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
   token = "0D1B0DBA0A84F13255C9AC66887064F4";
@@ -370,7 +369,8 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                     enabelcomment = `<li class="more-option-nocomment" value="${element.allow_comment}"><i class="fas fa-comment-slash"></i><span>${noCommentText}</span></li>`
                   }
                   if(element.status == 1){
-                    moreOption = `<i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
+                    // <i class="fas fa-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"></i></i>
+                    moreOption = `
                     <i class="fas fa-ellipsis-v"></i>
                     <ul class="more-option-list">
                       <li class="more-option-copy" data-bs-toggle="tooltip" data-bs-placement="top" title="برای کپی کردن متن کلیک کنید"><i class="far fa-copy"></i><span>کپی کردن متن</span></li>
@@ -930,6 +930,15 @@ let multiline = () =>{
 $('textarea.form-control').keyup('',function(){
   multiline()
 });
+$("textarea.form-control").bind('paste', function(e) {
+  
+  var that = this;
+    setTimeout(function() {
+        var length = that.value.length;
+        console.log(length);   
+        $( "textarea.form-control" ).keyup();
+    }, 0);
+});
 
 // ************************* delete message ****************************
 let deleteMessage  = (channel , news)=>{
@@ -1323,9 +1332,9 @@ let get_comment_reply = (id , componentthispost) =>{
         let text = '';
         comment_list.forEach((element) => {
           text = element.text
-              let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g
+              let regexlink = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
               // Replace plain text links by hyperlinks
-              text = text.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
+              text = text.replace(regexlink, "<a href='$1' target='_blank'></a>");
               text = text.replace(/\n/g, '<br/>');
               // Echo link
           if(element.status == 1){
@@ -1463,6 +1472,7 @@ let get_comment_reply = (id , componentthispost) =>{
               </div>
         `;
         $("#conversation .conversation_comment").html(out);
+        $('.comment-box')[0].scrollTop =  $('.comment-box')[0].scrollHeight;
     }
 });
 }
@@ -1581,15 +1591,14 @@ $('.conversation').on('click', '.more-option-comments', function(e) {
 
 // more-option-copy ****************************
 $('.conversation').on('click','.more-option-copy',function(e){
-  let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g
+  let regexlink = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+  let regexEnter = /<br\s*[\/]?>/gi;
   let $temp = $("<input>");
   $("body").append($temp);
   if($(e.target).parents("div.receiver").length){
-
-    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html().replace(/<br\s*[\/]?>/gi,'\r\n').replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
+    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html().replace(regexEnter,"\n").replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
   }else{
-
-    $temp.val($(e.target).parents("div.sender").children("div.message-text").html().replace(/<br\s*[\/]?>/gi,'\r\n').replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
+    $temp.val($(e.target).parents("div.sender").children("div.message-text").html().replace(regexEnter,"\n").replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
   }
   document.execCommand("copy");
   $temp.remove();
@@ -2222,9 +2231,7 @@ $.each(targetElement.files, function (i, file) {
       "file__id":chaneleImgId,
       "file_name":file.name
      }
-     console.log(chanelImage);
      chanelImage = JSON.stringify(chanelImage)
-     console.log(chanelImage);
 });
 }
 let removeImgChanel = (tarrget) =>{
@@ -2236,15 +2243,11 @@ let removeImgChanel = (tarrget) =>{
 
 // *********** delete member final step wizard box => add chanel
 $('.chanel_list_member').on('click','.member_delete i',function(){
-  
   let tagetId = $(this).parents('li').attr('id');
-
   memberInfo = $.grep(memberInfo, function(e){ 
     return e.id != tagetId; 
-
   });
   sendMemberToNextStep(memberInfo ,'' , 'next' )
-  
 });
 
 // *********** add teacher for add new chanel and  update member chanel in the edite chanel 
@@ -2267,7 +2270,6 @@ let get_list_teacher = (Location)=>{
       `
       if(Location == 'update-chanel'){
         $('.users-list-chanel').html(loading)
-
       }
       if(Location == 'add-chanel'){
         $('.person_list').html(loading)
@@ -2283,9 +2285,12 @@ let get_list_teacher = (Location)=>{
           let out_list_techer = ``
           let input = '<input type="checkbox">'
           list_teacher.forEach(element => {
-           
             if(Location == 'update-chanel'){
-             
+              upadtememberchanel.forEach(elem =>{
+                if(elem.member__id == element.teacher__id){
+                  input = `<input type="checkbox" checked>`
+                }
+              });
               addmembers.forEach(el => {
                if(el.user__id == element.teacher__id){
                  input = `<input type="checkbox" checked disabled>`
@@ -2319,6 +2324,7 @@ let get_list_teacher = (Location)=>{
             
           });
           if(Location == 'update-chanel'){
+            
             $('.users-list-chanel').html(out_list_techer)
           }else if(Location == 'add-chanel'){
             $('.person_list').html(out_list_techer)
@@ -2343,7 +2349,7 @@ $('.teacher').on('click',function () {
   checkSellectInput('.header_person_box_checkbox input','.person_checkbox input')
   $('.title_added_person h5').html('انتخاب معلم');
   if (techerlist == ''){
-    get_list_teacher('add-chanel')
+    get_list_teacher('add-chanel');
   }else{
     handelUsersList('teacher','add-chanel');
   }
@@ -2400,6 +2406,11 @@ let get_list_personel = (Location)=>{
               </li>
               `
             }else if(Location == 'update-chanel'){
+              upadtememberchanel.forEach(elem =>{
+                if(elem.member__id == element.personel__id){
+                  input = `<input type="checkbox" checked>`
+                }
+              });
               addmembers.forEach(el => {
                 if(el.user__id == element.personel__id){
                   input = `<input type="checkbox" checked disabled>`
@@ -2602,6 +2613,11 @@ let list_student_of_class = (classid , branchid , Location)=>{
               </li>
               `
             }else if(Location == 'student-term'){
+              upadtememberchanel.forEach(elem =>{
+                if(elem.member__id == element.student__id){
+                  input = `<input type="checkbox" checked>`
+                }
+              });
               addmembers.forEach(el => {
                 if(el.user__id == element.student__id){
                   input = `<input type="checkbox" checked disabled>`
@@ -3016,7 +3032,7 @@ $('.back-menu-list').on('click',function(){
   $('.header-update-chanel p.chanle-name').text('منو');
   $('.update-name-chanel input').val('');
   $('.area-box textarea').val('');
-  $('.update_enable_comments input').prop('checked' , true);
+  // $('.update_enable_comments input').prop('checked' , true);
   $('.users-list-chanel li').remove();
   removeImgChanel(imgUpdateChanelUpload);
   $(`.uploade-image-chanel img`).attr('src' , './assets/images/blue.png');
@@ -3036,6 +3052,7 @@ $('.menu-list .menu-edite').on('click' , function(){
   $(".uploade-image-chanel img").attr('src' , img) ;
 });
 $('.menu-list .menu-users').on('click' , function(){
+  upadtememberchanel = [];
   stepLoationUpdate = 'subMenu';
   $('.header-update-chanel p.chanle-name').text('مدیریت اعضاء');
   $('.back-menu-list').css({display:'block'});
@@ -3122,7 +3139,7 @@ $('.save-change-info').on('click' , function(){
   }
 });
 $('.position-teacher').on('click' , function(){
-  upadtememberchanel=[]
+  // upadtememberchanel=[];
   get_list_teacher('update-chanel')
   member_channel('menu-admin')
   $('.sellect_all-box input').prop('checked' , false)
@@ -3130,13 +3147,13 @@ $('.position-teacher').on('click' , function(){
 
 });
 $('.position-personel').on('click' , function(){
-  upadtememberchanel=[]
+  // upadtememberchanel=[];
   get_list_personel('update-chanel')
   $('.sellect_all-box input').prop('checked' , false);
   $('.sellect_all-box').css({display:'block'});
 });
 $('.position-student').on('click' , function(){
-  upadtememberchanel=[]
+  // upadtememberchanel=[];
   classes_of_branch('position-student')
  
 });
@@ -3158,13 +3175,14 @@ $('.users-list-chanel').on('click' ,'li', function(){
         isadmin = element.is_admin;
     }
   });
+  
   if (personCheckbox && disabled) {
     $(this).children('input').prop('checked' , false)
   }else{
     $(this).children('input').prop('checked' , true)
   }
   personCheckbox = $(this).children('input').prop('checked')
-  let chekrpead = true
+  let chekrpead = true;
   if(personCheckbox && disabled){
     objectmember =
     {
@@ -3245,7 +3263,7 @@ $('.add-member-update-chanel').on('click',function(){
   }else{
     Swal.fire({
       icon: 'error',
-      title: "عضوی برای افزودن به کانال انتخاب نشده یا اعضای انتخاب شده در کانال وجود دارند",
+      title: "عضوی برای افزودن به کانال انتخاب نشده",
       showConfirmButton: false,
       timer: 2000
     })
@@ -3387,6 +3405,23 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
   },
     beforeSend: function(request) {
         $('.save-change-info').prop('disabled', true);
+        $('.save-change-info').html(
+          `
+            <div 
+            class="spinner-border 
+            text-dark" role="status" 
+            style = 
+            "
+              position: inherit;
+              display: inline-block; 
+              width: 20px;
+              height: 20px;
+            "
+            >
+              <span class="sr-only">Loading...</span>
+            </div>
+        `
+        );
         request.setRequestHeader("Authorization", "Bearer " + token);
     },
     success: function(response) {
@@ -3415,6 +3450,7 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
           $(`.uploade-image-chanel i.fa-camera`).show();
           $('.save-change-info').prop('disabled', false);
+          $('.save-change-info').html(`ذخیره`);
         }else{
           console.log(res);
           Swal.fire({
@@ -3485,6 +3521,7 @@ let update_member = (userId , is_admin)=>{
   });
 }
 let add_member = (list) => {
+  console.log(list);
   $.ajax({
     url: api_address + "/notices/add_member",
     type: "post",
