@@ -1,7 +1,8 @@
 let url = window.location.href;    
 let api_address = "";
 let token = "";
-if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
+console.log(url);
+if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url == 'file:///C:/Users/milad/OneDrive/Desktop/new%20message/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
   token = "0D1B0DBA0A84F13255C9AC66887064F4";
 }else{

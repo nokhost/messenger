@@ -150,6 +150,8 @@
         padding: 0;
         cursor: pointer;
         float: right;
+        width: auto;
+        margin-left: 5px;
     }
     
     .heading-avatar-icon img {
