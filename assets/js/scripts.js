@@ -380,9 +380,11 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                       <li class="more-option-delete"><i class="fas fa-trash"></i><span>حذف</span></li>
                     </ul>`;
                     contentComment = `<div class="col-xs-12">
-                    <i class="far fa-comment-dots"></i>
-                    <span class="comment-title">${comment}</span>
-                    <i class="fas fa-angle-left"></i>
+                    <span class = "comment_hover">
+                      <i class="far fa-comment-dots"></i>
+                      <span class="comment-title">${comment}</span>
+                      <i class="fas fa-angle-left"></i>
+                    </span>
                   </div>`
                   }else{
                     moreOption = ``;
@@ -1535,9 +1537,12 @@ $('.conversation').on('click', '.comment', function(e) {
     comment_id = $(this)[0].id
     get_comment_reply(primery_id ,headePost);
     commentBox = 'open';
-    postId = $(e.target).parents()[1].id;
-    $('.conversation_comment').show();
-    $('.conversation_message').hide();
+    postId = $(e.target).parents()[2].id;
+    if(postId !== ""){
+      $('.conversation_comment').show();
+      $('.conversation_message').hide();
+    }
+   
 });
 
 $("#conversation").on('click', '.close-comment-box', function() {
@@ -3259,7 +3264,7 @@ $('.info-close').on('click',function(){
 $('.add-member-update-chanel').on('click',function(){
   let arr_member = JSON.stringify(upadtememberchanel)
   if (upadtememberchanel.length) {
-    add_member(arr_member)
+    add_member(arr_member);
   }else{
     Swal.fire({
       icon: 'error',
@@ -3452,13 +3457,16 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $('.save-change-info').prop('disabled', false);
           $('.save-change-info').html(`ذخیره`);
         }else{
+          $('.save-change-info').prop('disabled', false);
+          $('.save-change-info').html(`ذخیره`);
           console.log(res);
           Swal.fire({
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
             timer: 2000
-          })
+          });
+          
         }
       }catch(err){
         console.log(err);
@@ -3521,7 +3529,6 @@ let update_member = (userId , is_admin)=>{
   });
 }
 let add_member = (list) => {
-  console.log(list);
   $.ajax({
     url: api_address + "/notices/add_member",
     type: "post",

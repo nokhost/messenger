@@ -104,6 +104,7 @@ div.info-name{
 }
 .info-member-chanel li{
     padding:  0 40px;
+    height: 30px;
 }
 .info-member-chanel li input{
     display: none;
@@ -116,6 +117,7 @@ div.info-name{
     position: relative;
     width: 50%;
     margin-right: 5px;
+    height: 20px;
 }
 .info-member-chanel li .spinner-border{
     position: relative;

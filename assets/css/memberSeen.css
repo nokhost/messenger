@@ -43,9 +43,10 @@ div.member-seen-box::-webkit-scrollbar{
     cursor: pointer;
 }
 .member-list-seen{
-    padding: 7px 24px 9px;
+    padding: 7px 24px 50px;
     list-style: none;
     overflow: auto;
+    height: 500px;
 }
 .member-list-seen p{
     display: inline-block;
