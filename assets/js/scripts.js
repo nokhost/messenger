@@ -1,9 +1,10 @@
 let url = window.location.href;    
 let api_address = "";
 let token = "";
-if(url == 'file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html' || url == 'file:///C:/Users/milad/OneDrive/Desktop/new%20message/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
+
+if(url == "file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html" || url == 'http://t.atiehsazan.ir/new_school_prj/component/messenger/' || url == 'file:///C:/Users/milad/OneDrive/Desktop/new%20message/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "0D1B0DBA0A84F13255C9AC66887064F4";
+  token = "DC7DE725DD48FB0D9ED8D648C99EC813";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -42,6 +43,7 @@ let lastRow = 0
 let archbox = 0;
 let allow_comment_update = '';
 let stepLoationUpdate = ''
+
 
 // ************************* refresh listChanel and Conve ****************************
 let refresListChanel =  setInterval (() =>{
@@ -288,8 +290,8 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
                 description = description.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
                 description = description.replace(/\n/g, '<br/>');
                 // Echo link
-                let regx =/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
-                let emoji = description.replace(regx, match => `[e-${match.codePointAt(0).toString(16)}]`);
+                // let regx =/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+                // let emoji = description.replace(regx, match => `[e-${match.codePointAt(0).toString(16)}]`);
                   
                   if (!!(element.list_archive.length)) {
                     let show_file = '';
@@ -797,147 +799,137 @@ $('.reply-send').on('click', 'i', function() {
 });
 
 // ************************* handle textarea multiline css ****************************
-let multiline = () =>{
-  let text = $('textarea.form-control').val().split('\n')
-  if(text.length < 1){
+let multiline = (show = false) =>{
+  let target = $('textarea#comment')[0];
+  let text = $('textarea.form-control').val()
+  // text.split('\n');
+  if(target.scrollHeight < 33){
     $('.reply-main textarea').css({overflow : 'auto'}); 
-  }else if(text.length == 1){
+  }else if(target.scrollHeight == 33 || target.scrollHeight == 53 || !text.length){
     $('#conversation').css({height : 'calc(100% - 120px)'});
     $('.reply').css({height : '60px'});
     $('.reply-main').css({height : 'auto'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '60px'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '85%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '85%'});
-      $('.reply_to').css({bottom : '60px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      console.log('ok');
-      $('.conversation_comment').css({height : '68%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '88%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '78%'});
       $('.reply_to').css({bottom : '139px'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '88%'});
+      $('.reply_to').css({bottom : '60px'});
     }else{
       $('.conversation_comment').css({height : '100%'});
     }
-  }else if(text.length == 2){
+  }else if(target.scrollHeight == 56 || target.scrollHeight == 73){
     $('#conversation').css({height : 'calc(100% - 144px)'});
     $('.reply').css({height : '84px'});
     $('.reply-main').css({height : '57px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '84px'});
     $('.reply_to').css({bottom : '163px'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '83%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '83%'});
-      $('.reply_to').css({bottom : '84px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      $('.conversation_comment').css({height : '68%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '88%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '77%'});
       $('.reply_to').css({bottom : '163px'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '88%'});
+      $('.reply_to').css({bottom : '84px'});
     }else{
       $('.conversation_comment').css({height : '100%'});
     }
-  }else if(text.length == 3){
+  }else if(target.scrollHeight == 79 || target.scrollHeight == 96){
     $('#conversation').css({height : 'calc(100% - 160px)'});
     $('.reply').css({height : '100px'});
     $('.reply-main').css({height : '77px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '100px'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '82%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '83%'});
-      $('.reply_to').css({bottom : '100px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      $('.conversation_comment').css({height : '67%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '87%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '76%'});
       $('.reply_to').css({bottom : '179px'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '87%'});
+      $('.reply_to').css({bottom : '100px'});
     }else{
       $('.conversation_comment').css({height : '100%'});
     }
-  }else if(text.length == 4){
+  }else if(target.scrollHeight == 101 || target.scrollHeight == 118){
     $('#conversation').css({height : 'calc(100% - 175px)'});
     $('.reply').css({height : '119px'});
     $('.reply-main').css({height : '100px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '115px'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '82%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '83%'});
-      $('.reply_to').css({bottom : '115px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      $('.conversation_comment').css({height : '64%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '87%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '75%'});
       $('.reply_to').css({bottom : '194px'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '87%'});
+      $('.reply_to').css({bottom : '115px'});
     }else{
       $('.conversation_comment').css({height : '100%'});
     }
-  }else if(text.length == 5){
+  }else if(target.scrollHeight == 124 ||  target.scrollHeight == 146){
     $('#conversation').css({height : 'calc(100% - 200px)'});
     $('.reply').css({height : '144px'});
     $('.reply-main').css({height : '122px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '140px'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '81%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '81%'});
-      $('.reply_to').css({bottom : '140px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      $('.conversation_comment').css({height : '62%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '86%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '74%'});
       $('.reply_to').css({bottom : '219px'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '86%'});
+      $('.reply_to').css({bottom : '140px'});
     }else{
       $('.conversation_comment').css({height : '100%'});
     }
-  }else if(text.length == 6){
+  }else if(target.scrollHeight == 147){
     $('#conversation').css({height : 'calc(100% - 227px)'});
     $('.reply').css({height : '168px'});
     $('.reply-main').css({height : '150px'});
     $('.reply-main textarea').css({overflow : 'hidden'});
     $('.prv_file').css({bottom : '167px'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '81%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '81%'});
-      $('.reply_to').css({bottom : '167px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      $('.conversation_comment').css({height : '62%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '86%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '73%'});
       $('.reply_to').css({bottom : '246px'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '86%'});
+      $('.reply_to').css({bottom : '167px'});
     }else{
       $('.conversation_comment').css({height : '100%'});
     }
-  }else if(text.length > 6){
+  }else if(target.scrollHeight > 147){
     $('#conversation').css({height : 'calc(100% - 227px)'});
     $('.reply').css({height : '168px'});
     $('.reply-main').css({height : '150px'});
     $('.prv_file').css({bottom : '167px'});
     $('.reply-main textarea').css({overflow : 'auto'});
-    if ($('.prv_file').children().length && $('.reply_to').css('display') == 'none') {
-      $('.conversation_comment').css({height : '81%'});
-    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
-      $('.conversation_comment').css({height : '81%'});
-      $('.reply_to').css({bottom : '167px'});
-    }else if($('.reply_to').css('display') == 'block' && $('.prv_file').children().length){
-      $('.conversation_comment').css({height : '62%'});
+    if (($('.prv_file').children().length || show) && $('.reply_to').css('display') == 'none') {
+      $('.conversation_comment').css({height : '86%'});
+    }else if($('.reply_to').css('display') == 'block' && ($('.prv_file').children().length || show)){
+      $('.conversation_comment').css({height : '73%'});
       $('.reply_to').css({bottom : '246px'});
-    }else{
-      $('.conversation_comment').css({height : '100%'});
+    }else if($('.reply_to').css('display') == 'block' && !($('.prv_file').children().length)){
+      $('.conversation_comment').css({height : '86%'});
+      $('.reply_to').css({bottom : '167px'});
     }
-  }else{
-    // $('#conversation').css({height : ''});
-    // $('.reply').css({height : '60px'});
-    // $('.reply-main').css({height : 'auto'});
-    // $('.reply-main textarea').css({overflow : 'hidden'});
-  }
+  } 
 }
 $('textarea.form-control').keyup('',function(){
   multiline()
 });
 $("textarea.form-control").bind('paste', function(e) {
-  
-  var that = this;
     setTimeout(function() {
-        var length = that.value.length;
-        console.log(length);   
         $( "textarea.form-control" ).keyup();
     }, 0);
 });
@@ -989,6 +981,9 @@ let deleteMessage  = (channel , news)=>{
           }catch(err){
             console.log(err);
           }
+        },
+        complete : function(response){
+          // scrollHandeling(news , '#conversation')
         },
         cache : function(response) {
           console.log(response);
@@ -1081,7 +1076,7 @@ let uploader = new plupload.Uploader({
     }
     if(commentBox == 'open') {
       
-      multiline()
+      multiline(true)
       if(uploader.files.length <= 1){
         FilesAdded();
       }else{
@@ -1124,7 +1119,6 @@ let uploader = new plupload.Uploader({
       }
     }
     $('.prv_file').on('click','.fa-times',function () {
-      
       let clicked_file_id = $(this).parents()[0].id;
       plupload.each(files, function (file) {
         if (file && file.id == clicked_file_id) {
@@ -1171,7 +1165,7 @@ let uploader = new plupload.Uploader({
           }
         } catch (ex) {
             alert(ex);
-        }
+          }
     });
   uploader.bind('ChunkUploaded', function (up, file, info) {  
   });
@@ -1245,6 +1239,8 @@ let uploader = new plupload.Uploader({
         if ($('.prv_file').children().length == 0){
           $('.prv_file').css({ visibility: "hidden" });
         }
+        // $('.reply_to i.fa-times-circle').trigger('click');
+        multiline()
       }, 7000);
       errUploadedFile = true;
     }
@@ -1288,6 +1284,21 @@ let allowComment = (id , allow) => {
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           get_news_channel(15 , chanel_id);
+          scrollHandeling(id , "#conversation")
+          const Toast = Swal.mixin({
+            toast: true,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          
+          Toast.fire({
+            title: 'عملیات با موفیت انجام شد'
+          })
         }else{
           Swal.fire({
             icon: 'error',
@@ -1334,9 +1345,9 @@ let get_comment_reply = (id , componentthispost) =>{
         let text = '';
         comment_list.forEach((element) => {
           text = element.text
-              let regexlink = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+              let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g;
               // Replace plain text links by hyperlinks
-              text = text.replace(regexlink, "<a href='$1' target='_blank'></a>");
+              text = text.replace(regexlink, "<a href='$1' target='_blank'>$1</a>");
               text = text.replace(/\n/g, '<br/>');
               // Echo link
           if(element.status == 1){
@@ -1556,8 +1567,29 @@ $("#conversation").on('click', '.close-comment-box', function() {
     $container.animate({
       scrollTop: $scrollTo.offset().top - 150
     },'slow');
+    $('.reply_to i.fa-times-circle').trigger('click');
+    $.each(uploader.files, function (i, file) {
+      uploader.removeFile(file);
+      $(`.msg_upload_lists li`).remove();
+      $(`.prv_file span`).remove();
+      preview_file = ``;
+      uploadFileShowModal = ``;
+    });
+    if ($('.prv_file').children().length == 0){
+      $('.prv_file').css({ visibility: "hidden" });
+    }
 });
 
+// ************************* scroll handleling ****************************
+let scrollHandeling = (id , container)=>{
+  console.log(id , container);
+  let $scrollTo = $(`#${id}`);
+  let $container =  $(`${container}`);
+  console.log($scrollTo);
+  $container.animate({
+    scrollTop: $scrollTo.offset().top - 150
+  },'slow');
+}
 // ************************* go to replay handle ****************************
 $(".conversation").on('click','.reply_comment' , function(e) {
 	e.preventDefault();
@@ -1596,32 +1628,39 @@ $('.conversation').on('click', '.more-option-comments', function(e) {
 
 // more-option-copy ****************************
 $('.conversation').on('click','.more-option-copy',function(e){
-  let regexlink = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-  let regexEnter = /<br\s*[\/]?>/gi;
-  let $temp = $("<input>");
-  $("body").append($temp);
+  // let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g;
+  let converBr = /\s?(<br\s?\/?>)\s?/g;
+  let anchorTag = /<a[^>]*>([^<]+)<\/a>/g;
+  let txt = ''
   if($(e.target).parents("div.receiver").length){
-    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html().replace(regexEnter,"\n").replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
+    txt = $(e.target).parents("div.receiver").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
+    
   }else{
-    $temp.val($(e.target).parents("div.sender").children("div.message-text").html().replace(regexEnter,"\n").replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
+    txt = $(e.target).parents("div.sender").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
   }
-  document.execCommand("copy");
-  $temp.remove();
-  $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
-  const Toast = Swal.mixin({
-    toast: true,
-    showConfirmButton: false,
-    timer: 1000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
+  // $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
+  navigator.clipboard.writeText(txt)
+  .then(() => {
+    // Success!
+    const Toast = Swal.mixin({
+      toast: true,
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+    
+    Toast.fire({
+      title: 'متن شما با موفقیت کپی شد'
+    })
   })
-  
-  Toast.fire({
-    title: 'متن شما با موفقیت کپی شد'
-  })
+  .catch(err => {
+    console.log('Something went wrong', err);
+
+  });
 });
 
 $('.conversation').on('click','.fa-copy',function(e){
@@ -1737,33 +1776,40 @@ $('.reply_to').on('click','i.fa-times-circle',function(){
 
 // more-option-fa-copy ****************************
 $('.conversation').on('click','.comment-cadr .fa-copy',function(e){
-  let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g
-  let $temp = $("<input>");
-  $("body").append($temp);
+  // let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g;
+  let converBr = /\s?(<br\s?\/?>)\s?/g;
+  let anchorTag = /<a[^>]*>([^<]+)<\/a>/g;
+  let txt = ''
   if($(e.target).parents("div.receiver").length){
-
-    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html().replace(/<br\s*[\/]?>/gi,'\r\n').replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
+    txt = $(e.target).parents("div.receiver").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
+    
   }else{
-
-    $temp.val($(e.target).parents("div.sender").children("div.message-text").html().replace(/<br\s*[\/]?>/gi,'\r\n').replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
+    txt = $(e.target).parents("div.sender").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
   }
-  document.execCommand("copy");
-  $temp.remove();
-  $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
-  const Toast = Swal.mixin({
-    toast: true,
-    showConfirmButton: false,
-    timer: 1000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
+  // $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
+  navigator.clipboard.writeText(txt)
+  .then(() => {
+    // Success!
+    console.log('Success!');
+    const Toast = Swal.mixin({
+      toast: true,
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+    
+    Toast.fire({
+      title: 'متن شما با موفقیت کپی شد'
+    })
   })
-  
-  Toast.fire({
-    title: 'متن شما با موفقیت کپی شد'
-  })
+  .catch(err => {
+    console.log('Something went wrong', err);
+
+  });
 });
 
 // more-option-fa-trash ****************************
