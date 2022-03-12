@@ -738,6 +738,7 @@ let sendMessage  = (id , text , archive)=>{
              }
             $('textarea.form-control').val('')
             get_news_channel(15 , chanel_id , 'sideBar-body');
+            multiline()
           }else{
             console.log(res);
             Swal.fire({
@@ -1783,10 +1784,28 @@ let copytexthandel = (e)=>{
       $temp.val(txt).select()
     }else{
       txt = $(e.target).parents("div.sender").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
+      $temp.val(txt).select()
     }
     // $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
-    document.execCommand("copy");
-    $temp.remove();
+    if(txt !== ''){
+      document.execCommand("copy");
+      $temp.remove();
+        const Toast = Swal.mixin({
+          toast: true,
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+        
+        Toast.fire({
+          icon: 'success',
+          title: 'متن شما با موفقیت کپی شد'
+        })
+    }else {
       const Toast = Swal.mixin({
         toast: true,
         showConfirmButton: false,
@@ -1799,8 +1818,11 @@ let copytexthandel = (e)=>{
       })
       
       Toast.fire({
-        title: 'متن شما با موفقیت کپی شد'
+        icon: 'error',
+        title: 'متن برای کپی کردن پیدا نشد'
       })
+    }
+    
     // navigator.clipboard.writeText(txt)
     // .then(() => {
     //   // Success!
@@ -1857,6 +1879,7 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
              }
             $('textarea.form-control').val('');
             get_comment_reply(primery_id , headePost , 'comment');
+            multiline();
           }else{
             Swal.fire({
               backdrop:false,
