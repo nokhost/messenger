@@ -29,187 +29,189 @@
     <title>پیام رسان</title>
   </head>
   <body>
-    <div class="update_info_chanel">
-      <div class="info_chanel">
-        <div class="header_chanel_info">
-          <div class="row">
-            <div class="clo-md-12 icon-header">
-              <i class="fas fa-times-circle info-close"></i>
-              <i class="far fa-edit info-edit"></i>
+    <div class="background_update_chanel">
+      <div class="update_info_chanel">
+        <div class="info_chanel">
+          <div class="header_chanel_info">
+            <div class="row">
+              <div class="clo-md-12 icon-header">
+                <i class="fas fa-times-circle info-close"></i>
+                <i class="far fa-edit info-edit"></i>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 update-headder-info-box">
+                <div class="info-img">
+                  <img src="" alt="" />
+                </div>
+                <div class="info-name">
+                  <p class="chanel-name"></p>
+                  <p class="chanel-member-cunt"></p>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-12 update-headder-info-box">
-              <div class="info-img">
-                <img src="" alt="" />
+          <div class="chanel-description">
+            <div class="row">
+              <div class="col-md-12">
+                <div>
+                  <h4>توضیحات</h4>
+                  <p class="decription-text"></p>
+                </div>
+                <hr />
               </div>
-              <div class="info-name">
-                <p class="chanel-name"></p>
-                <p class="chanel-member-cunt"></p>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+              <div class="col-md12">
+                <ul class="info-member-chanel"></ul>
               </div>
             </div>
           </div>
         </div>
-        <div class="chanel-description">
-          <div class="row">
-            <div class="col-md-12">
-              <div>
-                <h4>توضیحات</h4>
-                <p class="decription-text"></p>
-              </div>
+        <div class="update-chanel">
+          <div class="row header-update-chanel">
+            <div class="col-md12">
+              <i class="fas fa-times-circle"></i>
+              <p class="chanle-name">ویرایش کانال</p>
               <hr />
             </div>
           </div>
-        </div>
-        <div>
-          <div class="row">
-            <div class="col-md12">
-              <ul class="info-member-chanel"></ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="update-chanel">
-        <div class="row header-update-chanel">
-          <div class="col-md12">
-            <i class="fas fa-times-circle"></i>
-            <p class="chanle-name">ویرایش کانال</p>
-            <hr />
-          </div>
-        </div>
-        <div class="row content-update-chanel">
-          <div class="col-md-12 main-box-content">
-            <ul class="menu-list">
-              <li class="menu-edite">
-                <i class="fas fa-edit"></i>
-                <p>ویرایش اطلاعات کانال</p>
-                <i class="fas fa-chevron-left"></i>
-                <hr />
-              </li>
-              
-              <li class="menu-users">
-                <i class="fas fa-users"></i>
-                <p>افزودن اعضاء</p>
-                <i class="fas fa-chevron-left"></i>
-                <hr />
-              </li>
-              <li class="menu-deleteChanel">
-                <i class="fas fa-trash"></i>
-                <p>حذف و ترک کانال</p>
-              </li>
-            </ul>
-            <div class="col-md-12 update-info">
-              <div class="row upload-img-chanel">
-                <div class="col-md-12">
-                  <div class="uploade-image-chanel" id="uploade-image-chanel">
-                    <h5 class="fileProgress" style="display: none; position: absolute; top: 10px; right: 41px;">
-                      <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:0; --size:100px; color: white;"></div>
-                    </h5>
-                    <i class="fas fa-camera"></i>
-                    <img src="./assets/images/blue.png" alt="" />
-                    <p>بارگزاری عکس کانال</p>
-                  </div>
-                </div>
-              </div>
-              <div class="row update-name-chanel">
-                <div class="col-md-12">
-                  <label for="">نام کانال</label>
-                  <input type="text" />
-                </div>
-              </div>
-              <div class="row update-description-chanel">
-                <div class="col-md-12">
-                  <label for="">توضیحات کانال</label>
-                  <div class="area-box">
-                    <textarea name="" id="" cols="30" rows="10"></textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="row allow-comment-update-info">
-                <div class="col-md-12">
-                  <div class="row update_enable_comments">
-                    <input
-                      type="checkbox"
-                      id="update_comment_on"
-                      name="update_comment_on"
-                      checked
-                    />
-                    <label for="update_comment_on">فعال بودن یادداشت ها</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row add-admin-chanel">
-              <ul class="admin-list-members">
+          <div class="row content-update-chanel">
+            <div class="col-md-12 main-box-content">
+              <ul class="menu-list">
+                <li class="menu-edite">
+                  <i class="fas fa-edit"></i>
+                  <p>ویرایش اطلاعات کانال</p>
+                  <i class="fas fa-chevron-left"></i>
+                  <hr />
+                </li>
                 
+                <li class="menu-users">
+                  <i class="fas fa-users"></i>
+                  <p>افزودن اعضاء</p>
+                  <i class="fas fa-chevron-left"></i>
+                  <hr />
+                </li>
+                <li class="menu-deleteChanel">
+                  <i class="fas fa-trash"></i>
+                  <p>حذف و ترک کانال</p>
+                </li>
               </ul>
-            </div>
-            <div class="row add-usre-chanel">
-              <div class="col-md-12">
-                <div class="row">
+              <div class="col-md-12 update-info">
+                <div class="row upload-img-chanel">
                   <div class="col-md-12">
-                    <ul class="position-list">
-                      <li class="position-teacher">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <p>معلم</p>
-                        <span></span>
-                      </li>
-                      <li class="position-personel">
-                        <i class="fas fa-user-tie"></i>
-                        <p>پرسنل</p>
-                        <span></span>
-                      </li>
-                      <li class="position-student">
-                        <div class="dropdown">
-                          <div class="dropdown">
-                            <a
-                              class="btn dropdown-toggle"
-                              href="#"
-                              role="button"
-                              id="dropdownMenuLink"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i class="fas fa-user-graduate"></i>
-                              <p>دانش آموز</p>
-                              <span></span>
-                            </a>
-
-                            <ul
-                              class="dropdown-menu student-term"
-                              aria-labelledby="dropdownMenuLink"
-                            >
-                              
-                            </ul>
-                          </div>
-                        </div>
-                      </li>
-                      <hr />
-                    </ul>
+                    <div class="uploade-image-chanel" id="uploade-image-chanel">
+                      <h5 class="fileProgress" style="display: none; position: absolute; top: 10px; right: 41px;">
+                        <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:0; --size:100px; color: white;"></div>
+                      </h5>
+                      <i class="fas fa-camera"></i>
+                      <img src="./assets/images/blue.png" alt="" />
+                      <p>بارگزاری عکس کانال</p>
+                    </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row update-name-chanel">
                   <div class="col-md-12">
-                    <div class="sellect_all-box">
-                      <label for="selsct-all-user-upadte-chanel">انتخاب همه :</label>
-                      <input type="checkbox" id="selsct-all-user-upadte-chanel">
+                    <label for="">نام کانال</label>
+                    <input type="text" />
+                  </div>
+                </div>
+                <div class="row update-description-chanel">
+                  <div class="col-md-12">
+                    <label for="">توضیحات کانال</label>
+                    <div class="area-box">
+                      <textarea name="" id="" cols="30" rows="10"></textarea>
                     </div>
-                    <ul class="users-list-chanel">
-                    </ul>
+                  </div>
+                </div>
+                <div class="row allow-comment-update-info">
+                  <div class="col-md-12">
+                    <div class="row update_enable_comments">
+                      <input
+                        type="checkbox"
+                        id="update_comment_on"
+                        name="update_comment_on"
+                        checked
+                      />
+                      <label for="update_comment_on">فعال بودن یادداشت ها</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row add-admin-chanel">
+                <ul class="admin-list-members">
+                  
+                </ul>
+              </div>
+              <div class="row add-usre-chanel">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <ul class="position-list">
+                        <li class="position-teacher">
+                          <i class="fas fa-chalkboard-teacher"></i>
+                          <p>معلم</p>
+                          <span></span>
+                        </li>
+                        <li class="position-personel">
+                          <i class="fas fa-user-tie"></i>
+                          <p>پرسنل</p>
+                          <span></span>
+                        </li>
+                        <li class="position-student">
+                          <div class="dropdown">
+                            <div class="dropdown">
+                              <a
+                                class="btn dropdown-toggle"
+                                href="#"
+                                role="button"
+                                id="dropdownMenuLink"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <i class="fas fa-user-graduate"></i>
+                                <p>دانش آموز</p>
+                                <span></span>
+                              </a>
+  
+                              <ul
+                                class="dropdown-menu student-term"
+                                aria-labelledby="dropdownMenuLink"
+                              >
+                                
+                              </ul>
+                            </div>
+                          </div>
+                        </li>
+                        <hr />
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="sellect_all-box">
+                        <label for="selsct-all-user-upadte-chanel">انتخاب همه :</label>
+                        <input type="checkbox" id="selsct-all-user-upadte-chanel">
+                      </div>
+                      <ul class="users-list-chanel">
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row footer-update-chanel">
-          <!-- <hr /> -->
-          <div class="col-md-12">
-            <button class="save-change-info">ذخیره</button>
-            <button class="add-member-update-chanel">افزودن کاربران انتخاب شده</button>
-            <button class="add-admin-update-chanel">دخیره</button>
-            <p class="back-menu-list" style="visibility: hidden;">بازگشت به منو</p>
-            <p class="back-to-info-chanel" style="visibility: hidden;">بازگشت</p>
+          <div class="row footer-update-chanel">
+            <!-- <hr /> -->
+            <div class="col-md-12">
+              <button class="save-change-info">ذخیره</button>
+              <button class="add-member-update-chanel">افزودن کاربران انتخاب شده</button>
+              <button class="add-admin-update-chanel">دخیره</button>
+              <p class="back-menu-list" style="visibility: hidden;">بازگشت به منو</p>
+              <p class="back-to-info-chanel" style="visibility: hidden;">بازگشت</p>
+            </div>
           </div>
         </div>
       </div>

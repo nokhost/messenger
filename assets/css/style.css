@@ -1548,6 +1548,9 @@
     span.full_channel_name{
         display: none;
     }
+    .swal2-container{
+        overflow: hidden;
+    }
     @media screen and (min-width:1440px) and (max-width:2560px) {
         div.content-update-chanel{
             height: 365px !important;

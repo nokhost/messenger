@@ -2,9 +2,9 @@ let url = window.location.href;
 let api_address = "";
 let token = "";
 
-if(url == "file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html" || url == 'http://t.atiehsazan.ir/new_school_prj/component/messenger/' || url == 'file:///C:/Users/milad/OneDrive/Desktop/new%20message/messenger/index.html' || url =='file:///C:/Users/GIGABYTE/Desktop/messenger/index.html' || url == 'file:///C:/Users/darvi/Desktop/messenger/index.html'){
+if( url == "file:///C:/Users/milad/OneDrive/Desktop/messenger/index.html"){
   api_address = "http://t.atiehsazan.ir/new_school_prj/backend/api";
-  token = "DC7DE725DD48FB0D9ED8D648C99EC813";
+  token = "A6B32B02E66E5E5F82B0C1594037849E";
 }else{
   api_address =  "../../backend/api";
   token = localStorage.getItem("token");
@@ -43,7 +43,8 @@ let lastRow = 0
 let archbox = 0;
 let allow_comment_update = '';
 let stepLoationUpdate = ''
-
+let msgBoxSend = ''
+let notReadMsg = [];
 
 // ************************* refresh listChanel and Conve ****************************
 let refresListChanel =  setInterval (() =>{
@@ -131,6 +132,7 @@ let ChanleList = ()=>{
               }else{
                 console.log(res);
                 Swal.fire({
+                  backdrop:false,
                   icon: res.result,
                   title: res.data.message,
                   text: 'برای استفاده از پیام رسان مجدد وارد شوید',
@@ -223,12 +225,13 @@ $(".sideBar").on("click", ".sideBar-body", function(e) {
   $(".info-img img").attr('src' , img)
   chanel_id = this.id;
   $("#searchText").val("")
-  get_news_channel( row, chanel_id,'clickChanel');
+  get_news_channel( row, chanel_id , 'sideBar-body')
   if(allow_comment_update === '0'){
     $('#update_comment_on').prop('checked' , false);
   }else if(allow_comment_update === '1'){
     $('#update_comment_on').prop('checked' , true);
   }
+  
 });
 
 let get_news_channel = ( row , id , scrollEndMsg)=>{
@@ -266,7 +269,6 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
           let noCommentText = '';
           let description = '';
           let enabelcomment = ``;
-          let notReadMsg = [];
           if (last_row == -1) {
               out = `
               <div class="row" style="height: auto;">
@@ -463,36 +465,19 @@ let get_news_channel = ( row , id , scrollEndMsg)=>{
               </div>
           </div>`
           $('.conversation_empty').hide();
-          
           $("#conversation .conversation_message").html(out);
           $('.conversation_comment').css({height: "100%"});
           // $('.conversation_message').css({height: "100%"});
           $('.conversation_comment').hide();
           $('.conversation_message').show();
-          if(scrollEndMsg == 'showMore'){
-            $('#conversation').animate({ scrollTop: 20 });
-          }else if(notReadMsg[0]){
-            for (let i = 0; i < $('.message-body a').length; i++) {
-              if($('.message-body a')[i].id == notReadMsg[0]){
-                let $scrollTo =$(`#${notReadMsg[0]}`);
-                let $container =  $("#conversation");
-                $container.animate({
-                  scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
-                });
-                break;
-              }
-            }
-            ChanleList();
-          }else if(scrollEndMsg == 'clickChanel'){
-            $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight - 30 });
-            ChanleList();
-          }else{
-            $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight - 30; 
+          if (scrollEndMsg == 'sideBar-body') {
+            scrollHandeling(scrollEndMsg , 'clickChanel')
           }
           conversation = out;
           commentBox = 'close';
         }else{
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
@@ -548,13 +533,48 @@ $("#conversation").scroll(function() {
   if ( scrollTop == 0 ){
     if(lastRow + 1 >= row && commentBox !== 'open'){
       row = row + 5;
-      get_news_channel( row , chanel_id , 'showMore');
+      get_news_channel( row , chanel_id );
+      scrollHandeling('sideBar-body' , 'showMore')
     }
   }
 });
+
+let scrollHandeling = (scrollLoc , scrollEndMsg , id , target) => {
+  if(scrollLoc == 'sideBar-body'){
+    if(scrollEndMsg == 'showMore'){
+      $('#conversation').animate({ scrollTop: 20 });
+    }else if(notReadMsg[0]){
+      for (let i = 0; i < $('.message-body a').length; i++) {
+        if($('.message-body a')[i].id == notReadMsg[0]){
+          let $scrollTo =$(`#${notReadMsg[0]}`);
+          let $container =  $("#conversation");
+          $container.animate({
+            scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
+          });
+          break;
+        }
+      }
+      ChanleList();
+    }else if(scrollEndMsg == 'clickChanel'){
+      $('#conversation').animate({ scrollTop: $('.conversation_message')[0].scrollHeight - 30 });
+      ChanleList();
+    }else{
+      $('#conversation')[0].scrollTop =  $('.conversation_body')[0].scrollHeight - 30; 
+    }
+    
+  }else if(scrollLoc == 'delete' || scrollLoc == 'allowComment'){
+    let $scrollTo =$(`#${id}`);
+      let $container =  $(`${target}`);
+      $container.animate({
+      scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
+    });
+  }else if(scrollLoc == 'comment'){
+    
+    $('.comment-box')[0].scrollTop =  $('.comment-box')[0].scrollHeight;
+  }
+}
 // ************************* handle click window and conversation ****************************
 $(window).on('click', function(e) {
-
   // *** download file ***
 
   let file__id = e.target.id;
@@ -602,6 +622,7 @@ $(window).on('click', function(e) {
     get_session_archive()
   }else if(e.target.className == 'fas fa-download'){
     Swal.fire({
+      backdrop:false,
       icon: 'error',
       title: 'id فایل یافت نشد',
       showConfirmButton: false,
@@ -615,10 +636,18 @@ $(window).on('click', function(e) {
     $(".selected").last().removeClass('selected');
   }
   
-  // *** clear box msg after click other chanel ***
-  
-  if(!$(e.target).parents('.conversation').length && !$(e.target).parents('.fg-emoji-container').length && !$(e.target).parents('.reply_to_content_box').length && !$(e.target).parents('.span_prv_archive').length){
+  if($(e.target).parents('.sideBar-body').length || $(e.target).parents('.new-chanel').length || $(e.target).parents('.refresh-chanel').length){
     $('textarea.form-control').val('');
+    $('.back-menu-list').trigger('click');
+    $('.back-to-info-chanel').trigger('click');
+    $('.info-close').trigger('click');
+    $.each(uploader.files, function (i, file) {
+      uploader.removeFile(file);
+      $(`.msg_upload_lists li`).remove();
+      $(`.prv_file span`).remove();
+      preview_file = ``;
+      uploadFileShowModal = ``;
+    });
   }
 
   // *** clear box msg after click other chanel *** 
@@ -653,10 +682,10 @@ $('.heading-back').on('click', function() {
 
 $(".heading-refresh i").on("click", function() {
   if(commentBox == 'open'){
-    get_comment_reply(primery_id,headePost)
+    get_comment_reply(primery_id,headePost ,'comment')
   }else{
 
-    get_news_channel(15 , chanel_id)
+    get_news_channel(15 , chanel_id ,'sideBar-body')
   }
 });
 
@@ -703,14 +732,16 @@ let sendMessage  = (id , text , archive)=>{
                 if ($('.prv_file').children().length == 0){
                   $('.prv_file').css({ visibility: "hidden" });
                 }
+                msgBoxSend = ''
               }, 5000);
               listArchive = [];
              }
             $('textarea.form-control').val('')
-            get_news_channel(15 , chanel_id);
+            get_news_channel(15 , chanel_id , 'sideBar-body');
           }else{
             console.log(res);
             Swal.fire({
+              backdrop:false,
               icon: 'error',
               title: res.data.message,
               showConfirmButton: false,
@@ -937,6 +968,7 @@ $("textarea.form-control").bind('paste', function(e) {
 // ************************* delete message ****************************
 let deleteMessage  = (channel , news)=>{
   const swalWithBootstrapButtons = Swal.mixin({
+    backdrop:false,
     customClass: {
       confirmButton: 'btn btn-success',
       cancelButton: 'btn btn-danger'
@@ -969,9 +1001,10 @@ let deleteMessage  = (channel , news)=>{
           try{
               let res = jQuery.parseJSON(response);
               if(res.result == 'ok'){
-                get_news_channel(15 , chanel_id);
+                get_news_channel(row , chanel_id);
               }else{
               Swal.fire({
+                backdrop:false,
                 icon: 'error',
                 title: res.data.message,
                 showConfirmButton: false,
@@ -983,7 +1016,6 @@ let deleteMessage  = (channel , news)=>{
           }
         },
         complete : function(response){
-          // scrollHandeling(news , '#conversation')
         },
         cache : function(response) {
           console.log(response);
@@ -1081,6 +1113,7 @@ let uploader = new plupload.Uploader({
         FilesAdded();
       }else{
         Swal.fire({
+          backdrop:false,
           icon: 'error',
           title: 'محدودیت در ارسال تعداد فایل',
           text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 1 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
@@ -1102,6 +1135,7 @@ let uploader = new plupload.Uploader({
         FilesAdded();
       }else{
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: 'محدودیت در ارسال تعداد فایل',
             text : 'کاربر گرامی در هر بار بارگزاری فقط می توانید 6 فایل ارسال کنید لطفا مجددا تلاش نمایید!',
@@ -1140,6 +1174,7 @@ let uploader = new plupload.Uploader({
 
   });
   uploader.bind('UploadProgress',function (up, file) {
+    msgBoxSend = 'open'
     $('.msg_upload_bg').css({ visibility: "inherit" });
     let progress = 0;
     progress += file.percent ;
@@ -1240,7 +1275,8 @@ let uploader = new plupload.Uploader({
           $('.prv_file').css({ visibility: "hidden" });
         }
         // $('.reply_to i.fa-times-circle').trigger('click');
-        multiline()
+        multiline();
+        msgBoxSend = ''
       }, 7000);
       errUploadedFile = true;
     }
@@ -1283,8 +1319,7 @@ let allowComment = (id , allow) => {
       try{
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
-          get_news_channel(15 , chanel_id);
-          scrollHandeling(id , "#conversation")
+          get_news_channel(row , chanel_id);
           const Toast = Swal.mixin({
             toast: true,
             showConfirmButton: false,
@@ -1301,6 +1336,7 @@ let allowComment = (id , allow) => {
           })
         }else{
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
@@ -1322,7 +1358,7 @@ let allowComment = (id , allow) => {
 };
 
 // ************************* get_comment_reply ****************************
-let get_comment_reply = (id , componentthispost) =>{
+let get_comment_reply = (id , componentthispost , loc , scrollLoc) =>{
   $.ajax({
     url: api_address + "/notices/get_comment_reply",
     type: "post",
@@ -1484,8 +1520,14 @@ let get_comment_reply = (id , componentthispost) =>{
                 </div>
               </div>
         `;
+       
         $("#conversation .conversation_comment").html(out);
-        $('.comment-box')[0].scrollTop =  $('.comment-box')[0].scrollHeight;
+        if(loc == 'comment'){
+          scrollHandeling (loc)
+        }else if(loc == "delete"){
+          $('.comment-box')[0].scrollTop =  scrollLoc;
+        }
+        
     }
 });
 }
@@ -1546,12 +1588,19 @@ $('.conversation').on('click', '.comment', function(e) {
     $('textarea.form-control').val('');
     primery_id = e.currentTarget.id;
     comment_id = $(this)[0].id
-    get_comment_reply(primery_id ,headePost);
+    get_comment_reply(primery_id ,headePost ,'comment');
     commentBox = 'open';
     postId = $(e.target).parents()[2].id;
     if(postId !== ""){
       $('.conversation_comment').show();
       $('.conversation_message').hide();
+      $.each(uploader.files, function (i, file) {
+        uploader.removeFile(file);
+        $(`.msg_upload_lists li`).remove();
+        $(`.prv_file span`).remove();
+        preview_file = ``;
+        uploadFileShowModal = ``;
+      });
     }
    
 });
@@ -1578,18 +1627,8 @@ $("#conversation").on('click', '.close-comment-box', function() {
     if ($('.prv_file').children().length == 0){
       $('.prv_file').css({ visibility: "hidden" });
     }
+    multiline()
 });
-
-// ************************* scroll handleling ****************************
-let scrollHandeling = (id , container)=>{
-  console.log(id , container);
-  let $scrollTo = $(`#${id}`);
-  let $container =  $(`${container}`);
-  console.log($scrollTo);
-  $container.animate({
-    scrollTop: $scrollTo.offset().top - 150
-  },'slow');
-}
 // ************************* go to replay handle ****************************
 $(".conversation").on('click','.reply_comment' , function(e) {
 	e.preventDefault();
@@ -1628,70 +1667,16 @@ $('.conversation').on('click', '.more-option-comments', function(e) {
 
 // more-option-copy ****************************
 $('.conversation').on('click','.more-option-copy',function(e){
-  // let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g;
-  let converBr = /\s?(<br\s?\/?>)\s?/g;
-  let anchorTag = /<a[^>]*>([^<]+)<\/a>/g;
-  let txt = ''
-  if($(e.target).parents("div.receiver").length){
-    txt = $(e.target).parents("div.receiver").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
-    
-  }else{
-    txt = $(e.target).parents("div.sender").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
-  }
-  // $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
-  navigator.clipboard.writeText(txt)
-  .then(() => {
-    // Success!
-    const Toast = Swal.mixin({
-      toast: true,
-      showConfirmButton: false,
-      timer: 1000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-      }
-    })
-    
-    Toast.fire({
-      title: 'متن شما با موفقیت کپی شد'
-    })
-  })
-  .catch(err => {
-    console.log('Something went wrong', err);
-
-  });
+  copytexthandel(e)
 });
 
 $('.conversation').on('click','.fa-copy',function(e){
-  let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g
-  let $temp = $("<input>");
-  $("body").append($temp);
-  if($(e.target).parents("div.receiver").length){
-    $temp.val($(e.target).parents("div.receiver").children("div.message-text").html().replace(/<br\s*[\/]?>/gi,'\r\n').replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
-  }else{
-    $temp.val($(e.target).parents("div.sender").children("div.message-text").html().replace(/<br\s*[\/]?>/gi,'\r\n').replace("<a href='$1' target='_blank'>$1</a>",regexlink)).select();
-  }
-  document.execCommand("copy");
-  
-  $temp.remove();
-  const Toast = Swal.mixin({
-    toast: true,
-    showConfirmButton: false,
-    timer: 1000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  })
-  Toast.fire({
-    title: 'متن شما با موفقیت کپی شد'
-  })
+  copytexthandel(e)
 });
 // more-option-share ****************************
 $('.conversation').on('click','.more-option-share',function(e){
   Swal.fire({
+    backdrop:false,
     icon: 'info',
     title: 'این بخش  به زودی اضافه خواهد شد',
     showConfirmButton: false,
@@ -1776,40 +1761,7 @@ $('.reply_to').on('click','i.fa-times-circle',function(){
 
 // more-option-fa-copy ****************************
 $('.conversation').on('click','.comment-cadr .fa-copy',function(e){
-  // let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g;
-  let converBr = /\s?(<br\s?\/?>)\s?/g;
-  let anchorTag = /<a[^>]*>([^<]+)<\/a>/g;
-  let txt = ''
-  if($(e.target).parents("div.receiver").length){
-    txt = $(e.target).parents("div.receiver").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
-    
-  }else{
-    txt = $(e.target).parents("div.sender").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
-  }
-  // $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
-  navigator.clipboard.writeText(txt)
-  .then(() => {
-    // Success!
-    console.log('Success!');
-    const Toast = Swal.mixin({
-      toast: true,
-      showConfirmButton: false,
-      timer: 1000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-      }
-    })
-    
-    Toast.fire({
-      title: 'متن شما با موفقیت کپی شد'
-    })
-  })
-  .catch(err => {
-    console.log('Something went wrong', err);
-
-  });
+  copytexthandel(e)
 });
 
 // more-option-fa-trash ****************************
@@ -1818,6 +1770,47 @@ $('.conversation').on('click','.comment-cadr .fa-trash',function(e){
   deletecomment(commentId)
 });
 
+// ************************* copytexthandel ****************************
+let copytexthandel = (e)=>{
+    // let regexlink = /((((https:\/\/)|(http:\/\/))((\w+)|(\.)|\/|\-|\?|=){0,})(\s)*)/g;
+    let converBr = /\s?(<br\s?\/?>)\s?/g;
+    let anchorTag = /<a[^>]*>([^<]+)<\/a>/g;
+    let txt = ''
+    let $temp = $("<textarea>");
+    $("body").append($temp);
+    if($(e.target).parents("div.receiver").length){
+      txt = $(e.target).parents("div.receiver").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
+      $temp.val(txt).select()
+    }else{
+      txt = $(e.target).parents("div.sender").children("div.message-text").html().replace(converBr , "\r\n").replace(anchorTag ,'$1');
+    }
+    // $(e.target).parents("li.more-option-copy").attr("title" , "کپی شد")
+    document.execCommand("copy");
+    $temp.remove();
+      const Toast = Swal.mixin({
+        toast: true,
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      
+      Toast.fire({
+        title: 'متن شما با موفقیت کپی شد'
+      })
+    // navigator.clipboard.writeText(txt)
+    // .then(() => {
+    //   // Success!
+   
+    // })
+    // .catch(err => {
+    //   console.log('Something went wrong', err);
+
+    // });
+}
 // ************************* sendcomment ****************************
 let sendcomment = (text , reply_id , archive , extraid)=>{
   $.ajax({
@@ -1841,7 +1834,6 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
             if(!!$('.prv_file').children().length){
               $('.upload_img_success').css({display : 'block'});
               $('.upload_msg_success').css({display : 'block'});
-            
               setTimeout(function(){
                 $('.msg_upload_bg').css({visibility: "hidden"});
                 $('.upload_img_success').css({display : 'none'});
@@ -1859,20 +1851,21 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
                 if ($('.prv_file').children().length == 0){
                   $('.prv_file').css({ visibility: "hidden" });
                 }
+                msgBoxSend = ''
               }, 7000);
               listArchive = [];
              }
-            $('textarea.form-control').val('')
-            get_comment_reply(primery_id,headePost);
+            $('textarea.form-control').val('');
+            get_comment_reply(primery_id , headePost , 'comment');
           }else{
             Swal.fire({
+              backdrop:false,
               icon: 'error',
               title: res.data.message,
               showConfirmButton: false,
               timer: 2000
             })
           }
-           
       }catch(err){
         console.log(err);
       }
@@ -1888,7 +1881,9 @@ let sendcomment = (text , reply_id , archive , extraid)=>{
 
 // ************************* delete comment ****************************
 let deletecomment = (id) => {
+  let scrollTop = $(`#${id}`)[0].offsetTop;
   const swalWithBootstrapButtons = Swal.mixin({
+    backdrop:false,
     customClass: {
       confirmButton: 'btn btn-success',
       cancelButton: 'btn btn-danger'
@@ -1926,7 +1921,8 @@ let deletecomment = (id) => {
                 showConfirmButton: false,
                 timer: 1500,
               })
-              get_comment_reply(primery_id,headePost)
+              
+              get_comment_reply(primery_id , headePost , "delete" ,scrollTop-250);
             }else{
               swalWithBootstrapButtons.fire({
                 title: 'عملیات انجام نشد',
@@ -1994,6 +1990,7 @@ let insert_channel = (chanelData , arrymember)=>{
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           Swal.fire({
+            backdrop:false,
             icon: 'success',
             title: 'کانال با موفقیت ثبت شد',
             showConfirmButton: false,
@@ -2005,6 +2002,7 @@ let insert_channel = (chanelData , arrymember)=>{
           console.log();
           arrymember = [];
           Swal.fire({
+            backdrop:false,
             icon: res.result,
             title: res.data.message,
             showConfirmButton: false,
@@ -3054,6 +3052,7 @@ let enablechecked = () =>{
 
 $('.heading-name').on('click' , function () {
   $('.update_info_chanel').css({display:'block'});
+  $('.background_update_chanel').css({display:'block'});
   member_channel('heading-name');
 });
 $('.header_chanel_info .info-edit').on('click' , function(){
@@ -3182,6 +3181,7 @@ $('.save-change-info').on('click' , function(){
     update_info_channel(namechanel,descriptionchanel,chanelImage,allow_commentchanel);
   }else{
     Swal.fire({
+      backdrop:false,
       icon: 'error',
       title: 'نام کانال باید وارد شود',
       showConfirmButton: false,
@@ -3289,6 +3289,7 @@ $('.header-update-chanel .fa-times-circle').on('click',function () {
     // $('.back-menu-list').css({display:'none'});
     // $('.update-chanel').css({display:'none'});
     // $('.update_info_chanel').css({display:'none'});
+    // $('.background_update_chanel').css({display:'none'});
     // $('.info_chanel').css({display:'block'});
     // $('.sellect_all-box').css({display:'none'});
     // $('.update-name-chanel input').val('');
@@ -3306,6 +3307,7 @@ $('.header-update-chanel .fa-times-circle').on('click',function () {
 });
 $('.info-close').on('click',function(){
   $('.update_info_chanel').css({display:'none'});
+  $('.background_update_chanel').css({display:'none'});
 });
 $('.add-member-update-chanel').on('click',function(){
   let arr_member = JSON.stringify(upadtememberchanel)
@@ -3313,6 +3315,7 @@ $('.add-member-update-chanel').on('click',function(){
     add_member(arr_member);
   }else{
     Swal.fire({
+      backdrop:false,
       icon: 'error',
       title: "عضوی برای افزودن به کانال انتخاب نشده",
       showConfirmButton: false,
@@ -3480,6 +3483,7 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           Swal.fire({
+            backdrop:false,
             icon: 'success',
             title: 'اطلاعات کانال با موفقیت تغییر یافت',
             showConfirmButton: false,
@@ -3491,13 +3495,13 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $('.back-menu-list').css({display:'none'});
           $('.update-chanel').css({display:'none'});
           $('.update_info_chanel').css({display:'none'});
+          $('.background_update_chanel').css({display:'none'});
           $('.info_chanel').css({display:'block'});
           $('.update-name-chanel input').val('');
           $('.area-box textarea').val('');
           $('.users-list-chanel li').remove();
           ChanleList();
-          // $(`.sideBar #${chanel_id}`).trigger('click');
-          removeImgChanel(imgUpdateChanelUpload);
+          removeImgChanel(chanel_id);
           $(`.uploade-image-chanel img`).attr('src', './assets/images/blue.png');
           $(`.uploade-image-chanel i.fa-camera`).show();
           $('.save-change-info').prop('disabled', false);
@@ -3507,6 +3511,7 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
           $('.save-change-info').html(`ذخیره`);
           console.log(res);
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
@@ -3519,7 +3524,7 @@ let update_info_channel = (name , description , image_channel , allow_comment)=>
       }
     },
     complete :function (data) {
-      
+      console.log($(`.sideBar #${chanel_id} img`).attr('src'));
     },
     cache : function(response) {
       console.log(response);
@@ -3551,6 +3556,7 @@ let update_member = (userId , is_admin)=>{
         }else{
           console.log(res);
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
@@ -3590,6 +3596,7 @@ let add_member = (list) => {
         let res = jQuery.parseJSON(response);
         if(res.result == 'ok'){
           Swal.fire({
+            backdrop:false,
             icon: 'success',
             title: "کاربران انتخاب شده به کانال اضافه شدند",
             showConfirmButton: false,
@@ -3598,6 +3605,7 @@ let add_member = (list) => {
         }else{
           console.log(res);
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
@@ -3641,6 +3649,7 @@ let deletemember = (id) => {
           $(`li.${id} span`).replaceWith(`<i class="fas fa-trash" style="float: left;color: #fd4c4c;cursor: pointer; margin-right: 20px;"></i>`)
           $(`li.${id} i.fa-user-shield`).css({display:'block'});
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
@@ -3707,6 +3716,7 @@ let list_receiver_news_channel = (id) => {
         }else{
           console.log(res);
           Swal.fire({
+            backdrop:false,
             icon: 'error',
             title: res.data.message,
             showConfirmButton: false,
